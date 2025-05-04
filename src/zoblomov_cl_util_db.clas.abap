@@ -53,10 +53,10 @@ CLASS zoblomov_cl_util_db IMPLEMENTATION.
 
     DELETE FROM zoblomov_t_91
         WHERE
-           uname = @uname
-            AND handle = @handle
-            AND handle2 = @handle2
-            AND handle3 = @handle3.
+           uname = uname
+            AND handle = handle
+            AND handle2 = handle2
+            AND handle3 = handle3.
 
     IF check_commit = abap_true.
       COMMIT WORK AND WAIT.
@@ -67,23 +67,32 @@ CLASS zoblomov_cl_util_db IMPLEMENTATION.
 
   METHOD load_by_handle.
 
-    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH EMPTY KEY.
+    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH DEFAULT KEY.
 
     SELECT data
-      FROM zoblomov_t_91
+      FROM zoblomov_t_91 INTO CORRESPONDING FIELDS OF TABLE lt_db
        WHERE
-        uname = @uname
-        AND handle = @handle
-        AND handle2 = @handle2
-        AND handle3 = @handle3
-      INTO CORRESPONDING FIELDS OF TABLE @lt_db.
+        uname = uname
+        AND handle = handle
+        AND handle2 = handle2
+        AND handle3 = handle3
+      .
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zoblomov_cx_util_error
         EXPORTING
           val = `No entry for handle exists`.
     ENDIF.
 
-    DATA(ls_db) = lt_db[ 1 ].
+    DATA ls_db LIKE LINE OF lt_db.
+    DATA temp1 LIKE LINE OF lt_db.
+    DATA temp2 LIKE sy-tabix.
+    temp2 = sy-tabix.
+    READ TABLE lt_db INDEX 1 INTO temp1.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    ls_db = temp1.
 
     zoblomov_cl_util=>xml_parse(
       EXPORTING
@@ -96,15 +105,24 @@ CLASS zoblomov_cl_util_db IMPLEMENTATION.
 
   METHOD load_by_id.
 
-    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH EMPTY KEY.
+    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH DEFAULT KEY.
 
     SELECT data
-      FROM zoblomov_t_91
-      WHERE id = @id
-      INTO CORRESPONDING FIELDS OF TABLE @lt_db.
+      FROM zoblomov_t_91 INTO CORRESPONDING FIELDS OF TABLE lt_db
+      WHERE id = id
+      .
     ASSERT sy-subrc = 0.
 
-    DATA(ls_db) = lt_db[ 1 ].
+    DATA ls_db LIKE LINE OF lt_db.
+    DATA temp3 LIKE LINE OF lt_db.
+    DATA temp4 LIKE sy-tabix.
+    temp4 = sy-tabix.
+    READ TABLE lt_db INDEX 1 INTO temp3.
+    sy-tabix = temp4.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    ls_db = temp3.
 
     zoblomov_cl_util=>xml_parse(
       EXPORTING
@@ -117,30 +135,41 @@ CLASS zoblomov_cl_util_db IMPLEMENTATION.
 
   METHOD save.
 
-    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH EMPTY KEY.
+    DATA lt_db TYPE STANDARD TABLE OF zoblomov_t_91 WITH DEFAULT KEY.
     SELECT id
-      FROM zoblomov_t_91
+      FROM zoblomov_t_91 INTO CORRESPONDING FIELDS OF TABLE lt_db
        WHERE
-        uname = @uname
-        AND handle = @handle
-        AND handle2 = @handle2
-        AND handle3 = @handle3
-      INTO CORRESPONDING FIELDS OF TABLE @lt_db ##SUBRC_OK.
+        uname = uname
+        AND handle = handle
+        AND handle2 = handle2
+        AND handle3 = handle3
+       ##SUBRC_OK.
 
-    DATA(ls_db) = VALUE zoblomov_t_91(
-        uname   = uname
-        handle  = handle
-        handle2 = handle2
-        handle3 = handle3
-        data    = zoblomov_cl_util=>xml_stringify( data ) ).
+    DATA temp1 TYPE zoblomov_t_91.
+    CLEAR temp1.
+    temp1-uname = uname.
+    temp1-handle = handle.
+    temp1-handle2 = handle2.
+    temp1-handle3 = handle3.
+    temp1-data = zoblomov_cl_util=>xml_stringify( data ).
+    DATA ls_db LIKE temp1.
+    ls_db = temp1.
 
     TRY.
-        ls_db-id = lt_db[ 1 ]-id.
+        DATA temp2 LIKE LINE OF lt_db.
+        DATA temp3 LIKE sy-tabix.
+        temp3 = sy-tabix.
+        READ TABLE lt_db INDEX 1 INTO temp2.
+        sy-tabix = temp3.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        ls_db-id = temp2-id.
       CATCH cx_root.
         ls_db-id = zoblomov_cl_util=>uuid_get_c32( ).
     ENDTRY.
 
-    MODIFY zoblomov_t_91 FROM @ls_db.
+    MODIFY zoblomov_t_91 FROM ls_db.
     ASSERT sy-subrc = 0.
 
     IF check_commit = abap_true.
