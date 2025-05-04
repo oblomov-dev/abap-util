@@ -3,7 +3,6 @@ CLASS zoblomov_cl_util_abap DEFINITION
   CREATE PUBLIC.
 
   PUBLIC SECTION.
-
     TYPES:
       BEGIN OF ty_s_fix_val,
         low   TYPE string,
@@ -149,8 +148,14 @@ CLASS zoblomov_cl_util_abap DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_fix_val.
 
-  PROTECTED SECTION.
+    CLASS-METHODS rtti_get_table_desrc
+      IMPORTING
+        tabname       TYPE clike
+        langu         TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE string ##NEEDED.
 
+  PROTECTED SECTION.
     CLASS-METHODS rtti_get_class_descr_on_cloud
       IMPORTING
         i_classname   TYPE clike
@@ -175,6 +180,7 @@ ENDCLASS.
 
 
 CLASS zoblomov_cl_util_abap IMPLEMENTATION.
+
   METHOD context_check_abap_cloud.
 
     TRY.
@@ -199,28 +205,29 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
     DATA lt_values TYPE fixvalues.
 
-    DATA lv_langu TYPE c LENGTH 1.
-    DATA temp1 LIKE LINE OF lt_values.
-    DATA lr_fix LIKE REF TO temp1.
-      DATA temp2 TYPE zoblomov_cl_util_abap=>ty_s_fix_val.
+    DATA lv_langu  TYPE c LENGTH 1.
+    DATA temp1     LIKE LINE OF lt_values.
+    DATA lr_fix    LIKE REF TO temp1.
+    DATA temp2     TYPE zoblomov_cl_util_abap=>ty_s_fix_val.
+
     lv_langu = ' '.
     lv_langu = langu.
 
     CALL METHOD elemdescr->('GET_DDIC_FIXED_VALUES')
-      EXPORTING  p_langu        = lv_langu
-      RECEIVING  p_fixed_values = lt_values
-      EXCEPTIONS not_found      = 1
-                 no_ddic_type   = 2
-                 OTHERS         = 3.
-
-
+      EXPORTING
+        p_langu        = lv_langu
+      RECEIVING
+        p_fixed_values = lt_values
+      EXCEPTIONS
+        not_found      = 1
+        no_ddic_type   = 2
+        OTHERS         = 3.
 
     LOOP AT lt_values REFERENCE INTO lr_fix.
 
-
       CLEAR temp2.
-      temp2-low = lr_fix->low.
-      temp2-high = lr_fix->high.
+      temp2-low   = lr_fix->low.
+      temp2-high  = lr_fix->high.
       temp2-descr = lr_fix->ddtext.
       INSERT temp2
              INTO TABLE result.
@@ -230,48 +237,52 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD conv_decode_x_base64.
-        DATA lv_web_http_name TYPE c LENGTH 19.
-        DATA classname TYPE c LENGTH 15.
+    DATA lv_web_http_name TYPE c LENGTH 19.
+    DATA classname        TYPE c LENGTH 15.
 
     TRY.
 
-
         lv_web_http_name = 'CL_WEB_HTTP_UTILITY'.
         CALL METHOD (lv_web_http_name)=>('DECODE_X_BASE64')
-          EXPORTING encoded = val
-          RECEIVING decoded = result.
+          EXPORTING
+            encoded = val
+          RECEIVING
+            decoded = result.
 
       CATCH cx_root.
 
-
         classname = 'CL_HTTP_UTILITY'.
         CALL METHOD (classname)=>('DECODE_X_BASE64')
-          EXPORTING encoded = val
-          RECEIVING decoded = result.
+          EXPORTING
+            encoded = val
+          RECEIVING
+            decoded = result.
 
     ENDTRY.
 
   ENDMETHOD.
 
   METHOD conv_encode_x_base64.
-        DATA lv_web_http_name TYPE c LENGTH 19.
-        DATA classname TYPE c LENGTH 15.
+    DATA lv_web_http_name TYPE c LENGTH 19.
+    DATA classname        TYPE c LENGTH 15.
 
     TRY.
 
-
         lv_web_http_name = 'CL_WEB_HTTP_UTILITY'.
         CALL METHOD (lv_web_http_name)=>('ENCODE_X_BASE64')
-          EXPORTING unencoded = val
-          RECEIVING encoded   = result.
+          EXPORTING
+            unencoded = val
+          RECEIVING
+            encoded   = result.
 
       CATCH cx_root.
 
-
         classname = 'CL_HTTP_UTILITY'.
         CALL METHOD (classname)=>('ENCODE_X_BASE64')
-          EXPORTING unencoded = val
-          RECEIVING encoded   = result.
+          EXPORTING
+            unencoded = val
+          RECEIVING
+            encoded   = result.
 
     ENDTRY.
 
@@ -279,62 +290,74 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
   METHOD conv_get_string_by_xstring.
 
-    DATA conv TYPE REF TO object.
-        DATA conv_codepage TYPE c LENGTH 21.
-        DATA conv_in_class TYPE c LENGTH 18.
+    DATA conv          TYPE REF TO object.
+    DATA conv_codepage TYPE c LENGTH 21.
+    DATA conv_in_class TYPE c LENGTH 18.
 
     TRY.
 
         conv_codepage = 'CL_ABAP_CONV_CODEPAGE'.
         CALL METHOD (conv_codepage)=>create_in
-          RECEIVING instance = conv.
+          RECEIVING
+            instance = conv.
 
         CALL METHOD conv->('IF_ABAP_CONV_IN~CONVERT')
-          EXPORTING source = val
-          RECEIVING result = result.
+          EXPORTING
+            source = val
+          RECEIVING
+            result = result.
 
       CATCH cx_root.
 
-
         conv_in_class = 'CL_ABAP_CONV_IN_CE'.
         CALL METHOD (conv_in_class)=>create
-          EXPORTING encoding = 'UTF-8'
-          RECEIVING conv     = conv.
+          EXPORTING
+            encoding = 'UTF-8'
+          RECEIVING
+            conv     = conv.
 
         CALL METHOD conv->('CONVERT')
-          EXPORTING input = val
-          IMPORTING data  = result.
+          EXPORTING
+            input = val
+          IMPORTING
+            data  = result.
     ENDTRY.
 
   ENDMETHOD.
 
   METHOD conv_get_xstring_by_string.
 
-    DATA conv TYPE REF TO object.
-        DATA conv_codepage TYPE c LENGTH 21.
-        DATA conv_out_class TYPE c LENGTH 19.
+    DATA conv           TYPE REF TO object.
+    DATA conv_codepage  TYPE c LENGTH 21.
+    DATA conv_out_class TYPE c LENGTH 19.
 
     TRY.
 
         conv_codepage = 'CL_ABAP_CONV_CODEPAGE'.
         CALL METHOD (conv_codepage)=>create_out
-          RECEIVING instance = conv.
+          RECEIVING
+            instance = conv.
 
         CALL METHOD conv->('IF_ABAP_CONV_OUT~CONVERT')
-          EXPORTING source = val
-          RECEIVING result = result.
+          EXPORTING
+            source = val
+          RECEIVING
+            result = result.
 
       CATCH cx_root.
 
-
         conv_out_class = 'CL_ABAP_CONV_OUT_CE'.
         CALL METHOD (conv_out_class)=>create
-          EXPORTING encoding = 'UTF-8'
-          RECEIVING conv     = conv.
+          EXPORTING
+            encoding = 'UTF-8'
+          RECEIVING
+            conv     = conv.
 
         CALL METHOD conv->('CONVERT')
-          EXPORTING data   = val
-          IMPORTING buffer = result.
+          EXPORTING
+            data   = val
+          IMPORTING
+            buffer = result.
     ENDTRY.
 
   ENDMETHOD.
@@ -343,57 +366,63 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
     DATA object TYPE REF TO object.
     FIELD-SYMBOLS <any> TYPE any.
-    DATA lt_source TYPE string_table.
-    DATA lt_string TYPE string_table.
-        DATA lv_class TYPE string.
-        DATA lv_method TYPE string.
-        DATA xco_cp_abap TYPE c LENGTH 11.
-        DATA lv_name TYPE c LENGTH 13.
-        DATA lv_check_method LIKE abap_false.
-        DATA lv_source LIKE LINE OF lt_source.
-          DATA lv_source_upper TYPE string.
+    DATA lt_source       TYPE string_table.
+    DATA lt_string       TYPE string_table.
+    DATA lv_class        TYPE string.
+    DATA lv_method       TYPE string.
+    DATA xco_cp_abap     TYPE c LENGTH 11.
+    DATA lv_name         TYPE c LENGTH 13.
+    DATA lv_check_method LIKE abap_false.
+    DATA lv_source       LIKE LINE OF lt_source.
+    DATA lv_source_upper TYPE string.
 
     TRY.
-
 
         lv_class  = to_upper( iv_classname ).
 
         lv_method = to_upper( iv_methodname ).
 
-
         xco_cp_abap = 'XCO_CP_ABAP'.
         CALL METHOD (xco_cp_abap)=>('CLASS')
-          EXPORTING iv_name  = lv_class
-          RECEIVING ro_class = object.
+          EXPORTING
+            iv_name  = lv_class
+          RECEIVING
+            ro_class = object.
 
         ASSIGN ('OBJECT->IF_XCO_AO_CLASS~IMPLEMENTATION') TO <any>.
         ASSERT sy-subrc = 0.
         object = <any>.
 
         CALL METHOD object->('IF_XCO_CLAS_IMPLEMENTATION~METHOD')
-          EXPORTING iv_name   = lv_method
-          RECEIVING ro_method = object.
+          EXPORTING
+            iv_name   = lv_method
+          RECEIVING
+            ro_method = object.
 
         CALL METHOD object->('IF_XCO_CLAS_I_METHOD~CONTENT')
-          RECEIVING ro_content = object.
+          RECEIVING
+            ro_content = object.
 
         CALL METHOD object->('IF_XCO_CLAS_I_METHOD_CONTENT~GET_SOURCE')
-          RECEIVING rt_source = result.
+          RECEIVING
+            rt_source = result.
 
       CATCH cx_root.
 
-
         lv_name = 'CL_OO_FACTORY'.
         CALL METHOD (lv_name)=>('CREATE_INSTANCE')
-          RECEIVING result = object.
+          RECEIVING
+            result = object.
 
         CALL METHOD object->('IF_OO_CLIF_SOURCE_FACTORY~CREATE_CLIF_SOURCE')
-          EXPORTING clif_name = lv_class
-          RECEIVING result    = object.
+          EXPORTING
+            clif_name = lv_class
+          RECEIVING
+            result    = object.
 
         CALL METHOD object->('IF_OO_CLIF_SOURCE~GET_SOURCE')
-          IMPORTING source = lt_source.
-
+          IMPORTING
+            source = lt_source.
 
         lv_check_method = abap_false.
 
@@ -439,28 +468,29 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     DATA BEGIN OF ls_clskey.
     DATA   clsname TYPE c LENGTH 30.
     DATA END OF ls_clskey.
-    DATA class TYPE REF TO data.
-        DATA xco_cp_abap TYPE c LENGTH 11.
-        DATA temp3 TYPE zoblomov_cl_util_abap=>ty_t_classes.
-        DATA implementation_name LIKE LINE OF lt_implementation_names.
-          DATA temp4 LIKE LINE OF temp3.
-        DATA lv_fm TYPE string.
-        DATA type TYPE c LENGTH 12.
-        FIELD-SYMBOLS <class> TYPE data.
-        DATA temp5 LIKE LINE OF lt_impl.
-        DATA lr_impl LIKE REF TO temp5.
-          FIELD-SYMBOLS <description> TYPE any.
-          DATA temp6 TYPE zoblomov_cl_util_abap=>ty_s_class_descr.
+    DATA class               TYPE REF TO data.
+    DATA xco_cp_abap         TYPE c LENGTH 11.
+    DATA temp3               TYPE zoblomov_cl_util_abap=>ty_t_classes.
+    DATA implementation_name LIKE LINE OF lt_implementation_names.
+    DATA temp4               LIKE LINE OF temp3.
+    DATA lv_fm               TYPE string.
+    DATA type                TYPE c LENGTH 12.
+    FIELD-SYMBOLS <class> TYPE data.
+    DATA temp5   LIKE LINE OF lt_impl.
+    DATA lr_impl LIKE REF TO temp5.
+    FIELD-SYMBOLS <description> TYPE any.
+    DATA temp6 TYPE zoblomov_cl_util_abap=>ty_s_class_descr.
 
     TRY.
 
         ls_clskey-clsname = val.
 
-
         xco_cp_abap = 'XCO_CP_ABAP'.
         CALL METHOD (xco_cp_abap)=>interface
-          EXPORTING iv_name      = ls_clskey-clsname
-          RECEIVING ro_interface = obj.
+          EXPORTING
+            iv_name      = ls_clskey-clsname
+          RECEIVING
+            ro_interface = obj.
 
         ASSIGN obj->('IF_XCO_AO_INTERFACE~IMPLEMENTATIONS') TO <any>.
         IF sy-subrc <> 0.
@@ -475,14 +505,14 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         obj = <any>.
 
         CALL METHOD obj->('IF_XCO_INTF_IMPLEMENTATIONS~GET_NAMES')
-          RECEIVING rt_names = lt_implementation_names.
-
+          RECEIVING
+            rt_names = lt_implementation_names.
 
         CLEAR temp3.
 
         LOOP AT lt_implementation_names INTO implementation_name.
 
-          temp4-classname = implementation_name.
+          temp4-classname   = implementation_name.
           temp4-description = rtti_get_class_descr_on_cloud( implementation_name ).
           INSERT temp4 INTO TABLE temp3.
         ENDLOOP.
@@ -492,24 +522,23 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
         ls_key-intkey = val.
 
-
         lv_fm = `SEO_INTERFACE_IMPLEM_GET_ALL`.
         CALL FUNCTION lv_fm
-          EXPORTING  intkey       = ls_key
-          IMPORTING  impkeys      = lt_impl
-          EXCEPTIONS not_existing = 1
-                     OTHERS       = 2.
+          EXPORTING
+            intkey       = ls_key
+          IMPORTING
+            impkeys      = lt_impl
+          EXCEPTIONS
+            not_existing = 1
+            OTHERS       = 2.
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
-
 
         type = 'SEOC_CLASS_R'.
         CREATE DATA class TYPE (type).
 
         ASSIGN class->* TO <class>.
-
-
 
         LOOP AT lt_impl REFERENCE INTO lr_impl.
 
@@ -519,9 +548,10 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
           lv_fm = `SEO_CLASS_READ`.
           CALL FUNCTION lv_fm
-            EXPORTING clskey = ls_clskey
-            IMPORTING class  = <class>.
-
+            EXPORTING
+              clskey = ls_clskey
+            IMPORTING
+              class  = <class>.
 
           ASSIGN
             COMPONENT 'DESCRIPT'
@@ -529,9 +559,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
             TO <description>.
           ASSERT sy-subrc = 0.
 
-
           CLEAR temp6.
-          temp6-classname = lr_impl->clsname.
+          temp6-classname   = lr_impl->clsname.
           temp6-description = <description>.
           INSERT
             temp6
@@ -553,21 +582,21 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
             scrtext_m TYPE string,
             scrtext_l TYPE string,
           END OF ddic.
-    DATA exists TYPE abap_bool.
+    DATA exists            TYPE abap_bool.
 
     DATA data_element_name LIKE i_data_element_name.
-        DATA temp7 TYPE REF TO cl_abap_structdescr.
-        DATA struct_desrc LIKE temp7.
-        FIELD-SYMBOLS <ddic> TYPE data.
-        DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
-        DATA temp8 TYPE REF TO cl_abap_datadescr.
-        DATA data_descr LIKE temp8.
-            DATA xco_cp_abap_dictionary TYPE c LENGTH 22.
+    DATA temp7             TYPE REF TO cl_abap_structdescr.
+    DATA struct_desrc      LIKE temp7.
+    FIELD-SYMBOLS <ddic> TYPE data.
+    DATA lo_typedescr           TYPE REF TO cl_abap_typedescr.
+    DATA temp8                  TYPE REF TO cl_abap_datadescr.
+    DATA data_descr             LIKE temp8.
+    DATA xco_cp_abap_dictionary TYPE c LENGTH 22.
+
     data_element_name = i_data_element_name.
 
     TRY.
         cl_abap_typedescr=>describe_by_name( 'T100' ).
-
 
         temp7 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
 
@@ -578,7 +607,6 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         ASSIGN ddic_ref->* TO <ddic>.
         ASSERT sy-subrc = 0.
 
-
         cl_abap_elemdescr=>describe_by_name( EXPORTING  p_name      = data_element_name
                                              RECEIVING  p_descr_ref = lo_typedescr
                                              EXCEPTIONS OTHERS      = 1 ).
@@ -586,16 +614,17 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
           RETURN.
         ENDIF.
 
-
         temp8 ?= lo_typedescr.
 
         data_descr = temp8.
 
         CALL METHOD data_descr->('GET_DDIC_FIELD')
-          RECEIVING  p_flddescr   = <ddic>
-          EXCEPTIONS not_found    = 1
-                     no_ddic_type = 2
-                     OTHERS       = 3.
+          RECEIVING
+            p_flddescr   = <ddic>
+          EXCEPTIONS
+            not_found    = 1
+            no_ddic_type = 2
+            OTHERS       = 3.
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
@@ -611,30 +640,38 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
             xco_cp_abap_dictionary = 'XCO_CP_ABAP_DICTIONARY'.
             CALL METHOD (xco_cp_abap_dictionary)=>('DATA_ELEMENT')
-              EXPORTING iv_name         = data_element_name
-              RECEIVING ro_data_element = data_element.
+              EXPORTING
+                iv_name         = data_element_name
+              RECEIVING
+                ro_data_element = data_element.
 
             CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~EXISTS')
-              RECEIVING rv_exists = exists.
+              RECEIVING
+                rv_exists = exists.
 
             IF exists = abap_false.
               RETURN.
             ENDIF.
 
             CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~CONTENT')
-              RECEIVING ro_content = content.
+              RECEIVING
+                ro_content = content.
 
             CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_HEADING_FIELD_LABEL')
-              RECEIVING rs_heading_field_label = result-header.
+              RECEIVING
+                rs_heading_field_label = result-header.
 
             CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_SHORT_FIELD_LABEL')
-              RECEIVING rs_short_field_label = result-short.
+              RECEIVING
+                rs_short_field_label = result-short.
 
             CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_MEDIUM_FIELD_LABEL')
-              RECEIVING rs_medium_field_label = result-medium.
+              RECEIVING
+                rs_medium_field_label = result-medium.
 
             CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_LONG_FIELD_LABEL')
-              RECEIVING rs_long_field_label = result-long.
+              RECEIVING
+                rs_long_field_label = result-long.
 
           CATCH cx_root.
         ENDTRY.
@@ -644,9 +681,9 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
   METHOD uuid_get_c22.
 
-    DATA lv_uuid TYPE c LENGTH 22.
-            DATA lv_classname TYPE string.
-            DATA lv_fm TYPE string.
+    DATA lv_uuid      TYPE c LENGTH 22.
+    DATA lv_classname TYPE string.
+    DATA lv_fm        TYPE string.
 
     TRY.
 
@@ -654,14 +691,15 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
             lv_classname = `CL_SYSTEM_UUID`.
             CALL METHOD (lv_classname)=>if_system_uuid_static~create_uuid_c22
-              RECEIVING uuid = lv_uuid.
+              RECEIVING
+                uuid = lv_uuid.
 
           CATCH cx_sy_dyn_call_illegal_class.
 
-
             lv_fm = `GUID_CREATE`.
             CALL FUNCTION lv_fm
-              IMPORTING ev_guid_22 = lv_uuid.
+              IMPORTING
+                ev_guid_22 = lv_uuid.
 
         ENDTRY.
 
@@ -691,9 +729,9 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD uuid_get_c32.
-    DATA lv_uuid TYPE c LENGTH 32.
-            DATA lv_classname TYPE string.
-            DATA lv_fm TYPE string.
+    DATA lv_uuid      TYPE c LENGTH 32.
+    DATA lv_classname TYPE string.
+    DATA lv_fm        TYPE string.
 
     TRY.
 
@@ -701,14 +739,15 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
             lv_classname = `CL_SYSTEM_UUID`.
             CALL METHOD (lv_classname)=>if_system_uuid_static~create_uuid_c32
-              RECEIVING uuid = lv_uuid.
+              RECEIVING
+                uuid = lv_uuid.
 
           CATCH cx_root.
 
-
             lv_fm = `GUID_CREATE`.
             CALL FUNCTION lv_fm
-              IMPORTING ev_guid_32 = lv_uuid.
+              IMPORTING
+                ev_guid_32 = lv_uuid.
 
         ENDTRY.
 
@@ -724,21 +763,24 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     DATA obj          TYPE REF TO object.
     DATA content      TYPE REF TO object.
     DATA lv_classname TYPE c LENGTH 30.
-    DATA xco_cp_abap TYPE c LENGTH 11.
+    DATA xco_cp_abap  TYPE c LENGTH 11.
 
     lv_classname = i_classname.
 
-
     xco_cp_abap = 'XCO_CP_ABAP'.
     CALL METHOD (xco_cp_abap)=>('CLASS')
-      EXPORTING iv_name  = lv_classname
-      RECEIVING ro_class = obj.
+      EXPORTING
+        iv_name  = lv_classname
+      RECEIVING
+        ro_class = obj.
 
     CALL METHOD obj->('IF_XCO_AO_CLASS~CONTENT')
-      RECEIVING ro_content = content.
+      RECEIVING
+        ro_content = content.
 
     CALL METHOD content->('IF_XCO_CLAS_CONTENT~GET_SHORT_DESCRIPTION')
-      RECEIVING rv_short_description = result.
+      RECEIVING
+        rv_short_description = result.
 
   ENDMETHOD.
 
@@ -751,16 +793,15 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     FIELD-SYMBOLS <dfies> TYPE STANDARD TABLE.
     FIELD-SYMBOLS <line>  TYPE any.
 
-    DATA temp9 TYPE cl_abap_structdescr=>component_table.
-    DATA comps LIKE temp9.
-    DATA temp10 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struct LIKE temp10.
-        DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
-        DATA new_table_desc TYPE REF TO cl_abap_tabledescr.
-          DATA comp LIKE LINE OF comps.
-            FIELD-SYMBOLS <value> TYPE any.
-            FIELD-SYMBOLS <value_dest> TYPE any.
-    CLEAR temp9.
+    DATA temp9           TYPE cl_abap_structdescr=>component_table.
+    DATA comps           LIKE temp9.
+    DATA temp10          TYPE REF TO cl_abap_structdescr.
+    DATA lo_struct       LIKE temp10.
+    DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
+    DATA new_table_desc  TYPE REF TO cl_abap_tabledescr.
+    DATA comp            LIKE LINE OF comps.
+    FIELD-SYMBOLS <value>      TYPE any.
+    FIELD-SYMBOLS <value_dest> TYPE any.
 
     comps = temp9.
 
@@ -771,11 +812,10 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
     TRY.
 
-
         new_struct_desc = cl_abap_structdescr=>create( comps ).
 
         new_table_desc = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
-                                                           p_table_kind = cl_abap_tabledescr=>tablekind_std ).
+                                                     p_table_kind = cl_abap_tabledescr=>tablekind_std ).
 
         CREATE DATA dfies TYPE HANDLE new_table_desc.
 
@@ -787,7 +827,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         IF tabname IS INITIAL.
 
           RAISE EXCEPTION TYPE zoblomov_cx_util_error
-            EXPORTING val = `RTTI_BY_NAME_TAB_INITIAL`.
+            EXPORTING
+              val = `RTTI_BY_NAME_TAB_INITIAL`.
         ENDIF.
 
         structdescr ?= cl_abap_structdescr=>describe_by_name( tabname ).
@@ -795,15 +836,12 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
         LOOP AT <dfies> ASSIGNING <line>.
 
-
           LOOP AT comps INTO comp.
-
 
             ASSIGN COMPONENT comp-name OF STRUCTURE <line> TO <value>.
             IF <value> IS NOT ASSIGNED.
               CONTINUE.
             ENDIF.
-
 
             ASSIGN COMPONENT comp-name OF STRUCTURE s_dfies TO <value_dest>.
             IF <value_dest> IS NOT ASSIGNED.
@@ -963,5 +1001,37 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
-ENDCLASS.
 
+  METHOD rtti_get_table_desrc.
+
+    DATA ddtext TYPE c LENGTH 60.
+
+    IF langu IS NOT SUPPLIED.
+      DATA(lan) = sy-langu.
+    ELSE.
+      lan = langu.
+    ENDIF.
+
+    IF context_check_abap_cloud( ).
+
+      ddtext = tabname.
+
+    ELSE.
+
+      DATA(lv_tabname) = `dd02t`.
+      SELECT SINGLE ddtext FROM (lv_tabname)
+        WHERE tabname    = @tabname
+          AND ddlanguage = @lan
+         INTO @ddtext.
+
+    ENDIF.
+
+    IF ddtext IS NOT INITIAL.
+      result = ddtext.
+    ELSE.
+      result = tabname.
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.
