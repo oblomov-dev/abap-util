@@ -82,10 +82,10 @@ CLASS ltcl_unit_test_msg_mapper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_cx.
-
+  data lx type ref to cx_root.
     TRY.
         DATA(lv_val) = 1 / 0.
-      CATCH cx_root INTO DATA(lx).
+      CATCH cx_root INTO lx.
         DATA(lt_result) = zoblomov_cl_util_msg=>msg_get( lx ).
     ENDTRY.
 
