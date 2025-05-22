@@ -204,14 +204,14 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_raise_error.
-
+    Data lx type ref to zoblomov_cx_util_error.
     TRY.
         IF 1 = 1.
           RAISE EXCEPTION TYPE zoblomov_cx_util_error.
         ENDIF.
         cl_abap_unit_assert=>fail( ).
 
-      CATCH zoblomov_cx_util_error INTO DATA(lx).
+      CATCH zoblomov_cx_util_error INTO lx.
         cl_abap_unit_assert=>assert_bound( lx ).
     ENDTRY.
 
