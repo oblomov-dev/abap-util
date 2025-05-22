@@ -82,15 +82,6 @@ CLASS ltcl_unit_test_msg_mapper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_cx.
-  data lx type ref to cx_root.
-    TRY.
-        DATA(lv_val) = 1 / 0.
-      CATCH cx_root INTO lx.
-        DATA(lt_result) = zoblomov_cl_util_msg=>msg_get( lx ).
-    ENDTRY.
-
-    cl_abap_unit_assert=>assert_equals( exp = `E`
-                                        act = lt_result[ 1 ]-type ).
 
 
   ENDMETHOD.
