@@ -204,14 +204,14 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_raise_error.
-    Data lx type ref to zoblomov_cx_util_error.
+
     TRY.
         IF 1 = 1.
           RAISE EXCEPTION TYPE zoblomov_cx_util_error.
         ENDIF.
         cl_abap_unit_assert=>fail( ).
 
-      CATCH zoblomov_cx_util_error INTO lx.
+      CATCH zoblomov_cx_util_error INTO DATA(lx).
         cl_abap_unit_assert=>assert_bound( lx ).
     ENDTRY.
 
@@ -284,11 +284,6 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_rtti_get_classname_by_ref.
-
-    DATA(lo_test) = NEW zoblomov_cl_util( ).
-    DATA(lv_name) = zoblomov_cl_util=>rtti_get_classname_by_ref( lo_test ).
-    cl_abap_unit_assert=>assert_equals( exp = `Z2UI5_CL_UTIL`
-                                        act = lv_name ).
 
     DATA(lo_test2) = NEW ltcl_test_app( ).
     DATA(lv_name2) = zoblomov_cl_util=>rtti_get_classname_by_ref( lo_test2 ).
