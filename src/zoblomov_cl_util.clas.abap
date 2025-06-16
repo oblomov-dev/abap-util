@@ -97,6 +97,17 @@ CLASS zoblomov_cl_util DEFINITION
       RETURNING
         VALUE(result) TYPE ty_s_msg.
 
+    CLASS-METHODS msg_get_by_msg
+      IMPORTING
+        id            TYPE any
+        no            TYPE any
+        v1            TYPE any OPTIONAL
+        v2            TYPE any OPTIONAL
+        v3            TYPE any OPTIONAL
+        v4            TYPE any OPTIONAL
+      RETURNING
+        VALUE(result) TYPE ty_s_msg.
+
     CLASS-METHODS rtti_get_t_attri_by_include
       IMPORTING
         !type         TYPE REF TO cl_abap_datadescr
@@ -245,16 +256,12 @@ CLASS zoblomov_cl_util DEFINITION
     CLASS-METHODS x_check_raise
       IMPORTING
         v     TYPE clike DEFAULT `CX_SY_SUBRC`
-        !when TYPE xfeld.
+        !when TYPE abap_bool.
 
     CLASS-METHODS x_raise
       IMPORTING
         v TYPE clike DEFAULT `CX_SY_SUBRC`
           PREFERRED PARAMETER v.
-
-    CLASS-METHODS context_get_user_tech
-      RETURNING
-        VALUE(result) TYPE string.
 
     CLASS-METHODS json_stringify
       IMPORTING
@@ -1039,8 +1046,12 @@ CLASS zoblomov_cl_util IMPLEMENTATION.
                 DATA(lo_ref) = cl_abap_typedescr=>describe_by_data_ref( val ).
                 lo_struct = CAST cl_abap_structdescr( lo_ref ).
               CATCH cx_root.
-                lo_tab = CAST cl_abap_tabledescr( lo_ref ).
-                lo_struct = CAST cl_abap_structdescr( lo_tab->get_table_line_type( ) ).
+                TRY.
+                    lo_tab = CAST cl_abap_tabledescr( lo_ref ).
+                    lo_struct = CAST cl_abap_structdescr( lo_tab->get_table_line_type( ) ).
+                  CATCH cx_root.
+                    lo_struct ?= cl_abap_structdescr=>describe_by_name( val ).
+                ENDTRY.
             ENDTRY.
         ENDTRY.
     ENDTRY.
@@ -1266,10 +1277,6 @@ CLASS zoblomov_cl_util IMPLEMENTATION.
 
     result = url_param_create_url( lt_params ).
 
-  ENDMETHOD.
-
-  METHOD context_get_user_tech.
-    result = sy-uname.
   ENDMETHOD.
 
   METHOD xml_parse.
@@ -1564,13 +1571,26 @@ CLASS zoblomov_cl_util IMPLEMENTATION.
   METHOD msg_get.
 
     DATA(lt_msg) = msg_get_t( val ).
-    result = lt_msg[ 0 ].
+    result = lt_msg[ 1 ].
 
   ENDMETHOD.
 
   METHOD rtti_get_data_element_text_l.
 
     result = zoblomov_cl_util=>rtti_get_data_element_texts( val )-long.
+
+  ENDMETHOD.
+
+  METHOD msg_get_by_msg.
+
+    DATA(ls_msg) = VALUE zoblomov_cl_util=>ty_s_msg(
+      id         = id
+      no         = no
+      v1         = v1
+      v2         = v2
+      v3         = v3
+      v4         = v4 ).
+    result = msg_get( ls_msg ).
 
   ENDMETHOD.
 

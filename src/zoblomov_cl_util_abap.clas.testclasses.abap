@@ -51,7 +51,9 @@ CLASS ltcl_test IMPLEMENTATION.
     ENDIF.
 
     DATA(ls_result) = zoblomov_cl_util_abap=>rtti_get_data_element_texts( `UNAME` ).
-    cl_abap_unit_assert=>assert_not_initial( ls_result ).
+    IF zoblomov_cl_util=>context_check_abap_cloud( ) = abap_false.
+      cl_abap_unit_assert=>assert_not_initial( ls_result ).
+    ENDIF.
 
   ENDMETHOD.
 
