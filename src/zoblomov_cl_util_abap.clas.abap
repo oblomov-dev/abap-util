@@ -109,9 +109,36 @@ CLASS zoblomov_cl_util_abap DEFINITION
       CHANGING
         result TYPE data.
 
+    CLASS-METHODS bal_read
+      IMPORTING
+        object        TYPE clike
+        subobject     TYPE clike
+        id            TYPE clike
+      RETURNING
+        VALUE(result) TYPE zoblomov_cl_util=>ty_t_msg.
+
+    CLASS-METHODS bal_save
+      IMPORTING
+        object    TYPE clike
+        subobject TYPE clike
+        id        TYPE clike
+        t_log     TYPE zoblomov_cl_util=>ty_t_msg.
+
+    CLASS-METHODS context_get_callstack
+      RETURNING
+        VALUE(result) TYPE string_table.
+
+    CLASS-METHODS context_get_tenant
+      RETURNING
+        VALUE(result) TYPE string.
+
     CLASS-METHODS context_check_abap_cloud
       RETURNING
         VALUE(result) TYPE abap_bool.
+
+    CLASS-METHODS context_get_user_tech
+      RETURNING
+        VALUE(result) TYPE string.
 
     CLASS-METHODS source_get_method
       IMPORTING
@@ -130,9 +157,9 @@ CLASS zoblomov_cl_util_abap DEFINITION
 
     CLASS-METHODS rtti_get_data_element_texts
       IMPORTING
-        i_data_element_name TYPE clike
+        val           TYPE clike
       RETURNING
-        VALUE(result)       TYPE ty_s_data_element_text.
+        VALUE(result) TYPE ty_s_data_element_text.
 
     CLASS-METHODS conv_decode_x_base64
       IMPORTING
@@ -157,6 +184,18 @@ CLASS zoblomov_cl_util_abap DEFINITION
         val           TYPE string
       RETURNING
         VALUE(result) TYPE xstring.
+
+    CLASS-METHODS conv_get_xlsx_by_itab
+      IMPORTING
+        val           TYPE ANY TABLE
+      RETURNING
+        VALUE(result) TYPE xstring.
+
+    CLASS-METHODS conv_get_itab_by_xlsx
+      IMPORTING
+        val    TYPE xstring
+      EXPORTING
+        result TYPE REF TO data.
 
     CLASS-METHODS rtti_get_classes_impl_intf
       IMPORTING
@@ -340,9 +379,7 @@ CLASS zoblomov_cl_util_abap DEFINITION
       IMPORTING
         ir_data      TYPE REF TO data
         iv_tabname   TYPE string
-        is_transport TYPE ty_s_transport
-      EXCEPTIONS
-        ob_check_obj_error.
+        is_transport TYPE ty_s_transport.
 
     CLASS-METHODS bus_search_help_read
       CHANGING
@@ -410,6 +447,10 @@ ENDCLASS.
 
 
 CLASS zoblomov_cl_util_abap IMPLEMENTATION.
+
+  METHOD context_get_user_tech.
+    result = sy-uname.
+  ENDMETHOD.
 
   METHOD context_check_abap_cloud.
 
@@ -823,7 +864,7 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     DATA data_descr             LIKE temp8.
     DATA xco_cp_abap_dictionary TYPE c LENGTH 22.
 
-    data_element_name = i_data_element_name.
+    data_element_name = val.
 
     TRY.
         cl_abap_typedescr=>describe_by_name( 'T100' ).
@@ -906,6 +947,13 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
           CATCH cx_root.
         ENDTRY.
     ENDTRY.
+
+    IF result IS INITIAL.
+      result-header = val.
+      result-long = val.
+      result-medium = val.
+      result-short = val.
+    ENDIF.
 
   ENDMETHOD.
 
@@ -1035,6 +1083,59 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
     comps = temp9.
 
+*    TYPES: BEGIN OF ty_s_dfies,
+*             tabname     TYPE c LENGTH 30,
+*             fieldname   TYPE c LENGTH 30,
+*             langu       TYPE c LENGTH 1,
+*             position    TYPE n LENGTH 4,
+*             offset      TYPE n LENGTH 6,
+*             domname     TYPE c LENGTH 30,
+*             rollname    TYPE c LENGTH 30,
+*             checktable  TYPE c LENGTH 30,
+*             leng        TYPE n LENGTH 6,
+*             intlen      TYPE n LENGTH 6,
+*             outputlen   TYPE n LENGTH 6,
+*             decimals    TYPE n LENGTH 6,
+*             datatype    TYPE c LENGTH 4,
+*             inttype     TYPE c LENGTH 1,
+*             reftable    TYPE c LENGTH 30,
+*             reffield    TYPE c LENGTH 30,
+*             precfield   TYPE c LENGTH 30,
+*             authorid    TYPE c LENGTH 3,
+*             memoryid    TYPE c LENGTH 20,
+*             logflag     TYPE c LENGTH 1,
+*             mask        TYPE c LENGTH 20,
+*             masklen     TYPE n LENGTH 4,
+*             convexit    TYPE c LENGTH 5,
+*             headlen     TYPE n LENGTH 2,
+*             scrlen1     TYPE n LENGTH 2,
+*             scrlen2     TYPE n LENGTH 2,
+*             scrlen3     TYPE n LENGTH 2,
+*             fieldtext   TYPE c LENGTH 60,
+*             reptext     TYPE c LENGTH 55,
+*             scrtext_s   TYPE c LENGTH 10,
+*             scrtext_m   TYPE c LENGTH 20,
+*             scrtext_l   TYPE c LENGTH 40,
+*             keyflag     TYPE c LENGTH 1,
+*             lowercase   TYPE c LENGTH 1,
+*             mac         TYPE c LENGTH 1,
+*             genkey      TYPE c LENGTH 1,
+*             noforkey    TYPE c LENGTH 1,
+*             valexi      TYPE c LENGTH 1,
+*             noauthch    TYPE c LENGTH 1,
+*             sign        TYPE c LENGTH 1,
+*             dynpfld     TYPE c LENGTH 1,
+*             f4availabl  TYPE c LENGTH 1,
+*             comptype    TYPE c LENGTH 1,
+*             lfieldname  TYPE c LENGTH 132,
+*             ltrflddis   TYPE c LENGTH 1,
+*             bidictrlc   TYPE c LENGTH 1,
+*             outputstyle TYPE n LENGTH 2,
+*             nohistory   TYPE c LENGTH 1,
+*             ampmformat  TYPE c LENGTH 1,
+*           END OF ty_s_dfies.
+*    temp10 ?= cl_abap_structdescr=>describe_by_name( 'TY_S_DFIES' ).
+
     temp10 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
 
     lo_struct = temp10.
@@ -1055,7 +1156,6 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         ENDIF.
 
         IF tabname IS INITIAL.
-
           RAISE EXCEPTION TYPE zoblomov_cx_util_error
             EXPORTING
               val = `RTTI_BY_NAME_TAB_INITIAL`.
@@ -1096,6 +1196,104 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rtti_get_t_attri_on_cloud.
+
+    DATA obj TYPE REF TO object.
+    DATA lv_tabname TYPE c LENGTH 16.
+    DATA lr_ddfields TYPE REF TO data.
+    TYPES ty_c30 TYPE c LENGTH 30.
+    DATA names TYPE STANDARD TABLE OF ty_c30 WITH EMPTY KEY.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <field> TYPE simple.
+    FIELD-SYMBOLS <ddfields> TYPE ANY TABLE.
+
+* convert to correct type,
+    lv_tabname = tabname.
+
+    TRY.
+        TRY.
+            CALL METHOD ('XCO_CP_ABAP_DICTIONARY')=>database_table
+              EXPORTING
+                iv_name           = lv_tabname
+              RECEIVING
+                ro_database_table = obj.
+            ASSIGN obj->('IF_XCO_DATABASE_TABLE~FIELDS->IF_XCO_DBT_FIELDS_FACTORY~KEY') TO <any>.
+            IF sy-subrc  <> 0.
+* fallback to RTTI, KEY field does not exist in S/4 2020
+              RAISE EXCEPTION TYPE cx_sy_dyn_call_illegal_class.
+            ENDIF.
+            obj = <any>.
+            CALL METHOD obj->('IF_XCO_DBT_FIELDS~GET_NAMES')
+              RECEIVING
+                rt_names = names.
+          CATCH cx_sy_dyn_call_illegal_class.
+            DATA(workaround) = 'DDFIELDS'.
+            CREATE DATA lr_ddfields TYPE (workaround).
+            ASSIGN lr_ddfields->* TO <ddfields>.
+            ASSERT sy-subrc = 0.
+            <ddfields> = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name(
+              lv_tabname ) )->get_ddic_field_list( ).
+            LOOP AT <ddfields> ASSIGNING <any>.
+              ASSIGN COMPONENT 'KEYFLAG' OF STRUCTURE <any> TO <field>.
+              IF sy-subrc <> 0 OR <field> <> abap_true.
+                CONTINUE.
+              ENDIF.
+              ASSIGN COMPONENT 'FIELDNAME' OF STRUCTURE <any> TO <field>.
+              ASSERT sy-subrc = 0.
+              APPEND <field> TO names.
+            ENDLOOP.
+        ENDTRY.
+      CATCH cx_root.
+    ENDTRY.
+
+
+    DATA(lt_comp)  =  zoblomov_cl_util=>rtti_get_t_attri_by_any( tabname ).
+    LOOP AT lt_comp REFERENCE INTO DATA(lr_comp).
+
+      DATA(lv_check_key) = abap_false.
+      IF line_exists( names[ table_line = lr_comp->name ] ).
+        lv_check_key = abap_true.
+      ENDIF.
+
+      INSERT VALUE #(
+          fieldname = lr_comp->name
+          rollname  = lr_comp->name
+          keyflag = lv_check_key
+        scrtext_s =  lr_comp->name
+        scrtext_m =  lr_comp->name
+        scrtext_l =  lr_comp->name
+       ) INTO TABLE result.
+
+    ENDLOOP.
+*            structdescr->
+*        <dfies> = structdescr->get_ddic_field_list( ).
+
+*        LOOP AT <dfies> ASSIGNING <line>.
+*
+*          LOOP AT comps INTO comp.
+*
+*            ASSIGN COMPONENT comp-name OF STRUCTURE <line> TO <value>.
+*            IF <value> IS NOT ASSIGNED.
+*              CONTINUE.
+*            ENDIF.
+*
+*            ASSIGN COMPONENT comp-name OF STRUCTURE s_dfies TO <value_dest>.
+*            IF <value_dest> IS NOT ASSIGNED.
+*              CONTINUE.
+*            ENDIF.
+*
+*            <value_dest> = <value>.
+*
+*            UNASSIGN <value>.
+*            UNASSIGN <value_dest>.
+*
+*          ENDLOOP.
+*
+*          APPEND s_dfies TO result.
+*          CLEAR s_dfies.
+*
+*        ENDLOOP.
+
+
 
 *    DATA db        TYPE REF TO object.
 *    DATA fields    TYPE REF TO object.
@@ -1333,9 +1531,9 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
       " Values from Caller app to Interface Values
       LOOP AT ms_shlp-interface REFERENCE INTO DATA(r_interface) WHERE value IS INITIAL.
 
-        FIELD-SYMBOLS <any> type any.
-        assign mr_data->* to <any>.
-        FIELD-SYMBOLS <value> type any.
+        FIELD-SYMBOLS <any> TYPE any.
+        ASSIGN mr_data->* TO <any>.
+        FIELD-SYMBOLS <value> TYPE any.
         ASSIGN COMPONENT r_interface->shlpfield OF STRUCTURE <any> TO <value>.
 
         IF sy-subrc <> 0.
@@ -1481,7 +1679,7 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
       IF interface-value IS NOT INITIAL.
 
         UNASSIGN <any>.
-        assign ms_data_row->* to <any>.
+        ASSIGN ms_data_row->* TO <any>.
         ASSIGN COMPONENT interface-shlpfield OF STRUCTURE <any> TO <value>.
 
         IF sy-subrc <> 0.
@@ -1599,24 +1797,25 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
       DATA(fb1) = 'TR_APPEND_TO_COMM_OBJS_KEYS'.
       CALL FUNCTION fb1
         EXPORTING
-          wi_trkorr = is_transport-transport
-          iv_dialog = abap_false
+          wi_trkorr     = is_transport-transport
+          iv_dialog     = abap_false
         TABLES
-          wt_e071   = <t_e071>
-          wt_e071k  = <t_e071k>
+          wt_e071       = <t_e071>
+          wt_e071k      = <t_e071k>
         EXCEPTIONS
-          OTHERS    = 1.
+          error_message = 1
+          OTHERS        = 2.
       IF sy-subrc <> 0.
         RAISE EXCEPTION TYPE zoblomov_cx_util_error.
       ENDIF.
 
       DATA(fb2) = 'TR_SORT_AND_COMPRESS_COMM'.
-
       CALL FUNCTION fb2
         EXPORTING
-          iv_trkorr = is_transport-task
+          iv_trkorr     = is_transport-task
         EXCEPTIONS
-          OTHERS    = 1.
+          error_message = 1
+          OTHERS        = 2.
       IF sy-subrc <> 0.
         RAISE EXCEPTION TYPE zoblomov_cx_util_error.
       ELSE.
@@ -2043,6 +2242,89 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
       ENDIF.
 
     ENDIF.
+
+  ENDMETHOD.
+
+  METHOD context_get_tenant.
+
+    "DATA(tenant_info) = xco_cp=>current->tenant( ).
+    "DATA(account_id) = tenant_info->get_global_account_id( ).
+
+  ENDMETHOD.
+
+  METHOD context_get_callstack.
+
+*    "callstack
+*    DATA(stack) = xco_cp=>current->call_stack.
+*    DATA(full_stack) = stack->full( ).
+*    DATA(format_source) = xco_cp_call_stack=>format->adt( )->with_line_number_flavor(
+*        xco_cp_call_stack=>line_number_flavor->source ).
+*
+*    LOOP AT full_stack->as_text( format_source )->get_lines( )->value INTO DATA(text).
+*      INSERT text INTO TABLE result.
+*    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD conv_get_xlsx_by_itab.
+
+*    DATA(write_access) = xco_cp_xlsx=>document->empty( )->write_access( ).
+*    DATA(worksheet) = write_access->get_workbook( )->worksheet->at_position( 1 ).
+*    DATA(selection_pattern) = xco_cp_xlsx_selection=>pattern_builder->simple_from_to( )->get_pattern( ).
+*    worksheet->select( selection_pattern
+*               )->row_stream(
+*               )->operation->write_from( REF #( val )
+*               )->execute( ).
+*    result = write_access->get_file_content( ).
+
+  ENDMETHOD.
+
+  METHOD conv_get_itab_by_xlsx.
+
+*    CLEAR result.
+*    DATA(document) = xco_cp_xlsx=>document->for_file_content( val )->read_access( ).
+*    DATA(sheet) = document->get_workbook( )->worksheet->at_position( 1 ).
+*    DATA(pattern) = xco_cp_xlsx_selection=>pattern_builder->simple_from_to( )->get_pattern( ).
+*    sheet->select( pattern
+*            )->row_stream(
+*            )->operation->write_to( REF #( result )
+*            )->set_value_transformation( xco_cp_xlsx_read_access=>value_transformation->string_value
+*            )->execute( ).
+
+  ENDMETHOD.
+
+  METHOD bal_read.
+
+*" Create and set header
+*
+*
+*DATA(lo_header) = cl_bali_header_setter=>create( object      = 'ZBS_DEMO_LOG_OBJECT'
+*                                                 subobject   = 'TEST'
+*                                                 external_id = cl_system_uuid=>create_uuid_c32_static( )
+*                                                 ).
+*
+*
+*DATA(lo_ohandler) = cl_bali_object_handler=>get_instance( ).
+*
+*lo_ohandler->read_object(
+*  EXPORTING
+*    iv_object      = 'TEST'
+*  IMPORTING
+**    ev_object_text =
+*    et_subobjects  = data(lo_obj)
+*).
+**CATCH cx_bali_objects.
+*
+*lo_obj
+*DATA(lo_log_db) = cl_bali_log_db=>get_instance( ).
+*data(ls_hanlde) =  value if_bali_log_db=>ty_handle( ).
+*DATA(lo_log) = lo_header->load_log( value ).
+*DATA(lt_items) = lo_log->get_all_items( ).
+
+
+  ENDMETHOD.
+
+  METHOD bal_save.
 
   ENDMETHOD.
 
