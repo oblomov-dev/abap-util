@@ -151,6 +151,4 @@ CLASS zoblomov_cl_util_db IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-
 ENDCLASS.

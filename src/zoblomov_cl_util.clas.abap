@@ -653,7 +653,7 @@ CLASS zoblomov_cl_util IMPLEMENTATION.
   METHOD filter_get_range_by_token.
 
     DATA(lv_length) = strlen( value ) - 1.
-    CASE value(1).
+    CASE VALUE(1).
 
       WHEN `=`.
         result = VALUE #( sign   = `I`
@@ -1524,7 +1524,8 @@ CLASS zoblomov_cl_util IMPLEMENTATION.
       ENDIF.
 
       INSERT INITIAL LINE INTO tab ASSIGNING <row_out> INDEX lv_lines.
-      <row_out> = CORRESPONDING #( <row_in> ).
+      CLEAR: <row_out>.
+      MOVE-CORRESPONDING <row_in> TO <row_out>.
 
     ENDLOOP.
 
