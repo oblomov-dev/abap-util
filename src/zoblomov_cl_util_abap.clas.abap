@@ -231,7 +231,7 @@ CLASS zoblomov_cl_util_abap DEFINITION
         transport         TYPE sxco_transport,
         task              TYPE sxco_transport,
         selkz             TYPE abap_bool,
-        locl              type abap_bool,
+        locl              TYPE abap_bool,
       END OF ty_s_transport.
 
     TYPES ty_t_data TYPE STANDARD TABLE OF ty_s_transport WITH EMPTY KEY.
@@ -651,7 +651,6 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
     TRY.
 
         lv_class  = to_upper( iv_classname ).
-
         lv_method = to_upper( iv_methodname ).
 
         xco_cp_abap = 'XCO_CP_ABAP'.
@@ -797,12 +796,12 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         lv_fm = `SEO_INTERFACE_IMPLEM_GET_ALL`.
         CALL FUNCTION lv_fm
           EXPORTING
-            intkey       = ls_key
+            intkey        = ls_key
           IMPORTING
-            impkeys      = lt_impl
+            impkeys       = lt_impl
           EXCEPTIONS
-            not_existing = 1
-            OTHERS       = 2.
+            error_message = 1
+            OTHERS        = 2.
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
@@ -821,9 +820,15 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
           lv_fm = `SEO_CLASS_READ`.
           CALL FUNCTION lv_fm
             EXPORTING
-              clskey = ls_clskey
+              clskey        = ls_clskey
             IMPORTING
-              class  = <class>.
+              class         = <class>
+            EXCEPTIONS
+              error_message = 1
+              OTHERS        = 2.
+          IF sy-subrc <> 0.
+            RAISE EXCEPTION TYPE zoblomov_cx_util_error.
+          ENDIF.
 
           ASSIGN
             COMPONENT 'DESCRIPT'
@@ -944,7 +949,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
               RECEIVING
                 rs_long_field_label = result-long.
 
-          CATCH cx_root.
+          CATCH cx_root INTO DATA(x).
+            DATA(error) = x->get_text( ).
         ENDTRY.
     ENDTRY.
 
@@ -1190,7 +1196,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
         ENDLOOP.
 
-      CATCH cx_root.
+      CATCH cx_root INTO DATA(x).
+        DATA(error) = x->get_text( ).
     ENDTRY.
 
   ENDMETHOD.
@@ -1243,7 +1250,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
               APPEND <field> TO names.
             ENDLOOP.
         ENDTRY.
-      CATCH cx_root.
+      CATCH cx_root INTO DATA(x).
+        DATA(error) = x->get_text( ).
     ENDTRY.
 
 
@@ -1587,7 +1595,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
     CREATE DATA lr_shlp TYPE (lv_type).
     ASSIGN lr_shlp->* TO <shlp>.
-    <shlp> = CORRESPONDING #( ms_shlp ).
+    CLEAR: <shlp>.
+    MOVE-CORRESPONDING ms_shlp TO <shlp>.
 
     lv_fm = 'F4IF_SELECT_VALUES'.
     CALL FUNCTION lv_fm
@@ -1663,8 +1672,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
             TRY.
                 " Sting table will crash if value length <> outputlen
                 <line_content> = result_line+result_desc-offset.
-              CATCH cx_root.
-                " rest of the fields are empty.
+              CATCH cx_root INTO DATA(x).
+                DATA(error) = x->get_text( ).
             ENDTRY.
         ENDTRY.
 
@@ -1853,8 +1862,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         ASSIGN t_e071k->* TO <t_e071k>.
         ASSIGN s_e071k->* TO <s_e071k>.
 
-      CATCH cx_root.
-
+      CATCH cx_root INTO DATA(x).
+        DATA(error) = x->get_text( ).
     ENDTRY.
 
     DATA(dfies) = zoblomov_cl_util=>rtti_get_t_dfies_by_table_name( iv_tabname ).
@@ -1953,8 +1962,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         ASSIGN t_e071->* TO <t_e071>.
         ASSIGN s_e071->* TO <s_e071>.
 
-      CATCH cx_root.
-
+      CATCH cx_root INTO DATA(x).
+        DATA(error) = x->get_text( ).
     ENDTRY.
 
     ASSIGN COMPONENT 'TRKORR' OF STRUCTURE <s_e071> TO <value>.
@@ -2043,7 +2052,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
-      CATCH cx_root.
+      CATCH cx_root INTO DATA(x).
+        DATA(error) = x->get_text( ).
     ENDTRY.
 
     LOOP AT <table> INTO <line>.
@@ -2159,7 +2169,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
             RETURN.
           ENDIF.
 
-        CATCH cx_root.
+        CATCH cx_root INTO DATA(x).
+          DATA(error) = x->get_text( ).
       ENDTRY.
 
       LOOP AT <table> INTO <line>.
@@ -2205,7 +2216,8 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
         TRY.
             <row> = sy-mandt.
-          CATCH cx_root.
+          CATCH cx_root INTO DATA(x).
+            DATA(error) = x->get_text( ).
         ENDTRY.
 
       ENDIF.
@@ -2231,14 +2243,16 @@ CLASS zoblomov_cl_util_abap IMPLEMENTATION.
 
         CALL FUNCTION conex
           EXPORTING
-            input  = val
+            input         = val
           IMPORTING
-            output = result
+            output        = result
           EXCEPTIONS
-            OTHERS = 99.
+            error_message = 1
+            OTHERS        = 2.
         IF sy-subrc <> 0.
-
+          RAISE EXCEPTION TYPE zoblomov_cx_util_error.
         ENDIF.
+
 
       ENDIF.
 
