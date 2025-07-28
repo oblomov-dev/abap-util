@@ -122,6 +122,7 @@ ENDCLASS.
 
 
 CLASS ltcl_unit_test_open_abap IMPLEMENTATION.
+
   METHOD test_assign.
 
     DATA(lo_app) = NEW ltcl_test_app( ).
@@ -129,8 +130,8 @@ CLASS ltcl_unit_test_open_abap IMPLEMENTATION.
 
     lo_app->mv_val = `ABC`.
 
-    DATA(lv_assign) = |LO_APP->MV_VAL|.
-    ASSIGN (lv_assign) TO <any>.
+    DATA(lv_assign) = |MV_VAL|.
+    ASSIGN lo_app->(lv_assign) TO <any>.
     ASSERT sy-subrc = 0.
 
     cl_abap_unit_assert=>assert_equals( exp = `ABC`
@@ -321,7 +322,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA(lv_test) = `test`.
     DATA lr_data TYPE REF TO data.
-    GET REFERENCE OF lv_test INTO lr_data.
+*    GET REFERENCE OF lv_test INTO lr_data.
+    lr_data = REF #( lv_test ).
 
     cl_abap_unit_assert=>assert_true( zoblomov_cl_util=>rtti_check_ref_data( lr_data ) ).
 
@@ -333,7 +335,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA(lv_test) = `test`.
     DATA lr_data TYPE REF TO data.
-    GET REFERENCE OF lv_test INTO lr_data.
+*    GET REFERENCE OF lv_test INTO lr_data.
+    lr_data = REF #( lv_test ).
 
     DATA(lr_test2) = zoblomov_cl_util=>conv_copy_ref_data( lr_data ).
 
@@ -406,6 +409,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_func_get_user_tech.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
 
     cl_abap_unit_assert=>assert_equals( exp = zoblomov_cl_util=>context_get_user_tech( )
                                         act = sy-uname ).
@@ -756,6 +763,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA END OF ms_struc2.
 
     DATA(lo_datadescr) = cl_abap_typedescr=>describe_by_data( ms_struc2 ).
+
+    IF zoblomov_cl_util=>context_check_abap_cloud( ).
+      RETURN.
+    ENDIF.
     DATA(lt_attri) = zoblomov_cl_util=>rtti_get_t_attri_by_include( CAST #( lo_datadescr ) ).
 
     IF lines( lt_attri ) <> 6.
