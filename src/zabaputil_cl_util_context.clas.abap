@@ -227,6 +227,12 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE abap_component_tab.
 
+    CLASS-METHODS expand_components
+      IMPORTING
+        it_comps      TYPE abap_component_tab
+      RETURNING
+        VALUE(result) TYPE abap_component_tab.
+
     TYPES:
       BEGIN OF ty_s_fix_val,
         low   TYPE string,
@@ -2281,6 +2287,20 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    CLASS-METHODS get_comp_str
+      IMPORTING
+        val           TYPE any
+        iv_comp       TYPE clike
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS scan_flag_prefix
+      IMPORTING
+        val           TYPE any
+        iv_prefix     TYPE clike
+      RETURNING
+        VALUE(result) TYPE string_table.
+
     CLASS-METHODS msg_get_rap_meta
       IMPORTING
         val           TYPE any
@@ -2403,11 +2423,11 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     TYPES:
       BEGIN OF ty_s_bool_cache,
-        absolute_name TYPE string,
-        is_bool       TYPE abap_bool,
+        typedescr TYPE REF TO cl_abap_typedescr,
+        is_bool   TYPE abap_bool,
       END OF ty_s_bool_cache.
 
-    CLASS-DATA mt_bool_cache TYPE HASHED TABLE OF ty_s_bool_cache WITH UNIQUE KEY absolute_name.
+    CLASS-DATA mt_bool_cache TYPE HASHED TABLE OF ty_s_bool_cache WITH UNIQUE KEY typedescr.
 
     TYPES:
       BEGIN OF ty_s_attri_cache,
@@ -2447,6 +2467,10 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-DATA gv_check_cloud TYPE abap_bool.
     CLASS-DATA gv_check_cloud_cached TYPE abap_bool.
+
+    " Guards the cycle zabaputil_cx_util_error=>constructor -> uuid_get_c32 ->
+    " RAISE zabaputil_cx_util_error -> ... see uuid_get_c32.
+    CLASS-DATA gv_uuid_failed TYPE abap_bool.
 
     CLASS-METHODS bal_cloud_add_items
       IMPORTING
@@ -2547,15 +2571,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         DATA(lo_descr) = cl_abap_elemdescr=>describe_by_data( val ).
 
         " all supported boolean types are character-like flags, this check
-        " filters out every other type before the name based cache lookup
+        " filters out every other type before the cache lookup
         IF lo_descr->type_kind <> cl_abap_typedescr=>typekind_char.
           RETURN.
         ENDIF.
 
-        DATA(lv_abs_name) = CONV string( lo_descr->absolute_name ).
-
+        " type descriptors are singletons, so the reference identifies the
+        " type without converting/hashing the absolute name on every call
         READ TABLE mt_bool_cache REFERENCE INTO DATA(lr_cache)
-             WITH TABLE KEY absolute_name = lv_abs_name.
+             WITH TABLE KEY typedescr = lo_descr.
         IF sy-subrc = 0.
           result = lr_cache->is_bool.
           RETURN.
@@ -2564,7 +2588,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         DATA(lo_ele) = CAST cl_abap_elemdescr( lo_descr ).
         result = boolean_check_by_name( lo_ele->get_relative_name( ) ).
 
-        INSERT VALUE #( absolute_name = lv_abs_name is_bool = result ) INTO TABLE mt_bool_cache.
+        INSERT VALUE #( typedescr = lo_descr is_bool = result ) INTO TABLE mt_bool_cache.
 
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
@@ -2619,6 +2643,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     IF rtti_check_ref_data( from ).
       ASSIGN from->* TO <from>.
+      IF <from> IS NOT ASSIGNED.
+        " unbound data reference - nothing to copy, return an initial reference
+        RETURN.
+      ENDIF.
     ELSE.
       ASSIGN from TO <from>.
     ENDIF.
@@ -2845,9 +2873,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA(lv_search) = COND string( WHEN ignore_case = abap_true
                                    THEN to_upper( val )
                                    ELSE val ).
+    DATA(lv_field_count) = lines( fields ).
 
     LOOP AT tab ASSIGNING <row>.
 
+      DATA(lv_tabix) = sy-tabix.
       DATA(lv_check_found) = abap_false.
       DATA(lv_index) = 1.
       DO.
@@ -2857,7 +2887,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             EXIT.
           ENDIF.
         ELSE.
-          IF lv_index > lines( fields ).
+          IF lv_index > lv_field_count.
             EXIT.
           ENDIF.
           DATA(lv_name) = fields[ lv_index ].
@@ -2875,19 +2905,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             lv_check_found = abap_true.
             EXIT.
           ENDIF.
-        ELSE.
+        ELSEIF find( val = lv_value
+                     sub = lv_search ) >= 0.
           " Case-sensitive: use find() because CS is always case-insensitive
-          IF find( val = lv_value sub = lv_search ) >= 0.
-            lv_check_found = abap_true.
-            EXIT.
-          ENDIF.
+          lv_check_found = abap_true.
+          EXIT.
         ENDIF.
 
         lv_index = lv_index + 1.
       ENDDO.
 
       IF lv_check_found = abap_false.
-        DELETE tab.
+        DELETE tab INDEX lv_tabix.
       ENDIF.
 
     ENDLOOP.
@@ -3090,23 +3119,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDTRY.
     DATA(sdescr) = CAST cl_abap_structdescr( type_desc ).
     DATA(comps) = sdescr->get_components( ).
+    result = expand_components( comps ).
 
-    LOOP AT comps REFERENCE INTO DATA(lr_comp).
+  ENDMETHOD.
 
+  METHOD expand_components.
+
+    LOOP AT it_comps REFERENCE INTO DATA(lr_comp).
       IF lr_comp->as_include = abap_true.
-
-        DATA(incl_comps) = rtti_get_t_attri_by_include( lr_comp->type ).
-
-        LOOP AT incl_comps REFERENCE INTO DATA(lr_incl_comp).
-          APPEND lr_incl_comp->* TO result.
-        ENDLOOP.
-
+        DATA(lt_incl) = rtti_get_t_attri_by_include( lr_comp->type ).
+        APPEND LINES OF lt_incl TO result.
       ELSE.
-
         APPEND lr_comp->* TO result.
-
       ENDIF.
-
     ENDLOOP.
 
   ENDMETHOD.
@@ -3156,16 +3181,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     DATA(comps) = lo_struct->get_components( ).
-
-    LOOP AT comps REFERENCE INTO DATA(lr_comp).
-
-      IF lr_comp->as_include = abap_false.
-        APPEND lr_comp->* TO result.
-      ELSE.
-        DATA(lt_attri) = rtti_get_t_attri_by_include( lr_comp->type ).
-        APPEND LINES OF lt_attri TO result.
-      ENDIF.
-    ENDLOOP.
+    result = expand_components( comps ).
 
     IF lr_cache IS BOUND.
       lr_cache->o_struct = lo_struct.
@@ -4090,8 +4106,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get.
 
-    DATA(lt_msg) = msg_get_t( val = val val2 = val2 ).
-    result = lt_msg[ 1 ].
+    DATA(lt_msg) = msg_get_t( val  = val
+                              val2 = val2 ).
+    result = VALUE #( lt_msg[ 1 ] OPTIONAL ).
 
   ENDMETHOD.
 
@@ -5278,7 +5295,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     TYPES clsname    TYPE c LENGTH 30.
     TYPES refclsname TYPE c LENGTH 30.
     TYPES END OF ty_s_impl.
-    DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH EMPTY KEY.
+    " DEFAULT KEY on purpose: this table is passed to the classic function
+    " module SEO_INTERFACE_IMPLEM_GET_ALL (impkeys), whose formal parameter is
+    " a STANDARD TABLE WITH DEFAULT KEY. WITH EMPTY KEY makes the table type
+    " incompatible, so the CALL FUNCTION fails and no implementers are returned
+    " (silently breaking user-exit discovery). Never change this key type.
+    DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
     TYPES BEGIN OF ty_s_key.
     TYPES intkey TYPE c LENGTH 30.
     TYPES END OF ty_s_key.
@@ -5558,8 +5580,24 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_uuid.
 
-      CATCH cx_root.
-        ASSERT 1 = 0.
+      CATCH cx_root INTO DATA(lx_uuid).
+        " both UUID mechanisms failed - raise the framework exception instead of
+        " ASSERT, which would trigger the uncatchable ASSERTION_FAILED and bypass
+        " every top-level catch (short dump instead of a handled error).
+        " zabaputil_cx_util_error=>constructor itself calls uuid_get_c32, so the
+        " raise below re-enters this method. gv_uuid_failed makes that nested
+        " call return an empty UUID instead of raising again (endless recursion).
+        IF gv_uuid_failed = abap_true.
+          RETURN.
+        ENDIF.
+        gv_uuid_failed = abap_true.
+        TRY.
+            RAISE EXCEPTION TYPE zabaputil_cx_util_error
+              EXPORTING
+                val = lx_uuid.
+          CLEANUP.
+            CLEAR gv_uuid_failed.
+        ENDTRY.
     ENDTRY.
   ENDMETHOD.
 
@@ -5588,8 +5626,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           RECEIVING
             rv_short_description = result.
 
-      CATCH cx_root INTO DATA(x).
-        DATA(lv_error) = x->get_text( ).
+      CATCH cx_root ##NO_HANDLER.
     ENDTRY.
   ENDMETHOD.
 
@@ -5975,64 +6012,65 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD msg_get_rap_element.
+  METHOD get_comp_str.
 
+    ASSIGN COMPONENT iv_comp OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
+    IF sy-subrc = 0.
+      result = <comp>.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD scan_flag_prefix.
+
+    DATA(lv_len) = strlen( iv_prefix ).
     DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
     LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
-      CHECK strlen( ls_attri->name ) > 9.
-      CHECK ls_attri->name(9) = `%ELEMENT-`.
+      CHECK strlen( ls_attri->name ) > lv_len.
+      CHECK ls_attri->name(lv_len) = iv_prefix.
       ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<flag>).
       CHECK sy-subrc = 0.
       CHECK <flag> IS NOT INITIAL.
-
-      IF result IS INITIAL.
-        result = ls_attri->name+9.
-      ELSE.
-        result = |{ result }, { ls_attri->name+9 }|.
-      ENDIF.
+      APPEND ls_attri->name+lv_len TO result.
     ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD msg_get_rap_element.
+
+    DATA(lt_suffix) = scan_flag_prefix( val       = val
+                                        iv_prefix = `%ELEMENT-` ).
+    result = concat_lines_of( table = lt_suffix
+                              sep   = `, ` ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_state_area.
 
-    ASSIGN COMPONENT `%STATE_AREA` OF STRUCTURE val TO FIELD-SYMBOL(<sa>).
-    IF sy-subrc = 0.
-      result = <sa>.
-    ENDIF.
+    result = get_comp_str( val     = val
+                           iv_comp = `%STATE_AREA` ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_action.
 
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
-      CHECK strlen( ls_attri->name ) > 12.
-      CHECK ls_attri->name(12) = `%OP-%ACTION-`.
-      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<flag>).
-      CHECK sy-subrc = 0.
-      CHECK <flag> IS NOT INITIAL.
-      result = ls_attri->name+12.
-      RETURN.
-    ENDLOOP.
+    DATA(lt_suffix) = scan_flag_prefix( val       = val
+                                        iv_prefix = `%OP-%ACTION-` ).
+    result = VALUE #( lt_suffix[ 1 ] OPTIONAL ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_pid.
 
-    ASSIGN COMPONENT `%PID` OF STRUCTURE val TO FIELD-SYMBOL(<pid>).
-    IF sy-subrc = 0.
-      result = <pid>.
-    ENDIF.
+    result = get_comp_str( val     = val
+                           iv_comp = `%PID` ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_cid.
 
-    ASSIGN COMPONENT `%CID` OF STRUCTURE val TO FIELD-SYMBOL(<cid>).
-    IF sy-subrc = 0.
-      result = <cid>.
-    ENDIF.
+    result = get_comp_str( val     = val
+                           iv_comp = `%CID` ).
 
   ENDMETHOD.
 
