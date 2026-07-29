@@ -1284,6 +1284,8 @@ CLASS ltcl_itab_ops DEFINITION FINAL
 
     METHODS filter_by_val_basic            FOR TESTING.
     METHODS filter_by_val_case_ignore      FOR TESTING.
+    METHODS filter_by_val_keeps_rows       FOR TESTING.
+    METHODS filter_by_val_fields_subset    FOR TESTING.
 
     METHODS corresponding_basic            FOR TESTING.
 
@@ -1417,6 +1419,37 @@ CLASS ltcl_itab_ops IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( exp = 2 act = lines( lt_tab ) ).
   ENDMETHOD.
 
+  METHOD filter_by_val_keeps_rows.
+    " guards the DELETE ... INDEX in itab_filter_by_val: with a plain DELETE the
+    " wrong rows are removed as soon as several non-matching rows are dropped
+    TYPES: BEGIN OF ty, name TYPE string, city TYPE string, END OF ty.
+    DATA lt_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+    lt_tab = VALUE #( ( name = `Alice`   city = `Paris` )
+                      ( name = `Bob`     city = `Berlin` )
+                      ( name = `Charlie` city = `Rome` )
+                      ( name = `Dave`    city = `Berlin` )
+                      ( name = `Eve`     city = `Madrid` ) ).
+    zabaputil_cl_util_context=>itab_filter_by_val( EXPORTING val = `Berlin`
+                                                   CHANGING  tab = lt_tab ).
+    cl_abap_unit_assert=>assert_equals( exp = 2 act = lines( lt_tab ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `Bob`  act = lt_tab[ 1 ]-name ).
+    cl_abap_unit_assert=>assert_equals( exp = `Dave` act = lt_tab[ 2 ]-name ).
+  ENDMETHOD.
+
+  METHOD filter_by_val_fields_subset.
+    " only the listed field is searched, the match in the other column is ignored
+    TYPES: BEGIN OF ty, name TYPE string, city TYPE string, END OF ty.
+    DATA lt_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+    lt_tab = VALUE #( ( name = `Berlin` city = `Paris` )
+                      ( name = `Bob`    city = `Berlin` ) ).
+    zabaputil_cl_util_context=>itab_filter_by_val(
+      EXPORTING val    = `Berlin`
+                fields = VALUE string_table( ( `CITY` ) )
+      CHANGING  tab    = lt_tab ).
+    cl_abap_unit_assert=>assert_equals( exp = 1 act = lines( lt_tab ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `Bob` act = lt_tab[ 1 ]-name ).
+  ENDMETHOD.
+
   METHOD corresponding_basic.
     TYPES: BEGIN OF ty_src, a TYPE string, b TYPE string, c TYPE string, END OF ty_src.
     TYPES: BEGIN OF ty_dst, a TYPE string, b TYPE string, END OF ty_dst.
@@ -1492,10 +1525,58 @@ CLASS ltcl_rtti_ops DEFINITION FINAL
     METHODS get_type_name                  FOR TESTING.
     METHODS check_class_exists_true        FOR TESTING.
     METHODS check_class_exists_false       FOR TESTING.
+    METHODS expand_components_plain        FOR TESTING.
+    METHODS expand_components_empty        FOR TESTING.
+    METHODS attri_by_any_struct            FOR TESTING.
+    METHODS attri_by_any_table             FOR TESTING.
+    METHODS msg_get_empty_no_dump          FOR TESTING.
 
 ENDCLASS.
 
 CLASS ltcl_rtti_ops IMPLEMENTATION.
+
+  METHOD expand_components_plain.
+    " components that are not includes are passed through unchanged and in order
+    DATA(lo_str) = cl_abap_elemdescr=>get_string( ).
+    DATA(lt_comps) = VALUE abap_component_tab( ( name = `A` type = lo_str )
+                                               ( name = `B` type = lo_str )
+                                               ( name = `C` type = lo_str ) ).
+    DATA(lt_result) = zabaputil_cl_util_context=>expand_components( lt_comps ).
+    cl_abap_unit_assert=>assert_equals( exp = 3 act = lines( lt_result ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `A` act = lt_result[ 1 ]-name ).
+    cl_abap_unit_assert=>assert_equals( exp = `B` act = lt_result[ 2 ]-name ).
+    cl_abap_unit_assert=>assert_equals( exp = `C` act = lt_result[ 3 ]-name ).
+  ENDMETHOD.
+
+  METHOD expand_components_empty.
+    DATA(lt_result) = zabaputil_cl_util_context=>expand_components( VALUE abap_component_tab( ) ).
+    cl_abap_unit_assert=>assert_initial( lt_result ).
+  ENDMETHOD.
+
+  METHOD attri_by_any_struct.
+    TYPES: BEGIN OF ty, alpha TYPE string, beta TYPE i, END OF ty.
+    DATA ls_struc TYPE ty.
+    DATA(lt_attri) = zabaputil_cl_util_context=>rtti_get_t_attri_by_any( ls_struc ).
+    cl_abap_unit_assert=>assert_equals( exp = 2 act = lines( lt_attri ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `ALPHA` act = lt_attri[ 1 ]-name ).
+    cl_abap_unit_assert=>assert_equals( exp = `BETA`  act = lt_attri[ 2 ]-name ).
+  ENDMETHOD.
+
+  METHOD attri_by_any_table.
+    " for a table the components of the line type are returned
+    TYPES: BEGIN OF ty, alpha TYPE string, beta TYPE i, END OF ty.
+    DATA lt_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+    DATA(lt_attri) = zabaputil_cl_util_context=>rtti_get_t_attri_by_any( lt_tab ).
+    cl_abap_unit_assert=>assert_equals( exp = 2 act = lines( lt_attri ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `ALPHA` act = lt_attri[ 1 ]-name ).
+  ENDMETHOD.
+
+  METHOD msg_get_empty_no_dump.
+    " input without any message must return an initial structure instead of
+    " raising CX_SY_ITAB_LINE_NOT_FOUND on lt_msg[ 1 ]
+    DATA(ls_msg) = zabaputil_cl_util_context=>msg_get( 42 ).
+    cl_abap_unit_assert=>assert_initial( ls_msg-text ).
+  ENDMETHOD.
 
   METHOD check_table_true.
     DATA lt_tab TYPE string_table.
@@ -1652,6 +1733,9 @@ CLASS ltcl_ref_ops DEFINITION FINAL
     METHODS unassign_initial_empty         FOR TESTING.
     METHODS unassign_initial_filled        FOR TESTING.
     METHODS conv_get_as_data_ref           FOR TESTING.
+    METHODS copy_ref_data_unbound          FOR TESTING.
+    METHODS copy_ref_data_bound            FOR TESTING.
+    METHODS copy_ref_data_plain_value      FOR TESTING.
 
 ENDCLASS.
 
@@ -1702,6 +1786,36 @@ CLASS ltcl_ref_ops IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE string.
     ASSIGN lr_ref->* TO <val>.
     cl_abap_unit_assert=>assert_equals( exp = `test` act = <val> ).
+  ENDMETHOD.
+
+  METHOD copy_ref_data_unbound.
+    " an unbound reference must return an initial result instead of dumping in
+    " CREATE DATA ... LIKE <from> with an unassigned field symbol
+    DATA lr_ref TYPE REF TO data.
+    DATA(lr_copy) = zabaputil_cl_util_context=>conv_copy_ref_data( lr_ref ).
+    cl_abap_unit_assert=>assert_initial( lr_copy ).
+  ENDMETHOD.
+
+  METHOD copy_ref_data_bound.
+    DATA lv_val TYPE string VALUE `hello`.
+    DATA lr_ref TYPE REF TO data.
+    GET REFERENCE OF lv_val INTO lr_ref.
+    DATA(lr_copy) = zabaputil_cl_util_context=>conv_copy_ref_data( lr_ref ).
+    cl_abap_unit_assert=>assert_bound( lr_copy ).
+    FIELD-SYMBOLS <copy> TYPE string.
+    ASSIGN lr_copy->* TO <copy>.
+    cl_abap_unit_assert=>assert_equals( exp = `hello` act = <copy> ).
+    " a copy, not an alias
+    lv_val = `changed`.
+    cl_abap_unit_assert=>assert_equals( exp = `hello` act = <copy> ).
+  ENDMETHOD.
+
+  METHOD copy_ref_data_plain_value.
+    DATA(lr_copy) = zabaputil_cl_util_context=>conv_copy_ref_data( `plain` ).
+    cl_abap_unit_assert=>assert_bound( lr_copy ).
+    FIELD-SYMBOLS <copy> TYPE data.
+    ASSIGN lr_copy->* TO <copy>.
+    cl_abap_unit_assert=>assert_equals( exp = `plain` act = <copy> ).
   ENDMETHOD.
 
 ENDCLASS.
