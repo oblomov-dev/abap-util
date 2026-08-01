@@ -397,7 +397,7 @@ ENDTRY.
 ###### Context
 ```abap
 DATA(lv_user)  = zabaputil_cl_util_context=>context_get_user_tech( ). " => 'DEVELOPER'
-DATA(lv_cloud) = zabaputil_cl_util_context=>context_check_abap_cloud( ). " => abap_true / abap_false
+DATA(lv_cloud) = zabaputil_cl_util_context=>check_abap_cloud( ). " => abap_true / abap_false
 DATA(lt_stack) = zabaputil_cl_util_context=>context_get_callstack( ).
 
 " User details - cl_abap_context_info on Cloud, USR01/USER_ADDR/ADR6 on-premise

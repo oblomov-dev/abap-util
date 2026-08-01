@@ -48,7 +48,9 @@ abap-util (master catalog, this repo)             Downstream projects (vendored 
 4. **Periodic AI sync-back:** every few weeks an AI compares abap-util with all consumers' context classes and merges what was added or fixed downstream into this repository — so abap-util always converges back to the superset of all methods, unit-tested and linted for all targets, and every other consumer can pick them up from here.
 
    **The sync compares method *bodies*, not just method names.** A consumer that fixes a bug in a method it already has produces no missing method at all, so a name-level diff reports "in sync" while the master keeps shipping the broken implementation to every other consumer. Diff each shared method's body (normalizing the renamed class/exception prefixes), and treat a behavioral difference as a sync item exactly like a missing method. Pure formatting and comment-wording differences are expected — each consumer runs its own formatter config — and are not sync items.
-5. **Multi-environment compatibility is non-negotiable:** every method must work on NW 7.02, Standard ABAP, and ABAP Cloud, because any consumer may run on any of these targets. Environment-specific behavior is branched via `context_check_abap_cloud( )` and dynamic calls so the code compiles everywhere.
+5. **Multi-environment compatibility is non-negotiable:** every method must work on NW 7.02, Standard ABAP, and ABAP Cloud, because any consumer may run on any of these targets. Environment-specific behavior is branched via `check_abap_cloud( )` and dynamic calls so the code compiles everywhere.
+
+**Why the consumers need this at all:** in every consumer, *all* system- and environment-specific functionality is reached through a method of its context class — never by calling `cl_abap_*`, a function module, or an environment-specific API directly. That is what confines the dependency on SAP standard objects to one class per project and makes those projects portable across all three targets and transpilable to JS. This catalog exists to keep that one class from having to be written from scratch in every project.
 
 ## Repository Structure
 
