@@ -545,6 +545,12 @@ CLASS ltcl_url_ops DEFINITION FINAL
     METHODS param_set_new_param            FOR TESTING.
     METHODS param_set_existing_param       FOR TESTING.
 
+    METHODS param_get_tab_normalizes_name  FOR TESTING.
+    METHODS param_get_tab_no_phantom       FOR TESTING.
+
+    METHODS app_url_drops_app_hash         FOR TESTING.
+    METHODS app_url_keeps_shell_hash       FOR TESTING.
+
 ENDCLASS.
 
 CLASS ltcl_url_ops IMPLEMENTATION.
@@ -629,6 +635,55 @@ CLASS ltcl_url_ops IMPLEMENTATION.
                                                      value = `99` ).
     cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>c_contains( val = lv_result sub = `b=99` ) ).
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>c_contains( val = lv_result sub = `b=2` ) ).
+  ENDMETHOD.
+
+  METHOD param_get_tab_normalizes_name.
+    " url_param_get / url_param_set look up with c_trim_lower, so the stored
+    " name has to be lower case for a mixed-case URL to resolve at all. The
+    " value keeps its original case.
+    DATA(lt_result) = zabaputil_cl_util_context=>url_param_get_tab( `https://h/p?APP_START=MixedCase` ).
+    cl_abap_unit_assert=>assert_equals( exp = `app_start` act = lt_result[ 1 ]-n ).
+    cl_abap_unit_assert=>assert_equals( exp = `MixedCase` act = lt_result[ 1 ]-v ).
+
+    cl_abap_unit_assert=>assert_equals(
+        exp = `MixedCase`
+        act = zabaputil_cl_util_context=>url_param_get( val = `app_start`
+                                                        url = `?APP_START=MixedCase` ) ).
+  ENDMETHOD.
+
+  METHOD param_get_tab_no_phantom.
+    " an empty segment (empty search string, trailing &) must not become a
+    " nameless row - url_param_create_url would write it back out as `=&`
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>url_param_get_tab( `` ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+        exp = 1
+        act = lines( zabaputil_cl_util_context=>url_param_get_tab( `?a=1&` ) ) ).
+  ENDMETHOD.
+
+  METHOD app_url_drops_app_hash.
+    " the app-owned hash (route or app-state, leading `/`) must be dropped -
+    " a consumer backend prefers it over app_start, so keeping it would
+    " re-open the current app instead of the requested one
+    cl_abap_unit_assert=>assert_equals(
+        exp = `https://h/p?app_start=zcl_new`
+        act = zabaputil_cl_util_context=>app_get_url( classname = `ZCL_NEW`
+                                                      origin    = `https://h`
+                                                      pathname  = `/p`
+                                                      search    = ``
+                                                      hash      = `#/app/ZCL_OLD/DRAFT1` ) ).
+  ENDMETHOD.
+
+  METHOD app_url_keeps_shell_hash.
+    " inside the launchpad the shell part of the hash survives, only the app
+    " part after `&/` is cut
+    cl_abap_unit_assert=>assert_equals(
+        exp = `https://h/p?app_start=zcl_new#Shell-home`
+        act = zabaputil_cl_util_context=>app_get_url( classname = `ZCL_NEW`
+                                                      origin    = `https://h`
+                                                      pathname  = `/p`
+                                                      search    = ``
+                                                      hash      = `#Shell-home&/app/ZCL_OLD/DRAFT1` ) ).
   ENDMETHOD.
 
 ENDCLASS.

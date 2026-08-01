@@ -3106,17 +3106,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_t_attri_by_include.
 
-    TRY.
-
-        cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = type->absolute_name
-                                             RECEIVING  p_descr_ref    = DATA(type_desc)
-                                             EXCEPTIONS type_not_found = 1 ).
-
-      CATCH cx_root INTO DATA(x).
-        RAISE EXCEPTION TYPE zabaputil_cx_util_error
-          EXPORTING
-            previous = x.
-    ENDTRY.
+    cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = type->absolute_name
+                                         RECEIVING  p_descr_ref    = DATA(type_desc)
+                                         EXCEPTIONS type_not_found = 1 ).
+    " classic exception method: a missing type sets sy-subrc and leaves the
+    " ref unbound instead of raising - check it, or get_components below
+    " dumps with CX_SY_REF_IS_INITIAL
+    IF sy-subrc <> 0 OR type_desc IS NOT BOUND.
+      RAISE EXCEPTION TYPE zabaputil_cx_util_error
+        EXPORTING
+          val = |Include type '{ type->absolute_name }' not found|.
+    ENDIF.
     DATA(sdescr) = CAST cl_abap_structdescr( type_desc ).
     DATA(comps) = sdescr->get_components( ).
     result = expand_components( comps ).
@@ -3414,7 +3414,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                                         sub = `&sap-startup-params=` ).
     lv_search = COND #( WHEN lv_search2 IS NOT INITIAL THEN lv_search2 ELSE lv_search ).
 
-    lv_search2 = substring_after( val = c_trim_lower( lv_search )
+    lv_search2 = substring_after( val = lv_search
                                   sub = `?` ).
     IF lv_search2 IS NOT INITIAL.
       lv_search = lv_search2.
@@ -3424,7 +3424,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     LOOP AT lt_param REFERENCE INTO DATA(lr_param).
       SPLIT lr_param->* AT `=` INTO DATA(lv_name) DATA(lv_value).
-      INSERT VALUE #( n = lv_name
+      " an empty segment (empty search string, trailing &) would otherwise
+      " produce a phantom nameless parameter that url_param_create_url
+      " writes back out as a stray `=&`
+      IF lv_name IS INITIAL.
+        CONTINUE.
+      ENDIF.
+      " normalize the name so lookups are case-insensitive on every input
+      " shape (with or without a leading path/question mark) - the value
+      " keeps its original case. url_param_get / url_param_set look up with
+      " c_trim_lower, so the stored name has to be lower case too
+      INSERT VALUE #( n = c_trim_lower( lv_name )
                       v = lv_value ) INTO TABLE rt_params.
     ENDLOOP.
 
@@ -3504,12 +3514,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               srtti       = srtti.
           CALL TRANSFORMATION id SOURCE srtti = srtti dobj = data RESULT XML result.
 
-        CATCH cx_root.
+        CATCH cx_root INTO DATA(lx_srtti).
 
+          " keep the root cause - a transformation error on the caller's own
+          " data must not be masked behind a bare UNSUPPORTED_FEATURE
           DATA(lv_text) = `UNSUPPORTED_FEATURE`.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
-              val = lv_text.
+              val      = lv_text
+              previous = lx_srtti.
 
       ENDTRY.
     ENDIF.
@@ -3631,7 +3644,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD itab_get_by_struc.
 
-    DATA(lt_attri) = zabaputil_cl_util_context=>rtti_get_t_attri_by_any( val ).
+    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
     LOOP AT lt_attri REFERENCE INTO DATA(lr_attri).
 
       ASSIGN COMPONENT lr_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<component>).
@@ -3639,7 +3652,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
-      CASE zabaputil_cl_util_context=>rtti_get_type_kind( <component> ).
+      CASE rtti_get_type_kind( <component> ).
 
         WHEN cl_abap_typedescr=>typekind_table.
 
@@ -4375,20 +4388,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA(lt_msg) = msg_get_t( val ).
 
-    IF lines( lt_msg ) = 1.
-      result-text  = lt_msg[ 1 ]-text.
-      result-type  = to_lower( ui5_get_msg_type( lt_msg[ 1 ]-type ) ).
-      result-title = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+    DATA(lv_lines) = lines( lt_msg ).
+    IF lv_lines > 0.
+      DATA(lv_type) = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+    ENDIF.
 
-    ELSEIF lines( lt_msg ) > 1.
-      result-text = | { lines( lt_msg ) } Messages found: |.
+    IF lv_lines = 1.
+      result-text  = lt_msg[ 1 ]-text.
+      result-type  = to_lower( lv_type ).
+      result-title = lv_type.
+
+    ELSEIF lv_lines > 1.
+      result-text = | { lv_lines } Messages found: |.
       DATA lt_detail_items TYPE string_table.
       LOOP AT lt_msg REFERENCE INTO DATA(lr_msg).
         INSERT |<li>{ lr_msg->text }</li>| INTO TABLE lt_detail_items.
       ENDLOOP.
       result-details = `<ul>` && concat_lines_of( lt_detail_items ) && `</ul>`.
-      result-title   = ui5_get_msg_type( lt_msg[ 1 ]-type ).
-      result-type    = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+      result-title   = lv_type.
+      result-type    = to_lower( lv_type ).
 
     ELSE.
       result-skip = abap_true.
@@ -4418,7 +4436,36 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     INSERT VALUE #( n = `app_start`
                     v = to_lower( classname ) ) INTO TABLE lt_param.
 
-    result = |{ origin }{ pathname }?| && url_param_create_url( lt_param ) && hash.
+    " keep only the launchpad shell part of the hash: the app-owned part
+    " (leading `/` standalone, or everything after `&/` inside the FLP)
+    " carries THIS app's route/app-state, which the backend prefers over
+    " app_start - appending it verbatim would re-open the current app
+    " instead of the requested one
+    DATA(lv_hash) = CONV string( hash ).
+    IF lv_hash IS NOT INITIAL.
+      DATA(lv_content) = lv_hash.
+      IF lv_content(1) = `#`.
+        lv_content = substring( val = lv_content
+                                off = 1 ).
+      ENDIF.
+      IF lv_content IS INITIAL OR lv_content(1) = `/`.
+        " pure app hash (route or app-state) - drop it entirely
+        lv_hash = ``.
+      ELSE.
+        " inside the FLP keep the shell part, cut the app part after `&/`
+        DATA(lv_off) = find( val = lv_content
+                             sub = `&/` ).
+        IF lv_off = 0.
+          lv_hash = ``.
+        ELSEIF lv_off > 0.
+          lv_hash = |#{ lv_content(lv_off) }|.
+        ELSE.
+          lv_hash = |#{ lv_content }|.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    result = |{ origin }{ pathname }?| && url_param_create_url( lt_param ) && lv_hash.
 
   ENDMETHOD.
 
@@ -5406,7 +5453,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             scrtext_m TYPE string,
             scrtext_l TYPE string,
           END OF ddic.
-    DATA struct_desrc TYPE REF TO cl_abap_structdescr.
+    DATA struct_descr TYPE REF TO cl_abap_structdescr.
     FIELD-SYMBOLS <ddic> TYPE data.
     DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
     DATA data_descr   TYPE REF TO cl_abap_datadescr.
@@ -5416,16 +5463,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     cl_abap_typedescr=>describe_by_name( `T100` ).
 
-    struct_desrc ?= cl_abap_structdescr=>describe_by_name( `DFIES` ).
+    struct_descr ?= cl_abap_structdescr=>describe_by_name( `DFIES` ).
 
-    CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
+    CREATE DATA ddic_ref TYPE HANDLE struct_descr.
 
     ASSIGN ddic_ref->* TO <ddic>.
     ASSERT sy-subrc = 0.
 
-    cl_abap_elemdescr=>describe_by_name( EXPORTING  p_name     = name
-                                         RECEIVING p_descr_ref = lo_typedescr
-                                         EXCEPTIONS OTHERS     = 1 ).
+    cl_abap_elemdescr=>describe_by_name( EXPORTING  p_name      = name
+                                         RECEIVING  p_descr_ref = lo_typedescr
+                                         EXCEPTIONS OTHERS      = 1 ).
     IF sy-subrc <> 0.
       RETURN.
     ENDIF.
@@ -5581,12 +5628,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         result = lv_uuid.
 
       CATCH cx_root INTO DATA(lx_uuid).
-        " both UUID mechanisms failed - raise the framework exception instead of
-        " ASSERT, which would trigger the uncatchable ASSERTION_FAILED and bypass
-        " every top-level catch (short dump instead of a handled error).
+        " both UUID mechanisms failed - raise the framework exception so the
+        " consumer's single top-level catch can turn it into a handled error.
+        " ASSERT would raise the uncatchable ASSERTION_FAILED and bypass that
+        " catch (short dump instead of a handled error response).
         " zabaputil_cx_util_error=>constructor itself calls uuid_get_c32, so the
         " raise below re-enters this method. gv_uuid_failed makes that nested
-        " call return an empty UUID instead of raising again (endless recursion).
+        " call return an empty UUID instead of raising again (endless recursion
+        " until the stack overflows, which would defeat the handled error above).
         IF gv_uuid_failed = abap_true.
           RETURN.
         ENDIF.
@@ -5792,7 +5841,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       WHEN OTHERS.
 
-        IF rtti_check_clike( val ).
+        " skip an empty character value like the struct branch does -
+        " otherwise msg_get_t's val2 fallback can never take over and the
+        " caller renders a message box with blank text
+        IF rtti_check_clike( val ) AND val IS NOT INITIAL.
           INSERT VALUE #( text = val ) INTO TABLE result.
         ENDIF.
     ENDCASE.

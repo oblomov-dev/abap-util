@@ -45,7 +45,9 @@ abap-util (master catalog, this repo)             Downstream projects (vendored 
 1. **Class-level selection:** every project decides which utility classes it needs and vendors a renamed copy of exactly those classes.
 2. **Method-level trimming — context class only:** the copy of `zabaputil_cl_util_context` is additionally reduced at method level to the methods the project actually uses. Trimming must keep the closure: every private/protected helper a kept method calls (transitively) stays in the copy. All other vendored classes are copied as-is.
 3. **New methods are developed locally.** When a project needs a utility method during development that its context-class copy does not have, it is simply written directly into the project's local context class — no upstream round-trip is required. (If the method already exists in this catalog, copy it from here with its helper closure instead of re-implementing it.)
-4. **Periodic AI sync-back:** every few weeks an AI compares abap-util with all consumers' context classes and merges methods that were added downstream into this repository — so abap-util always converges back to the superset of all methods, unit-tested and linted for all targets, and every other consumer can pick them up from here.
+4. **Periodic AI sync-back:** every few weeks an AI compares abap-util with all consumers' context classes and merges what was added or fixed downstream into this repository — so abap-util always converges back to the superset of all methods, unit-tested and linted for all targets, and every other consumer can pick them up from here.
+
+   **The sync compares method *bodies*, not just method names.** A consumer that fixes a bug in a method it already has produces no missing method at all, so a name-level diff reports "in sync" while the master keeps shipping the broken implementation to every other consumer. Diff each shared method's body (normalizing the renamed class/exception prefixes), and treat a behavioral difference as a sync item exactly like a missing method. Pure formatting and comment-wording differences are expected — each consumer runs its own formatter config — and are not sync items.
 5. **Multi-environment compatibility is non-negotiable:** every method must work on NW 7.02, Standard ABAP, and ABAP Cloud, because any consumer may run on any of these targets. Environment-specific behavior is branched via `context_check_abap_cloud( )` and dynamic calls so the code compiles everywhere.
 
 ## Repository Structure
@@ -68,7 +70,7 @@ src/
     └── 02/                               # S-RTTI mirror — DO NOT MODIFY (synced from upstream)
 ```
 
-Every class has a `.testclasses.abap` file — unit tests live in the master, not in the downstream copies.
+Every class has a `.testclasses.abap` file. The master carries the **full** test suite — every method, all three targets — and is the only place where a vendored method is guaranteed to be covered. Consumers may additionally test their own copy (abap2UI5 does, for the subset it vendors); that does not replace the coverage here, and a method synced back from a consumer needs its tests written in this repository.
 
 ## Build & Validation
 
