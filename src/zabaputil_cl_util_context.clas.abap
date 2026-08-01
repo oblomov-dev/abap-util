@@ -188,6 +188,11 @@ CLASS zabaputil_cl_util_context DEFINITION
     " flag column named sel_field_name (default `ZZSELKZ`) is inserted.
     " Keeps the dynamic RTTI type construction (describe_by_data / create) in
     " one place so it can be ported once for non-ABAP runtimes.
+    " `ir_tab` keeps its Hungarian name against the `val` convention used by
+    " the rest of this class: abap2UI5's frozen src/99 package passes it as a
+    " NAMED argument and cannot be edited, so renaming it there is blocked -
+    " and a rename only in this catalog would show up as drift on every sync.
+    " Rename it once that consumer drops the call.
     CLASS-METHODS rtti_create_sel_tab_type
       IMPORTING
         ir_tab         TYPE REF TO data
@@ -229,7 +234,7 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-METHODS expand_components
       IMPORTING
-        it_comps      TYPE abap_component_tab
+        val      TYPE abap_component_tab
       RETURNING
         VALUE(result) TYPE abap_component_tab.
 
@@ -349,7 +354,7 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-METHODS rtti_get_classname_by_ref
       IMPORTING
-        !in           TYPE REF TO object
+        val           TYPE REF TO object
       RETURNING
         VALUE(result) TYPE string.
 
@@ -455,9 +460,9 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-METHODS url_param_get_tab
       IMPORTING
-        i_val            TYPE clike
+        val           TYPE clike
       RETURNING
-        VALUE(rt_params) TYPE ty_t_name_value.
+        VALUE(result) TYPE ty_t_name_value.
 
     CLASS-METHODS rtti_get_t_attri_by_oref
       IMPORTING
@@ -1160,7 +1165,7 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE ty_syst.
 
-    CLASS-METHODS context_check_abap_cloud
+    CLASS-METHODS check_abap_cloud
       RETURNING
         VALUE(result) TYPE abap_bool.
 
@@ -1242,7 +1247,7 @@ CLASS zabaputil_cl_util_context DEFINITION
       IMPORTING
         name          TYPE clike
         val           TYPE data
-        is_msg        TYPE ty_s_msg
+        msg           TYPE ty_s_msg
       RETURNING
         VALUE(result) TYPE ty_s_msg.
 
@@ -2207,7 +2212,7 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-METHODS rtti_get_class_descr_on_cloud
       IMPORTING
-        i_classname   TYPE clike
+        classname     TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
@@ -2290,14 +2295,14 @@ CLASS zabaputil_cl_util_context DEFINITION
     CLASS-METHODS get_comp_str
       IMPORTING
         val           TYPE any
-        iv_comp       TYPE clike
+        comp          TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS scan_flag_prefix
       IMPORTING
         val           TYPE any
-        iv_prefix     TYPE clike
+        prefix        TYPE clike
       RETURNING
         VALUE(result) TYPE string_table.
 
@@ -3071,7 +3076,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_classname_by_ref.
 
-    DATA(lv_classname) = cl_abap_classdescr=>get_class_name( in ).
+    DATA(lv_classname) = cl_abap_classdescr=>get_class_name( val ).
     result = substring_after( val = lv_classname
                               sub = `\CLASS=` ).
 
@@ -3125,7 +3130,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD expand_components.
 
-    LOOP AT it_comps REFERENCE INTO DATA(lr_comp).
+    LOOP AT val REFERENCE INTO DATA(lr_comp).
       IF lr_comp->as_include = abap_true.
         DATA(lt_incl) = rtti_get_t_attri_by_include( lr_comp->type ).
         APPEND LINES OF lt_incl TO result.
@@ -3283,7 +3288,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD convexit_ext.
 
-    IF context_check_abap_cloud( ).
+    IF check_abap_cloud( ).
 
     ELSE.
 
@@ -3397,7 +3402,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD url_param_get_tab.
 
-    DATA(lv_search) = replace( val  = i_val
+    DATA(lv_search) = replace( val  = val
                                sub  = `%3D`
                                with = `=`
                                occ  = 0 ).
@@ -3435,7 +3440,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       " keeps its original case. url_param_get / url_param_set look up with
       " c_trim_lower, so the stored name has to be lower case too
       INSERT VALUE #( n = c_trim_lower( lv_name )
-                      v = lv_value ) INTO TABLE rt_params.
+                      v = lv_value ) INTO TABLE result.
     ENDLOOP.
 
   ENDMETHOD.
@@ -5072,7 +5077,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         DATA(lv_result) = VALUE string( ).
         DATA(lv_class) = `CL_ABAP_CONTEXT_INFO`.
 
-        IF context_check_abap_cloud( ).
+        IF check_abap_cloud( ).
           CALL METHOD (lv_class)=>(`GET_USER_TECHNICAL_NAME`)
             RECEIVING
               rv_technical_name = lv_result.
@@ -5092,7 +5097,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD context_check_abap_cloud.
+  METHOD check_abap_cloud.
 
     IF gv_check_cloud_cached = abap_true.
       result = gv_check_cloud.
@@ -5282,7 +5287,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_classes_impl_intf.
 
-    IF context_check_abap_cloud( ).
+    IF check_abap_cloud( ).
       result = rtti_get_classes_intf_cloud( val ).
     ELSE.
       result = rtti_get_classes_intf_std( val ).
@@ -5658,7 +5663,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         DATA lv_classname TYPE c LENGTH 30.
         DATA xco_cp_abap  TYPE c LENGTH 11.
 
-        lv_classname = i_classname.
+        lv_classname = classname.
 
         xco_cp_abap = `XCO_CP_ABAP`.
         CALL METHOD (xco_cp_abap)=>(`CLASS`)
@@ -5688,7 +5693,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD context_get_callstack.
 
-    IF context_check_abap_cloud( ).
+    IF check_abap_cloud( ).
 
       DATA current_obj TYPE REF TO object.
       DATA stack TYPE REF TO object.
@@ -5824,7 +5829,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             INSERT LINES OF lt_tab INTO TABLE result.
             RETURN.
           ELSE.
-            ls_result = msg_map( name = ls_attri->name val = <comp> is_msg = ls_result ).
+            ls_result = msg_map( name = ls_attri->name val = <comp> msg = ls_result ).
           ENDIF.
 
         ENDLOOP.
@@ -5866,7 +5871,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           IF sy-subrc <> 0.
             CONTINUE.
           ENDIF.
-          ls_result = msg_map( name = ls_attri_o->name val = <comp> is_msg = ls_result ).
+          ls_result = msg_map( name = ls_attri_o->name val = <comp> msg = ls_result ).
         ENDLOOP.
         INSERT ls_result INTO TABLE result.
       CATCH cx_root.
@@ -5911,7 +5916,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                   IF sy-subrc <> 0.
                     CONTINUE.
                   ENDIF.
-                  ls_result = msg_map( name = ls_attri_o->name val = <comp> is_msg = ls_result ).
+                  ls_result = msg_map( name = ls_attri_o->name val = <comp> msg = ls_result ).
                 ENDLOOP.
                 INSERT ls_result INTO TABLE result.
 
@@ -5923,7 +5928,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_map.
 
-    result = is_msg.
+    result = msg.
     CASE name.
       WHEN `ID` OR `MSGID`.
         result-id = val.
@@ -6066,7 +6071,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD get_comp_str.
 
-    ASSIGN COMPONENT iv_comp OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
+    ASSIGN COMPONENT comp OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
     IF sy-subrc = 0.
       result = <comp>.
     ENDIF.
@@ -6075,11 +6080,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD scan_flag_prefix.
 
-    DATA(lv_len) = strlen( iv_prefix ).
+    DATA(lv_len) = strlen( prefix ).
     DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
     LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
       CHECK strlen( ls_attri->name ) > lv_len.
-      CHECK ls_attri->name(lv_len) = iv_prefix.
+      CHECK ls_attri->name(lv_len) = prefix.
       ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<flag>).
       CHECK sy-subrc = 0.
       CHECK <flag> IS NOT INITIAL.
@@ -6091,7 +6096,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD msg_get_rap_element.
 
     DATA(lt_suffix) = scan_flag_prefix( val       = val
-                                        iv_prefix = `%ELEMENT-` ).
+                                        prefix = `%ELEMENT-` ).
     result = concat_lines_of( table = lt_suffix
                               sep   = `, ` ).
 
@@ -6100,14 +6105,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD msg_get_rap_state_area.
 
     result = get_comp_str( val     = val
-                           iv_comp = `%STATE_AREA` ).
+                           comp = `%STATE_AREA` ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_action.
 
     DATA(lt_suffix) = scan_flag_prefix( val       = val
-                                        iv_prefix = `%OP-%ACTION-` ).
+                                        prefix = `%OP-%ACTION-` ).
     result = VALUE #( lt_suffix[ 1 ] OPTIONAL ).
 
   ENDMETHOD.
@@ -6115,14 +6120,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD msg_get_rap_pid.
 
     result = get_comp_str( val     = val
-                           iv_comp = `%PID` ).
+                           comp = `%PID` ).
 
   ENDMETHOD.
 
   METHOD msg_get_rap_cid.
 
     result = get_comp_str( val     = val
-                           iv_comp = `%CID` ).
+                           comp = `%CID` ).
 
   ENDMETHOD.
 
@@ -6590,7 +6595,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_t_dfies_by_table_name.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ) IS NOT INITIAL.
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       result = rtti_get_t_attri_on_cloud( table_name ).
     ELSE.
       result = rtti_get_t_attri_on_prem( table_name ).
@@ -6608,7 +6613,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       lan = langu.
     ENDIF.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
       ddtext = tabname.
 
@@ -6986,7 +6991,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bus_tr_add.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
     ELSE.
 
@@ -7288,7 +7293,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bus_tr_read.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
 *          data(lo_current_user) = xco_cp=>sy->user( ).
 *
@@ -7429,7 +7434,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_search.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use CL_BALI_LOG_FILTER + CL_BALI_LOG_DB
       DATA lo_filter TYPE REF TO object.
       DATA lo_db     TYPE REF TO object.
@@ -7621,7 +7626,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA(lv_cutoff) = CONV d( sy-datum - days ).
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use CL_BALI_LOG_DB to delete via filter
       DATA lo_filter_c TYPE REF TO object.
       DATA lo_db_c     TYPE REF TO object.
@@ -7749,7 +7754,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_read.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
       " Load the persisted logs (incl. items) via the released filter API and map
       " each item back to the framework's z2ui5_cl_util=>ty_s_msg structure with full metadata.
@@ -7938,7 +7943,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_create.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
       " ABAP Cloud: released Business Application Log API (cl_bali_*).
       " All access is dynamic so this class still compiles on lower releases.
@@ -8053,7 +8058,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_update.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
       " Load the existing log and append items. If no log exists, create a new one.
       DATA lo_filter TYPE REF TO object.
@@ -8159,7 +8164,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_delete.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
 
       DATA lo_filter TYPE REF TO object.
       DATA lo_db     TYPE REF TO object.
@@ -8228,7 +8233,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD tr_get_objects.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use XCO_CP_CTS
       TRY.
           DATA lo_transport TYPE REF TO object.
@@ -8327,7 +8332,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD tr_get_user_requests.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use XCO_CP_CTS transport filter
       TRY.
           DATA(lv_xco) = `XCO_CP_CTS`.
@@ -8452,7 +8457,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD tr_get_description.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use XCO_CP_CTS
       TRY.
           DATA lo_tr_d TYPE REF TO object.
@@ -8493,7 +8498,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD tr_is_released.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use XCO_CP_CTS
       TRY.
           DATA lo_tr_r TYPE REF TO object.
@@ -8645,7 +8650,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " Copying objects between requests relies on the classic transport
     " functions (TR_COPY_COMM) which are not released on ABAP Cloud.
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_copy_objects is not supported on ABAP Cloud`.
@@ -8720,7 +8725,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD tr_import.
 
     " Importing transports via TMS (TMS_MGR_*) is not available on ABAP Cloud.
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_import is not supported on ABAP Cloud`.
@@ -8801,7 +8806,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " Reading the transport log (TR_READ_GLOBAL_INFO_OF_REQUEST) is not
     " available on ABAP Cloud.
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_check_status is not supported on ABAP Cloud`.
@@ -9469,7 +9474,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD mail_send.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use CL_BCS_MAIL_MESSAGE (released cloud mail API)
       DATA lo_mail_c TYPE REF TO object.
       DATA lv_cls_c  TYPE string.
@@ -9605,7 +9610,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD job_submit_report.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: Application Jobs have a different architecture (job catalog + templates).
       " Direct report submission is not available. Raise informative exception.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
@@ -9701,7 +9706,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     lv_nr_sub = subobject.
 
     TRY.
-        IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+        IF zabaputil_cl_util_context=>check_abap_cloud( ).
           " Cloud: use CL_NUMBERRANGE_RUNTIME
           DATA(lv_cls) = `CL_NUMBERRANGE_RUNTIME`.
           CALL METHOD (lv_cls)=>(`NUMBER_GET`)
@@ -9742,7 +9747,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD changdoc_read.
 
-    IF zabaputil_cl_util_context=>context_check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ).
       " Cloud: use released CDS view I_ChangeDocument
       TRY.
           DATA(lv_cds) = `I_CHANGEDOCUMENTITEM`.
@@ -10353,7 +10358,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lo_regex TYPE REF TO object.
     DATA lv_class TYPE string.
 
-    IF context_check_abap_cloud( ) = abap_true.
+    IF check_abap_cloud( ) = abap_true.
 
       lv_class = `CL_ABAP_REGEX`.
       CALL METHOD (lv_class)=>create_pcre
@@ -10917,7 +10922,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     result-langu    = sy-langu.
     result-timezone = time_get_user_timezone( ).
 
-    IF context_check_abap_cloud( ) = abap_true.
+    IF check_abap_cloud( ) = abap_true.
 
       lv_class = `CL_ABAP_CONTEXT_INFO`.
       TRY.
@@ -11058,7 +11063,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    IF context_check_abap_cloud( ) = abap_false.
+    IF check_abap_cloud( ) = abap_false.
 
       DATA lv_in  TYPE f.
       DATA lv_out TYPE f.
@@ -11230,7 +11235,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD http_execute.
 
-    IF context_check_abap_cloud( ) = abap_true.
+    IF check_abap_cloud( ) = abap_true.
       result = http_execute_cloud( method       = method
                                    url          = url
                                    body         = body

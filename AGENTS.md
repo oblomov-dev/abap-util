@@ -90,4 +90,6 @@ CI lints against all three targets (`ABAP_702.yaml`, `ABAP_STANDARD.yaml`, `ABAP
 3. **Always run `npx abaplint`** before considering changes complete.
 4. **Multi-environment compatibility** — code must work on NW 7.02, Standard ABAP, and ABAP Cloud. No direct use of on-premise-only or cloud-only APIs without a dynamic-call branch.
 5. **String literals use backticks** (`` ` ``), not single quotes; `xsdbool()` for booleans; `NEW #()` instead of `CREATE OBJECT`.
-6. **Public API stability:** downstream copies mirror method signatures — never change or remove existing public methods, parameters, or constants. Additive changes only.
+6. **Public API stability:** downstream copies mirror method signatures, so default to additive changes — new methods and new optional parameters, not edits to what exists.
+
+   A rename is possible, because nobody installs this repository as a dependency (every consumer runs its own renamed copy, so a rename here breaks no running system). But it only pays off if it lands everywhere at once: rename in this catalog **and** in every consumer's context class in the same coordinated change, or the next sync reports the signature as drift and reverts it. Before renaming, check each consumer for callers that pass the parameter **by name** — a consumer that cannot be edited blocks the rename outright. Concrete case: `rtti_create_sel_tab_type`'s `ir_tab` keeps its Hungarian name because abap2UI5's frozen `src/99` passes it as a named argument; the parameter is documented as such at the declaration in both repositories.
