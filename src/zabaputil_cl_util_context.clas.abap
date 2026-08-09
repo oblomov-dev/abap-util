@@ -1217,6 +1217,40 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_classes.
 
+    " abap_true for values that can be rendered into a text without a
+    " conversion dump - the elementary types. Anything structured (struct,
+    " table, reference) must be excluded before a generic `|{ val }|`.
+    CLASS-METHODS rtti_check_printable
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+
+    " The source-code position an exception was raised at, as
+    " `<program> / <include> / line <n>`; empty when the runtime supplies
+    " none. Wraps cx_root->get_source_position so the dependency on the SAP
+    " standard exception API stays inside this class. This is what identifies
+    " the failing method for exceptions that carry no text of their own -
+    " a CX_SY_MOVE_CAST_ERROR only says which types did not match, the
+    " position says where.
+    CLASS-METHODS error_get_source_position
+      IMPORTING
+        val           TYPE REF TO cx_root
+      RETURNING
+        VALUE(result) TYPE string.
+
+    " Every public, non-static, non-constant attribute of an exception that
+    " has a printable value - the class-specific payload the text alone does
+    " not carry (source/target type of a cast error, the offending value of a
+    " conversion error, DB object of an SQL error, ...). The general cx_root
+    " attributes (PREVIOUS, TEXTID, IS_RESUMABLE, KERNEL_ERRID) are skipped -
+    " the caller renders them itself or they carry no information.
+    CLASS-METHODS error_get_attributes
+      IMPORTING
+        val           TYPE REF TO cx_root
+      RETURNING
+        VALUE(result) TYPE ty_t_name_value.
+
     CLASS-METHODS rtti_get_t_fixvalues
       IMPORTING
         elemdescr     TYPE REF TO cl_abap_elemdescr
@@ -2850,14 +2884,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA(lt_tab) = VALUE ty_t_range( ).
 
     itab_corresponding( EXPORTING val = val
-                        CHANGING  tab = lt_tab
-    ).
+                        CHANGING  tab = lt_tab ).
 
     LOOP AT lt_tab REFERENCE INTO DATA(lr_row).
 
       DATA(lv_value) = lt_mapping[ n = lr_row->option ]-v.
       REPLACE `{LOW}`  IN lv_value WITH lr_row->low.
       REPLACE `{HIGH}` IN lv_value WITH lr_row->high.
+
+      " an excluding row must not render like its including twin - negate the
+      " token so the MultiInput shows the filter's real meaning
+      IF lr_row->sign = `E`.
+        lv_value = |!({ lv_value })|.
+      ENDIF.
 
       INSERT VALUE #( key      = lv_value
                       text     = lv_value
@@ -2868,10 +2907,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD itab_filter_by_val.
-    " TRANSPILER NOTE: ABAP CS operator is ALWAYS case-insensitive regardless
-    " of the ignore_case flag. The flag only pre-converts to uppercase for
-    " consistency, but CS itself never does case-sensitive matching.
-    " JS equivalent: always use toLowerCase().includes(toLowerCase()).
+    " TRANSPILER NOTE: ABAP CS is always case-insensitive, so the two match
+    " branches below differ deliberately: ignore_case = abap_true uses
+    " to_upper + CS (JS: toLowerCase().includes(toLowerCase())), the default
+    " uses find( ) for a genuinely case-sensitive match (JS: plain includes()).
     FIELD-SYMBOLS <row>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
 
@@ -2889,7 +2928,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         IF fields IS INITIAL.
           ASSIGN COMPONENT lv_index OF STRUCTURE <row> TO <field>.
           IF sy-subrc <> 0.
-            EXIT.
+            IF lv_index = 1.
+              " elementary line type (e.g. string_table) has no components -
+              " match against the whole line instead of deleting every row
+              ASSIGN <row> TO <field>.
+            ELSE.
+              EXIT.
+            ENDIF.
           ENDIF.
         ELSE.
           IF lv_index > lv_field_count.
@@ -3075,6 +3120,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rtti_get_classname_by_ref.
+
+    " an unbound reference has no class - answer with an empty name instead
+    " of letting the RTTI call fail. Callers ask this while rendering (error
+    " context, response header), where a half-built object graph is normal
+    IF val IS NOT BOUND.
+      RETURN.
+    ENDIF.
 
     DATA(lv_classname) = cl_abap_classdescr=>get_class_name( val ).
     result = substring_after( val = lv_classname
@@ -3369,6 +3421,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <unassign> TYPE any.
 
     ASSIGN val->* TO <unassign>.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
     result = <unassign>.
 
   ENDMETHOD.
@@ -3378,6 +3433,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <unassign> TYPE any.
 
     ASSIGN val->* TO <unassign>.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
     result = <unassign>.
 
   ENDMETHOD.
@@ -3407,6 +3465,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                                with = `=`
                                occ  = 0 ).
 
+    " RFC 3986 allows lowercase hex digits in percent-encodings, so decode
+    " %3d the same way as %3D (%26 contains no letters and needs no twin)
+    lv_search = replace( val  = lv_search
+                         sub  = `%3d`
+                         with = `=`
+                         occ  = 0 ).
+
     lv_search = replace( val  = lv_search
                          sub  = `%26`
                          with = `&`
@@ -3415,7 +3480,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     lv_search = shift_left( val = lv_search
                             sub = `?` ).
 
-    DATA(lv_search2) = substring_after( val = lv_search
+    " prepend & before searching so sap-startup-params is also unwrapped
+    " when it is the first/only query parameter (typical FLP target mapping)
+    DATA(lv_search2) = substring_after( val = |&{ lv_search }|
                                         sub = `&sap-startup-params=` ).
     lv_search = COND #( WHEN lv_search2 IS NOT INITIAL THEN lv_search2 ELSE lv_search ).
 
@@ -3659,7 +3726,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       CASE rtti_get_type_kind( <component> ).
 
-        WHEN cl_abap_typedescr=>typekind_table.
+        " skip components that cannot be moved into the string value: tables,
+        " nested structures and references would raise an unhandled move
+        " error at runtime
+        WHEN cl_abap_typedescr=>typekind_table OR
+             cl_abap_typedescr=>typekind_struct1 OR
+             cl_abap_typedescr=>typekind_struct2 OR
+             cl_abap_typedescr=>typekind_dref OR
+             cl_abap_typedescr=>typekind_oref.
 
         WHEN OTHERS.
           INSERT VALUE #(
@@ -4087,14 +4161,127 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_check_clike.
 
+    " typekind_clike and typekind_csequence are generic kinds - RTTI never
+    " reports them for an actual data object, so branching on them was dead.
+    " N/D/T are character-like in every operation that matters here (they can
+    " be moved to a string and rendered in a string template without a dump).
     DATA(lv_type) = rtti_get_type_kind( val ).
     CASE lv_type.
       WHEN cl_abap_datadescr=>typekind_char OR
-          cl_abap_datadescr=>typekind_clike OR
-          cl_abap_datadescr=>typekind_csequence OR
-          cl_abap_datadescr=>typekind_string.
+          cl_abap_datadescr=>typekind_string OR
+          cl_abap_datadescr=>typekind_num OR
+          cl_abap_datadescr=>typekind_date OR
+          cl_abap_datadescr=>typekind_time.
         result = abap_true.
     ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD rtti_check_printable.
+
+    IF rtti_check_clike( val ) = abap_true.
+      result = abap_true.
+      RETURN.
+    ENDIF.
+
+    CASE rtti_get_type_kind( val ).
+      WHEN cl_abap_datadescr=>typekind_int OR
+          cl_abap_datadescr=>typekind_int1 OR
+          cl_abap_datadescr=>typekind_int2 OR
+          cl_abap_datadescr=>typekind_packed OR
+          cl_abap_datadescr=>typekind_float OR
+          cl_abap_datadescr=>typekind_hex.
+        result = abap_true.
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD error_get_source_position.
+
+    " typed like the EXPORTING parameters of get_source_position (syrepid is
+    " CHAR40) - they are passed by reference, so a string would not be
+    " type-compatible here
+    DATA lv_program TYPE c LENGTH 40.
+    DATA lv_include TYPE c LENGTH 40.
+    DATA lv_line    TYPE i.
+
+    IF val IS NOT BOUND.
+      RETURN.
+    ENDIF.
+
+    " open-abap - the transpiled JS runtime behind the node tests - implements
+    " get_source_position by reading a field that only the RAISE statement
+    " writes, and fails with a JS TypeError for every other exception (a
+    " runtime-thrown one, or one built with NEW). That error is not an ABAP
+    " exception, so the TRY below cannot intercept it and the caller would go
+    " down instead of reporting the error it was diagnosing. sy-saprl is
+    " `OPEN` on that runtime and a real release everywhere else.
+    IF sy-saprl = `OPEN`.
+      RETURN.
+    ENDIF.
+
+    TRY.
+        val->get_source_position( IMPORTING program_name = lv_program
+                                            include_name = lv_include
+                                            source_line  = lv_line ).
+      CATCH cx_root ##NO_HANDLER.
+        " never let the diagnostic be the reason a caller fails
+    ENDTRY.
+
+    IF lv_program IS INITIAL AND lv_line IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    result = c_trim( lv_program ).
+    " the include is the interesting part for a class (...CM001 = the method
+    " that raised); repeating it when it equals the program adds nothing
+    IF lv_include IS NOT INITIAL AND lv_include <> lv_program.
+      result = |{ result } / { c_trim( lv_include ) }|.
+    ENDIF.
+    IF lv_line IS NOT INITIAL.
+      result = |{ result } / line { lv_line }|.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD error_get_attributes.
+
+    FIELD-SYMBOLS <comp> TYPE any.
+
+    IF val IS NOT BOUND.
+      RETURN.
+    ENDIF.
+
+    TRY.
+        DATA(lt_attri) = rtti_get_t_attri_by_oref( val ).
+      CATCH cx_root ##NO_HANDLER.
+        RETURN.
+    ENDTRY.
+
+    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri)
+         WHERE visibility  = cv_objectdescr_public
+           AND is_constant = abap_false
+           AND is_class    = abap_false.
+
+      CASE lr_attri->name.
+          " rendered by the caller (PREVIOUS as the next chain entry,
+          " KERNEL_ERRID as its own line) or without information value
+        WHEN `PREVIOUS` OR `TEXTID` OR `IS_RESUMABLE` OR `KERNEL_ERRID`.
+          CONTINUE.
+      ENDCASE.
+
+      DATA(lv_name) = CONV string( lr_attri->name ).
+      ASSIGN val->(lv_name) TO <comp>.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      IF rtti_check_printable( <comp> ) = abap_false OR <comp> IS INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      INSERT VALUE #( n = lv_name
+                      v = c_trim( |{ <comp> }| ) ) INTO TABLE result.
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -4394,28 +4581,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA(lt_msg) = msg_get_t( val ).
 
     DATA(lv_lines) = lines( lt_msg ).
-    IF lv_lines > 0.
-      DATA(lv_type) = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+
+    IF lv_lines = 0.
+      result-skip = abap_true.
+      RETURN.
     ENDIF.
+
+    " the box takes its type/title from the FIRST message, also when several
+    " are collapsed into one box below
+    DATA(lv_type) = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+    result-title = lv_type.
+    result-type  = to_lower( lv_type ).
 
     IF lv_lines = 1.
-      result-text  = lt_msg[ 1 ]-text.
-      result-type  = to_lower( lv_type ).
-      result-title = lv_type.
-
-    ELSEIF lv_lines > 1.
-      result-text = | { lv_lines } Messages found: |.
-      DATA lt_detail_items TYPE string_table.
-      LOOP AT lt_msg REFERENCE INTO DATA(lr_msg).
-        INSERT |<li>{ lr_msg->text }</li>| INTO TABLE lt_detail_items.
-      ENDLOOP.
-      result-details = `<ul>` && concat_lines_of( lt_detail_items ) && `</ul>`.
-      result-title   = lv_type.
-      result-type    = to_lower( lv_type ).
-
-    ELSE.
-      result-skip = abap_true.
+      result-text = lt_msg[ 1 ]-text.
+      RETURN.
     ENDIF.
+
+    " several messages: a counting headline plus every text as a bullet
+    result-text = | { lv_lines } Messages found: |.
+    DATA lt_detail_items TYPE string_table.
+    LOOP AT lt_msg REFERENCE INTO DATA(lr_msg).
+      INSERT |<li>{ lr_msg->text }</li>| INTO TABLE lt_detail_items.
+    ENDLOOP.
+    result-details = `<ul>` && concat_lines_of( lt_detail_items ) && `</ul>`.
 
   ENDMETHOD.
 
@@ -5865,7 +6054,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         DATA(ls_result) = VALUE ty_s_msg( type = `E` text = lx->get_text( ) ).
         DATA(lt_attri_o) = rtti_get_t_attri_by_oref( val ).
         LOOP AT lt_attri_o REFERENCE INTO DATA(ls_attri_o)
-             WHERE visibility = `U`.
+             WHERE visibility = cv_objectdescr_public.
           DATA(lv_name) = ls_attri_o->name.
           ASSIGN lx->(lv_name) TO <comp>.
           IF sy-subrc <> 0.
@@ -5910,7 +6099,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
                 lt_attri_o = rtti_get_t_attri_by_oref( val ).
                 LOOP AT lt_attri_o REFERENCE INTO ls_attri_o
-                     WHERE visibility = `U`.
+                     WHERE visibility = cv_objectdescr_public.
                   lv_name = ls_attri_o->name.
                   ASSIGN obj->(lv_name) TO <comp>.
                   IF sy-subrc <> 0.

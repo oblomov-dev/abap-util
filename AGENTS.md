@@ -22,17 +22,18 @@ This is the most important concept in this repository. Read it before changing a
 abap-util (master catalog, this repo)             Downstream projects (vendored copies)
 ┌──────────────────────────────┐
 │ zabaputil_cl_util_context    │  copy + rename   ┌────────────────────────────────────┐
-│  (ALL utility methods,       │ ───────────────→ │ abap2UI5:                          │
-│   full unit test coverage,   │  context class:  │  z2ui5_cl_a2ui5_context            │
-│   linted for 7.02/Standard/  │  trim to used    │  (src/00/03/, framework subset)    │
-│   Cloud)                     │  methods         ├────────────────────────────────────┤
-│ zabaputil_cl_util_http       │ ───────────────→ │ popups:                            │
-│ zabaputil_cx_error           │  other classes:  │  z2ui5_cl_popup_context            │
-│ ...                          │  copy as-is      │  (src/00/, popup subset)           │
+│  (ALL utility methods,       │ ───────────────→ │ abap2UI5 (src/00/03/):             │
+│   full unit test coverage,   │  context class:  │  z2ui5_cl_a2ui5_context (subset)   │
+│   linted for 7.02/Standard/  │  trim to used    │  z2ui5_cl_a2ui5_http               │
+│   Cloud)                     │  methods         │  z2ui5_cx_a2ui5_error              │
+│ zabaputil_cl_util_http       │ ───────────────→ ├────────────────────────────────────┤
+│ zabaputil_cx_error           │  other classes:  │ popups:                            │
+│ ...                          │  copy as-is      │  z2ui5_cl_popup_context            │
+│                              │                  │  (src/00/, popup subset)           │
 └──────────────────────────────┘                  └────────────────────────────────────┘
         ↑                                                          │
-        └── periodic AI sync-back: methods added locally in the ───┘
-            consumers' context classes are merged into abap-util,
+        └── periodic AI sync-back: what was added or fixed in ─────┘
+            ANY vendored class downstream is merged into abap-util,
             so the master stays the superset of all methods
 ```
 
@@ -45,7 +46,11 @@ abap-util (master catalog, this repo)             Downstream projects (vendored 
 1. **Class-level selection:** every project decides which utility classes it needs and vendors a renamed copy of exactly those classes.
 2. **Method-level trimming — context class only:** the copy of `zabaputil_cl_util_context` is additionally reduced at method level to the methods the project actually uses. Trimming must keep the closure: every private/protected helper a kept method calls (transitively) stays in the copy. All other vendored classes are copied as-is.
 3. **New methods are developed locally.** When a project needs a utility method during development that its context-class copy does not have, it is simply written directly into the project's local context class — no upstream round-trip is required. (If the method already exists in this catalog, copy it from here with its helper closure instead of re-implementing it.)
-4. **Periodic AI sync-back:** every few weeks an AI compares abap-util with all consumers' context classes and merges what was added or fixed downstream into this repository — so abap-util always converges back to the superset of all methods, unit-tested and linted for all targets, and every other consumer can pick them up from here.
+4. **Periodic AI sync-back:** every few weeks an AI compares abap-util with all consumers and merges what was added or fixed downstream into this repository — so abap-util always converges back to the superset of all methods, unit-tested and linted for all targets, and every other consumer can pick them up from here.
+
+   **The sync covers every vendored class, not only the context class.** The context class is where most of the movement is, but a consumer fixes whatever it has a copy of: abap2UI5's `z2ui5_cx_a2ui5_error` and `z2ui5_cl_a2ui5_http` are copies of `zabaputil_cx_error` and `zabaputil_cl_util_http` and drift exactly the same way. Diff each consumer's full set of vendored classes against its master here.
+
+   **Two things next to a vendored copy are not sync sources.** A consumer may own classes in the same package that have no master here — abap2UI5's `z2ui5_cl_a2ui5_json_fltr` is framework-owned and stays downstream. And abap2UI5's `src/99/01/` (`z2ui5_cl_util`, `z2ui5_cl_util_http`, `z2ui5_cx_util_error`, …) holds frozen pre-vendoring copies that receive no fixes; syncing from them would drag dead code back into the master. Both are excluded — check the consumer's own AGENTS.md for its current list.
 
    **The sync compares method *bodies*, not just method names.** A consumer that fixes a bug in a method it already has produces no missing method at all, so a name-level diff reports "in sync" while the master keeps shipping the broken implementation to every other consumer. Diff each shared method's body (normalizing the renamed class/exception prefixes), and treat a behavioral difference as a sync item exactly like a missing method. Pure formatting and comment-wording differences are expected — each consumer runs its own formatter config — and are not sync items.
 5. **Multi-environment compatibility is non-negotiable:** every method must work on NW 7.02, Standard ABAP, and ABAP Cloud, because any consumer may run on any of these targets. Environment-specific behavior is branched via `check_abap_cloud( )` and dynamic calls so the code compiles everywhere.
@@ -88,7 +93,7 @@ CI lints against all three targets (`ABAP_702.yaml`, `ABAP_STANDARD.yaml`, `ABAP
 ## Rules for AI Assistants
 
 1. **Do not modify `src/00/01/` (ajson) and `src/00/02/` (S-RTTI)** — mirrored from external projects.
-2. **Never break the master-catalog contract** (see above): this repository must remain the superset of all utility methods across all consumers; methods added downstream are merged back here by the periodic AI sync, and unit tests live here.
+2. **Never break the master-catalog contract** (see above): this repository must remain the superset of all utility methods across all consumers — for *every* vendored class, not only the context class. Methods added downstream are merged back here by the periodic AI sync, and unit tests live here.
 3. **Always run `npx abaplint`** before considering changes complete.
 4. **Multi-environment compatibility** — code must work on NW 7.02, Standard ABAP, and ABAP Cloud. No direct use of on-premise-only or cloud-only APIs without a dynamic-call branch.
 5. **String literals use backticks** (`` ` ``), not single quotes; `xsdbool()` for booleans; `NEW #()` instead of `CREATE OBJECT`.
