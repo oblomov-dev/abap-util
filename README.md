@@ -35,17 +35,19 @@ Install via [abapGit](https://abapgit.org) - clone this repository into your SAP
 
 abap-util is designed to be consumed **as a vendored copy, not as an installed dependency**. abapGit has no dependency management, so a hard dependency between repositories would force users to install packages in the correct order and keep versions in sync. Instead, this repository is the **master catalog containing all utility classes with all methods**, and each downstream project decides which classes it needs and embeds a **renamed copy** of exactly those (e.g. `zabaputil_cl_util_context`, and where needed `zabaputil_cl_util_http` or `zabaputil_cx_error`). Only the context class is additionally **trimmed at method level** to the methods the project actually uses; other classes are copied as-is:
 
-| Project | Vendored Copy | Scope |
+| Project | Vendored Copies | Scope |
 |---|---|---|
-| [abap2UI5](https://github.com/abap2UI5/abap2UI5) | `z2ui5_cl_a2ui5_context` (`src/00/03/`) | methods used by the core framework |
+| [abap2UI5](https://github.com/abap2UI5/abap2UI5) | `z2ui5_cl_a2ui5_context`, `z2ui5_cl_a2ui5_http`, `z2ui5_cx_a2ui5_error` (`src/00/03/`) | context class trimmed to the methods used by the core framework, the other two copied as-is |
 | [popups](https://github.com/abap2UI5-addons/popups) | `z2ui5_cl_popup_context` (`src/00/`) | methods used by the popup apps |
+
+Not every class next to a vendored copy has a master here: `z2ui5_cl_a2ui5_json_fltr` in the same abap2UI5 package is framework-owned and has no counterpart in this repository. And abap2UI5's `src/99/01/` (`z2ui5_cl_util`, `z2ui5_cl_util_http`, `z2ui5_cx_util_error`, …) holds *frozen* copies from before the vendoring model — they are kept for compatibility, receive no fixes, and are never a source for the sync described below.
 
 This gives every consumer a zero-dependency installation ("clone and go") and full namespace isolation (several projects — even on different versions — can coexist in one system with their own copy), while this repository remains the place where all methods converge, are unit-tested, and are kept compatible with all ABAP releases.
 
 **How the cycle works:**
 * **Copy per class:** each project vendors a renamed copy of the classes it needs. Only the context class is additionally reduced at **method level** — unused methods are removed (the private helpers a kept method needs stay in the copy).
 * **Develop locally:** when a project needs a new utility method during development, it is simply written directly into the project's local context class — no upstream detour required.
-* **AI sync-back:** every few weeks an AI compares abap-util with all consumers, detects methods that were added downstream, and merges them into this repository — so abap-util always returns to being the superset of all methods, and every other consumer can adopt them from here. Fix it here, then update the copies.
+* **AI sync-back:** every few weeks an AI compares abap-util with all consumers — **every vendored class, not only the context class** — detects what was added or fixed downstream, and merges it into this repository. So abap-util always returns to being the superset of all methods, and every other consumer can adopt them from here. Fix it here, then update the copies.
 
 #### Usage
 

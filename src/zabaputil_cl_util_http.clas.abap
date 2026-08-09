@@ -186,6 +186,7 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
     TRY.
 
         ASSIGN lo_client->(`REQUEST`) TO <any>.
+        ASSERT sy-subrc = 0.
         lo_request = <any>.
 
         DATA(lv_method) = CONV string( method ).
@@ -227,6 +228,7 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         ENDIF.
 
         ASSIGN lo_client->(`RESPONSE`) TO <any>.
+        ASSERT sy-subrc = 0.
         lo_response = <any>.
 
         CALL METHOD lo_response->(`GET_CDATA`)
@@ -260,12 +262,6 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
       CALL METHOD object->(`DELETE_COOKIE`)
         EXPORTING
           name = lv_val.
-
-    ELSE.
-
-*      CALL METHOD mo_response_cloud->(`DELETE_COOKIE_AT_CLIENT`)
-*        EXPORTING
-*          name = lv_val.
 
     ENDIF.
 
@@ -474,10 +470,10 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD get_request_onprem.
 
-    FIELD-SYMBOLS <any> TYPE any.
-
     IF mo_request_onprem IS NOT BOUND.
+      FIELD-SYMBOLS <any> TYPE any.
       ASSIGN mo_server_onprem->(`REQUEST`) TO <any>.
+      ASSERT sy-subrc = 0.
       mo_request_onprem = <any>.
     ENDIF.
 
@@ -487,10 +483,10 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD get_response_onprem.
 
-    FIELD-SYMBOLS <any> TYPE any.
-
     IF mo_response_onprem IS NOT BOUND.
+      FIELD-SYMBOLS <any> TYPE any.
       ASSIGN mo_server_onprem->(`RESPONSE`) TO <any>.
+      ASSERT sy-subrc = 0.
       mo_response_onprem = <any>.
     ENDIF.
 

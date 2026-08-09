@@ -3066,3 +3066,281 @@ CLASS ltcl_cur_amounts IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+"! Local exception used by the error_* tests below - a class-specific
+"! attribute is exactly what error_get_attributes has to surface.
+CLASS lcx_sync_test DEFINITION INHERITING FROM cx_static_check FINAL.
+
+  PUBLIC SECTION.
+
+    DATA mv_detail TYPE string.
+    DATA mv_empty  TYPE string ##NEEDED.
+    DATA mt_tab    TYPE string_table ##NEEDED.
+
+    METHODS constructor
+      IMPORTING
+        detail TYPE string OPTIONAL.
+
+ENDCLASS.
+
+CLASS lcx_sync_test IMPLEMENTATION.
+
+  METHOD constructor.
+    super->constructor( ).
+    mv_detail = detail.
+  ENDMETHOD.
+
+ENDCLASS.
+
+"! ================================================================
+"! Methods and fixes synced back from the consumers' context classes
+"! ================================================================
+CLASS ltcl_sync_back DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+
+  PRIVATE SECTION.
+
+    " rtti_check_clike / rtti_check_printable
+    METHODS clike_string                   FOR TESTING.
+    METHODS clike_date_time_num            FOR TESTING.
+    METHODS clike_int_is_false             FOR TESTING.
+    METHODS printable_elementary           FOR TESTING.
+    METHODS printable_complex_is_false     FOR TESTING.
+
+    " error_get_source_position / error_get_attributes
+    METHODS position_unbound_is_empty      FOR TESTING.
+    METHODS position_bound_no_dump         FOR TESTING.
+    METHODS attributes_unbound_is_empty    FOR TESTING.
+    METHODS attributes_own_attribute       FOR TESTING.
+    METHODS attributes_skip_general        FOR TESTING.
+
+    " unassign_* / rtti_get_classname_by_ref guards
+    METHODS unassign_data_unbound          FOR TESTING.
+    METHODS unassign_object_unbound        FOR TESTING.
+    METHODS classname_unbound_is_empty     FOR TESTING.
+
+    " itab_* fixes
+    METHODS filter_elementary_line_type    FOR TESTING.
+    METHODS struc_skips_complex_components FOR TESTING.
+
+    " filter tokens / url params
+    METHODS token_excluding_is_negated     FOR TESTING.
+    METHODS token_including_unchanged      FOR TESTING.
+    METHODS url_lower_case_encoded_equals  FOR TESTING.
+    METHODS url_startup_params_first       FOR TESTING.
+
+    " ui5_msg_box_format
+    METHODS msg_box_empty_is_skipped       FOR TESTING.
+    METHODS msg_box_single_message         FOR TESTING.
+    METHODS msg_box_several_messages       FOR TESTING.
+
+ENDCLASS.
+
+CLASS ltcl_sync_back IMPLEMENTATION.
+
+  METHOD clike_string.
+    DATA lv_str TYPE string.
+    DATA lv_char TYPE c LENGTH 4.
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_clike( lv_str ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_clike( lv_char ) ).
+  ENDMETHOD.
+
+  METHOD clike_date_time_num.
+    " N/D/T are character-like - they used to be reported as non-clike, so a
+    " date handed to msg_get_t was silently dropped instead of rendered
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+    DATA lv_num  TYPE n LENGTH 4.
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_clike( lv_date ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_clike( lv_time ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_clike( lv_num ) ).
+  ENDMETHOD.
+
+  METHOD clike_int_is_false.
+    DATA lv_int TYPE i.
+    DATA lt_tab TYPE string_table.
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_clike( lv_int ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_clike( lt_tab ) ).
+  ENDMETHOD.
+
+  METHOD printable_elementary.
+    DATA lv_int  TYPE i.
+    DATA lv_pack TYPE p LENGTH 8 DECIMALS 2.
+    DATA lv_str  TYPE string.
+    DATA lv_date TYPE d.
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_printable( lv_int ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_printable( lv_pack ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_printable( lv_str ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_printable( lv_date ) ).
+  ENDMETHOD.
+
+  METHOD printable_complex_is_false.
+    " these are the ones a generic |{ val }| would dump on
+    DATA lt_tab TYPE string_table.
+    DATA ls_struc TYPE ltcl_test_app=>ty_row.
+    DATA lo_obj TYPE REF TO ltcl_test_app.
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lt_tab ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( ls_struc ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lo_obj ) ).
+  ENDMETHOD.
+
+  METHOD position_unbound_is_empty.
+    DATA lx TYPE REF TO cx_root.
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>error_get_source_position( lx ) ).
+  ENDMETHOD.
+
+  METHOD position_bound_no_dump.
+    " the contract is "never let the diagnostic be the reason a caller fails"
+    " - the content depends on the runtime (empty on the transpiler), that it
+    " returns at all is what is asserted here
+    TRY.
+        RAISE EXCEPTION TYPE lcx_sync_test.
+      CATCH lcx_sync_test INTO DATA(lx).
+        DATA(lv_position) = zabaputil_cl_util_context=>error_get_source_position( lx ).
+        cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>rtti_check_clike( lv_position )
+                                            exp = abap_true ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD attributes_unbound_is_empty.
+    DATA lx TYPE REF TO cx_root.
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>error_get_attributes( lx ) ).
+  ENDMETHOD.
+
+  METHOD attributes_own_attribute.
+    DATA(lx) = NEW lcx_sync_test( `the_detail` ).
+    DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( lx ).
+    cl_abap_unit_assert=>assert_equals( act = lt_attri[ n = `MV_DETAIL` ]-v
+                                        exp = `the_detail` ).
+  ENDMETHOD.
+
+  METHOD attributes_skip_general.
+    DATA(lx) = NEW lcx_sync_test( `the_detail` ).
+    DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( lx ).
+    " rendered by the caller or without information value
+    cl_abap_unit_assert=>assert_false( xsdbool( line_exists( lt_attri[ n = `PREVIOUS` ] ) ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( line_exists( lt_attri[ n = `TEXTID` ] ) ) ).
+    " initial and non-printable attributes carry nothing to show
+    cl_abap_unit_assert=>assert_false( xsdbool( line_exists( lt_attri[ n = `MV_EMPTY` ] ) ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( line_exists( lt_attri[ n = `MT_TAB` ] ) ) ).
+  ENDMETHOD.
+
+  METHOD unassign_data_unbound.
+    DATA lr_data TYPE REF TO data.
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>unassign_data( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD unassign_object_unbound.
+    DATA lr_data TYPE REF TO data.
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>unassign_object( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD classname_unbound_is_empty.
+    DATA lo_obj TYPE REF TO object.
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>rtti_get_classname_by_ref( lo_obj ) ).
+  ENDMETHOD.
+
+  METHOD filter_elementary_line_type.
+    " a table without components used to lose every row, because the failing
+    " ASSIGN COMPONENT 1 was read as "no more fields, nothing matched"
+    DATA(lt_tab) = VALUE string_table( ( `alpha` ) ( `beta` ) ( `gamma` ) ).
+    zabaputil_cl_util_context=>itab_filter_by_val( EXPORTING val = `et`
+                                                   CHANGING  tab = lt_tab ).
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_tab )
+                                        exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_tab[ 1 ]
+                                        exp = `beta` ).
+  ENDMETHOD.
+
+  METHOD struc_skips_complex_components.
+    " only the elementary components survive - a nested structure or a
+    " reference would raise an unhandled move error on the value assignment
+    DATA:
+      BEGIN OF ls_struc,
+        name   TYPE string,
+        tab    TYPE string_table,
+        nested TYPE ltcl_test_app=>ty_row,
+        ref    TYPE REF TO data,
+        obj    TYPE REF TO object,
+      END OF ls_struc.
+
+    ls_struc-name = `the_name`.
+    DATA(lt_result) = zabaputil_cl_util_context=>itab_get_by_struc( ls_struc ).
+
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_result )
+                                        exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_result[ 1 ]-n
+                                        exp = `NAME` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_result[ 1 ]-v
+                                        exp = `the_name` ).
+  ENDMETHOD.
+
+  METHOD token_excluding_is_negated.
+    DATA(lt_range) = VALUE zabaputil_cl_util_context=>ty_t_range(
+                             ( sign = `E` option = `EQ` low = `4711` ) ).
+    DATA(lt_token) = zabaputil_cl_util_context=>filter_get_token_t_by_range_t( lt_range ).
+    cl_abap_unit_assert=>assert_equals( act = lt_token[ 1 ]-text
+                                        exp = `!(=4711)` ).
+  ENDMETHOD.
+
+  METHOD token_including_unchanged.
+    DATA(lt_range) = VALUE zabaputil_cl_util_context=>ty_t_range(
+                             ( sign = `I` option = `EQ` low = `4711` ) ).
+    DATA(lt_token) = zabaputil_cl_util_context=>filter_get_token_t_by_range_t( lt_range ).
+    cl_abap_unit_assert=>assert_equals( act = lt_token[ 1 ]-text
+                                        exp = `=4711` ).
+  ENDMETHOD.
+
+  METHOD url_lower_case_encoded_equals.
+    " RFC 3986 allows lowercase hex digits in percent-encodings
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?name%3dvalue` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
+                                        exp = `value` ).
+  ENDMETHOD.
+
+  METHOD url_startup_params_first.
+    " sap-startup-params as the first/only parameter has no leading & to
+    " match on - the wrapper used to stay in the parameter name
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?sap-startup-params=name%3Dvalue` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
+                                        exp = `value` ).
+  ENDMETHOD.
+
+  METHOD msg_box_empty_is_skipped.
+    DATA lv_empty TYPE string.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_msg_box_format( lv_empty ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_true ).
+    cl_abap_unit_assert=>assert_initial( ls_box-text ).
+  ENDMETHOD.
+
+  METHOD msg_box_single_message.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_msg_box_format( `the_message` ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `the_message` ).
+    " title and type come from the message type, both are always filled
+    cl_abap_unit_assert=>assert_not_initial( ls_box-title ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-type
+                                        exp = to_lower( ls_box-title ) ).
+    cl_abap_unit_assert=>assert_initial( ls_box-details ).
+  ENDMETHOD.
+
+  METHOD msg_box_several_messages.
+    DATA(lt_msg) = VALUE zabaputil_cl_util_context=>ty_t_msg( ( type = `E` text = `first` )
+                                                              ( type = `E` text = `second` ) ).
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_msg_box_format( lt_msg ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-text
+                                         exp = `*2*` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<li>first</li>*<li>second</li>*` ).
+    " type/title of the box come from the FIRST message, not from the last
+    cl_abap_unit_assert=>assert_not_initial( ls_box-title ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-type
+                                        exp = to_lower( ls_box-title ) ).
+  ENDMETHOD.
+
+ENDCLASS.
