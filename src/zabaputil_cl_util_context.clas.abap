@@ -2714,12 +2714,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_trim.
 
-    result = shift_left( shift_right( CONV string( val ) ) ).
-    result = shift_right( val = result
-                          sub = cv_char_util_horizontal_tab ).
-    result = shift_left( val = result
-                         sub = cv_char_util_horizontal_tab ).
-    result = shift_left( shift_right( result ) ).
+    result = CONV string( val ).
+    " spaces and tabs alternate at either end (`\t \tx`) - one pass of each
+    " leaves the inner layer standing, so strip until nothing changes
+    DO 10 TIMES.
+      DATA(lv_before) = result.
+      result = shift_left( shift_right( result ) ).
+      result = shift_right( val = result
+                            sub = cv_char_util_horizontal_tab ).
+      result = shift_left( val = result
+                           sub = cv_char_util_horizontal_tab ).
+      IF result = lv_before.
+        EXIT.
+      ENDIF.
+    ENDDO.
 
   ENDMETHOD.
 

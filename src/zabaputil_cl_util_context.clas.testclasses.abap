@@ -57,6 +57,10 @@ CLASS ltcl_string_ops DEFINITION FINAL
     METHODS trim_horizontal_tab            FOR TESTING.
     METHODS trim_empty                     FOR TESTING.
     METHODS trim_no_trim_needed            FOR TESTING.
+    METHODS trim_interleaved_blank_tab     FOR TESTING.
+    METHODS trim_interleaved_deep          FOR TESTING.
+    METHODS trim_only_blanks_and_tabs      FOR TESTING.
+    METHODS trim_keeps_inner_whitespace    FOR TESTING.
 
     " c_trim_upper
     METHODS trim_upper_basic               FOR TESTING.
@@ -158,6 +162,39 @@ CLASS ltcl_string_ops IMPLEMENTATION.
   METHOD trim_no_trim_needed.
     cl_abap_unit_assert=>assert_equals( exp = `abc`
                                         act = zabaputil_cl_util_context=>c_trim( `abc` ) ).
+  ENDMETHOD.
+
+  METHOD trim_interleaved_blank_tab.
+    " `\t \thello\t \t` - two passes (one of each) leave the inner layer
+    " standing, which is what the fixed-point loop is for
+    DATA(lv_tab) = zabaputil_cl_util_context=>cv_char_util_horizontal_tab.
+    DATA(lv_val) = lv_tab && ` ` && lv_tab && `hello` && lv_tab && ` ` && lv_tab.
+    cl_abap_unit_assert=>assert_equals( exp = `hello`
+                                        act = zabaputil_cl_util_context=>c_trim( lv_val ) ).
+  ENDMETHOD.
+
+  METHOD trim_interleaved_deep.
+    DATA(lv_tab) = zabaputil_cl_util_context=>cv_char_util_horizontal_tab.
+    DATA(lv_val) = ` ` && lv_tab && ` ` && lv_tab && ` ` && lv_tab && `x`
+                && lv_tab && ` ` && lv_tab && ` ` && lv_tab && ` `.
+    cl_abap_unit_assert=>assert_equals( exp = `x`
+                                        act = zabaputil_cl_util_context=>c_trim( lv_val ) ).
+  ENDMETHOD.
+
+  METHOD trim_only_blanks_and_tabs.
+    DATA(lv_tab) = zabaputil_cl_util_context=>cv_char_util_horizontal_tab.
+    DATA(lv_val) = ` ` && lv_tab && ` ` && lv_tab && ` `.
+    cl_abap_unit_assert=>assert_equals( exp = ``
+                                        act = zabaputil_cl_util_context=>c_trim( lv_val ) ).
+  ENDMETHOD.
+
+  METHOD trim_keeps_inner_whitespace.
+    " only the ends are stripped - a tab between two words stays
+    DATA(lv_tab) = zabaputil_cl_util_context=>cv_char_util_horizontal_tab.
+    DATA(lv_exp) = `a` && lv_tab && ` b`.
+    DATA(lv_val) = ` ` && lv_tab && lv_exp && lv_tab && ` `.
+    cl_abap_unit_assert=>assert_equals( exp = lv_exp
+                                        act = zabaputil_cl_util_context=>c_trim( lv_val ) ).
   ENDMETHOD.
 
   METHOD trim_upper_basic.
