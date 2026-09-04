@@ -80,6 +80,7 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     DATA lo_root TYPE REF TO cx_root.
     DATA lv_text TYPE string.
+    DATA temp4 TYPE REF TO cx_root.
 
     TRY.
         lo_root ?= val.
@@ -100,7 +101,13 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     " a failed dynamic call, and with it the source position of the method
     " that really failed - is dropped and only the outermost message ever
     " reaches the caller.
-    super->constructor( previous = COND #( WHEN previous IS BOUND THEN previous ELSE lo_root ) ).
+    
+    IF previous IS BOUND.
+      temp4 = previous.
+    ELSE.
+      temp4 = lo_root.
+    ENDIF.
+    super->constructor( previous = temp4 ).
     CLEAR textid.
 
     ms_error-x_root = lo_root.
@@ -130,13 +137,16 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_text_own_by_x.
+        DATA temp5 TYPE REF TO zabaputil_cx_error.
 
     IF val IS NOT BOUND.
       RETURN.
     ENDIF.
 
     TRY.
-        result = CAST zabaputil_cx_error( val )->get_text_own( ).
+        
+        temp5 ?= val.
+        result = temp5->get_text_own( ).
       CATCH cx_sy_move_cast_error.
         result = val->get_text( ).
     ENDTRY.
@@ -147,20 +157,30 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     DATA lv_count TYPE i.
     DATA lv_text  TYPE string.
+    DATA lv_last LIKE result.
+    DATA lo_x LIKE previous.
+        DATA temp6 TYPE string.
+    DATA temp7 TYPE string.
 
     result = get_text_own( ).
-    DATA(lv_last) = result.
+    
+    lv_last = result.
 
-    DATA(lo_x) = previous.
+    
+    lo_x = previous.
     WHILE lo_x IS BOUND AND lv_count < cv_chain_max.
       lv_count = lv_count + 1.
       lv_text = get_text_own_by_x( lo_x ).
       " a wrapper that only re-raises repeats the text of its cause - print
       " it once instead of the same line N times
       IF lv_text IS NOT INITIAL AND lv_text <> lv_last.
-        result = COND #( WHEN result IS INITIAL
-                         THEN lv_text
-                         ELSE result && zabaputil_cl_util_context=>cv_char_util_newline && lv_text ).
+        
+        IF result IS INITIAL.
+          temp6 = lv_text.
+        ELSE.
+          temp6 = result && zabaputil_cl_util_context=>cv_char_util_newline && lv_text.
+        ENDIF.
+        result = temp6.
         lv_last = lv_text.
       ENDIF.
       lo_x = lo_x->previous.
@@ -168,20 +188,31 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     " never answer with an empty text - a raise without val/previous would
     " otherwise produce a blank error message downstream
-    result = COND #( WHEN result IS INITIAL THEN `UNKNOWN_ERROR` ELSE result ).
+    
+    IF result IS INITIAL.
+      temp7 = `UNKNOWN_ERROR`.
+    ELSE.
+      temp7 = result.
+    ENDIF.
+    result = temp7.
 
   ENDMETHOD.
 
   METHOD get_text_full.
 
     DATA lv_count TYPE i.
+    DATA lv_nl LIKE zabaputil_cl_util_context=>cv_char_util_newline.
+    DATA lv_message TYPE string.
+    DATA temp8 TYPE string.
+    DATA lo_x LIKE val.
 
     IF val IS NOT BOUND.
       result = `UNKNOWN_ERROR`.
       RETURN.
     ENDIF.
 
-    DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_newline.
+    
+    lv_nl = zabaputil_cl_util_context=>cv_char_util_newline.
 
     " The messages first, one per line: consumers split this dump on the
     " section headers to show the messages and hide the rest behind a details
@@ -190,13 +221,21 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     " part of the contract, do not reword it.
     " get_text( ) on an exception of this class already renders the whole
     " concise chain, every other exception class has only its own text.
-    DATA(lv_message) = val->get_text( ).
-    lv_message = COND #( WHEN lv_message IS INITIAL THEN `UNKNOWN_ERROR` ELSE lv_message ).
+    
+    lv_message = val->get_text( ).
+    
+    IF lv_message IS INITIAL.
+      temp8 = `UNKNOWN_ERROR`.
+    ELSE.
+      temp8 = lv_message.
+    ENDIF.
+    lv_message = temp8.
 
     result = `--- error ---` && lv_nl && lv_message &&
              lv_nl && lv_nl && `--- exception chain ---`.
 
-    DATA(lo_x) = val.
+    
+    lo_x = val.
     WHILE lo_x IS BOUND AND lv_count < cv_chain_max.
       lv_count = lv_count + 1.
       result = result && lv_nl && get_text_full_entry( val   = lo_x
@@ -214,11 +253,20 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
   METHOD get_text_full_entry.
 
-    DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_newline.
+    DATA lv_nl LIKE zabaputil_cl_util_context=>cv_char_util_newline.
+    DATA lv_text TYPE string.
+    DATA lv_position TYPE string.
+        DATA temp9 TYPE REF TO zabaputil_cx_error.
+        DATA lx_own LIKE temp9.
+    DATA lt_attri TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA temp10 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp10.
+    lv_nl = zabaputil_cl_util_context=>cv_char_util_newline.
 
     result = |[{ index }] { zabaputil_cl_util_context=>rtti_get_classname_by_ref( val ) }|.
 
-    DATA(lv_text) = get_text_own_by_x( val ).
+    
+    lv_text = get_text_own_by_x( val ).
     IF lv_text IS NOT INITIAL.
       result = result && lv_nl && |    text     : { lv_text }|.
     ENDIF.
@@ -226,7 +274,8 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     " the position is the answer to "which method failed?" - for a
     " CX_SY_MOVE_CAST_ERROR the text names the two types, only the position
     " names the class include and line that tried the cast
-    DATA(lv_position) = zabaputil_cl_util_context=>error_get_source_position( val ).
+    
+    lv_position = zabaputil_cl_util_context=>error_get_source_position( val ).
     IF lv_position IS NOT INITIAL.
       result = result && lv_nl && |    position : { lv_position }|.
     ENDIF.
@@ -236,7 +285,10 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     ENDIF.
 
     TRY.
-        DATA(lx_own) = CAST zabaputil_cx_error( val ).
+        
+        temp9 ?= val.
+        
+        lx_own = temp9.
         " computed on first render, not in the constructor - see there.
         " cx_root, not just the cast error: a failing uuid lookup must not
         " abort the rendering of the very error report it decorates, and an
@@ -248,8 +300,11 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
-    DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri).
+    
+    lt_attri = zabaputil_cl_util_context=>error_get_attributes( val ).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO lr_attri.
       result = result && lv_nl && |    { lr_attri->n } = { lr_attri->v }|.
     ENDLOOP.
 
@@ -257,7 +312,8 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
   METHOD get_text_full_context.
 
-    DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_newline.
+    DATA lv_nl LIKE zabaputil_cl_util_context=>cv_char_util_newline.
+    lv_nl = zabaputil_cl_util_context=>cv_char_util_newline.
 
     " the runtime context of the failing request - what an issue report
     " otherwise has to ask back for. Deliberately WITHOUT sy-host, sy-mandt

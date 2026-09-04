@@ -62,7 +62,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         n TYPE string,
         v TYPE string,
       END OF ty_s_name_value.
-    TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH EMPTY KEY.
+    TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_token,
@@ -72,7 +72,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         selkz    TYPE abap_bool,
         editable TYPE abap_bool,
       END OF ty_s_token.
-    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
+    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_range,
@@ -81,7 +81,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         low    TYPE string,
         high   TYPE string,
       END OF ty_s_range.
-    TYPES ty_t_range TYPE STANDARD TABLE OF ty_s_range WITH EMPTY KEY.
+    TYPES ty_t_range TYPE STANDARD TABLE OF ty_s_range WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_filter_multi,
@@ -91,7 +91,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         t_token_added   TYPE ty_t_token,
         t_token_removed TYPE ty_t_token,
       END OF ty_s_filter_multi.
-    TYPES ty_t_filter_multi TYPE STANDARD TABLE OF ty_s_filter_multi WITH EMPTY KEY.
+    TYPES ty_t_filter_multi TYPE STANDARD TABLE OF ty_s_filter_multi WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_sql,
@@ -118,7 +118,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         timestampl TYPE timestampl,
         t_meta     TYPE ty_t_name_value,
       END OF ty_s_msg,
-      ty_t_msg TYPE STANDARD TABLE OF ty_s_msg WITH EMPTY KEY.
+      ty_t_msg TYPE STANDARD TABLE OF ty_s_msg WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_msg_box,
@@ -926,7 +926,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         old_value TYPE string,
         new_value TYPE string,
       END OF ty_s_field_diff.
-    TYPES ty_t_field_diff TYPE STANDARD TABLE OF ty_s_field_diff WITH EMPTY KEY.
+    TYPES ty_t_field_diff TYPE STANDARD TABLE OF ty_s_field_diff WITH DEFAULT KEY.
 
     CLASS-METHODS data_diff
       IMPORTING
@@ -1436,7 +1436,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         locl              TYPE abap_bool,
       END OF ty_s_transport.
 
-    TYPES ty_t_data TYPE STANDARD TABLE OF ty_s_transport WITH EMPTY KEY.
+    TYPES ty_t_data TYPE STANDARD TABLE OF ty_s_transport WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_dfies_2,
@@ -1490,7 +1490,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         nohistory   TYPE c LENGTH 1,   " Input History Deactivated
         ampmformat  TYPE c LENGTH 1,   " AM/PM Time Format Indicator
       END OF ty_s_dfies_2.
-    TYPES ty_t_dfies_2 TYPE STANDARD TABLE OF ty_s_dfies_2 WITH EMPTY KEY.
+    TYPES ty_t_dfies_2 TYPE STANDARD TABLE OF ty_s_dfies_2 WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_shlp_intdescr,
@@ -1567,10 +1567,10 @@ CLASS zabaputil_cl_util_context DEFINITION
         shlpname   TYPE c LENGTH 30,       " Name of a Search Help
         shlptype   TYPE c LENGTH 2,        " Type of an input help (fixed values)
         intdescr   TYPE ty_shlp_intdescr,  " Placeholder for Internal Info of Search Help
-        interface  TYPE STANDARD TABLE OF ty_ddshiface WITH EMPTY KEY,                      " Placeholder for Interface of Search Help
-        fielddescr TYPE STANDARD TABLE OF ty_s_dfies_2 WITH EMPTY KEY,
-        fieldprop  TYPE STANDARD TABLE OF ty_ddshfprop WITH EMPTY KEY,
-        selopt     TYPE STANDARD TABLE OF ty_ddshselopt WITH EMPTY KEY,
+        interface  TYPE STANDARD TABLE OF ty_ddshiface WITH DEFAULT KEY,                      " Placeholder for Interface of Search Help
+        fielddescr TYPE STANDARD TABLE OF ty_s_dfies_2 WITH DEFAULT KEY,
+        fieldprop  TYPE STANDARD TABLE OF ty_ddshfprop WITH DEFAULT KEY,
+        selopt     TYPE STANDARD TABLE OF ty_ddshselopt WITH DEFAULT KEY,
         textsearch TYPE ty_ddshtextsearch,
       END OF ty_shlp_descr.
 
@@ -1608,7 +1608,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         user        TYPE string,
         msg_count   TYPE i,
       END OF ty_s_bal_header.
-    TYPES ty_t_bal_header TYPE STANDARD TABLE OF ty_s_bal_header WITH EMPTY KEY.
+    TYPES ty_t_bal_header TYPE STANDARD TABLE OF ty_s_bal_header WITH DEFAULT KEY.
 
     CLASS-METHODS bal_search
       IMPORTING
@@ -1688,7 +1688,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         object   TYPE string,
         obj_name TYPE string,
       END OF ty_s_tr_object.
-    TYPES ty_t_tr_object TYPE STANDARD TABLE OF ty_s_tr_object WITH EMPTY KEY.
+    TYPES ty_t_tr_object TYPE STANDARD TABLE OF ty_s_tr_object WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_tr_request,
@@ -1698,7 +1698,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         status      TYPE string,
         type        TYPE string,
       END OF ty_s_tr_request.
-    TYPES ty_t_tr_request TYPE STANDARD TABLE OF ty_s_tr_request WITH EMPTY KEY.
+    TYPES ty_t_tr_request TYPE STANDARD TABLE OF ty_s_tr_request WITH DEFAULT KEY.
 
     CLASS-METHODS tr_get_objects
       IMPORTING
@@ -1862,7 +1862,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         tabname   TYPE string,
         chngind   TYPE string,
       END OF ty_s_changdoc.
-    TYPES ty_t_changdoc TYPE STANDARD TABLE OF ty_s_changdoc WITH EMPTY KEY.
+    TYPES ty_t_changdoc TYPE STANDARD TABLE OF ty_s_changdoc WITH DEFAULT KEY.
 
     CLASS-METHODS auth_check
       IMPORTING
@@ -1989,7 +1989,7 @@ CLASS zabaputil_cl_util_context DEFINITION
         name    TYPE string,
         content TYPE xstring,
       END OF ty_s_zip_file.
-    TYPES ty_t_zip_file TYPE STANDARD TABLE OF ty_s_zip_file WITH EMPTY KEY.
+    TYPES ty_t_zip_file TYPE STANDARD TABLE OF ty_s_zip_file WITH DEFAULT KEY.
 
     CLASS-METHODS conv_get_xlsx_by_itab
       IMPORTING
@@ -2758,9 +2758,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD boolean_abap_2_json.
+      DATA temp323 TYPE string.
 
-    IF boolean_check_by_data( val ).
-      result = COND #( WHEN val = abap_true THEN `true` ELSE `false` ).
+    IF boolean_check_by_data( val ) IS NOT INITIAL.
+      
+      IF val = abap_true.
+        temp323 = `true`.
+      ELSE.
+        temp323 = `false`.
+      ENDIF.
+      result = temp323.
     ELSE.
       result = val.
     ENDIF.
@@ -2768,9 +2775,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD boolean_check_by_data.
+        DATA lo_descr TYPE REF TO cl_abap_typedescr.
+        DATA lr_cache TYPE REF TO zabaputil_cl_util_context=>ty_s_bool_cache.
+        DATA temp324 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_ele LIKE temp324.
+        DATA temp325 TYPE zabaputil_cl_util_context=>ty_s_bool_cache.
 
     TRY.
-        DATA(lo_descr) = cl_abap_elemdescr=>describe_by_data( val ).
+        
+        lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
 
         " all supported boolean types are character-like flags, this check
         " filters out every other type before the cache lookup
@@ -2780,17 +2793,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         " type descriptors are singletons, so the reference identifies the
         " type without converting/hashing the absolute name on every call
-        READ TABLE mt_bool_cache REFERENCE INTO DATA(lr_cache)
+        
+        READ TABLE mt_bool_cache REFERENCE INTO lr_cache
              WITH TABLE KEY typedescr = lo_descr.
         IF sy-subrc = 0.
           result = lr_cache->is_bool.
           RETURN.
         ENDIF.
 
-        DATA(lo_ele) = CAST cl_abap_elemdescr( lo_descr ).
+        
+        temp324 ?= lo_descr.
+        
+        lo_ele = temp324.
         result = boolean_check_by_name( lo_ele->get_relative_name( ) ).
 
-        INSERT VALUE #( typedescr = lo_descr is_bool = result ) INTO TABLE mt_bool_cache.
+        
+        CLEAR temp325.
+        temp325-typedescr = lo_descr.
+        temp325-is_bool = result.
+        INSERT temp325 INTO TABLE mt_bool_cache.
 
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
@@ -2815,26 +2836,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD check_bound_a_not_initial.
+    DATA temp1 TYPE xsdboolean.
 
     IF val IS NOT BOUND.
       result = abap_false.
       RETURN.
     ENDIF.
-    result = xsdbool( check_unassign_initial( val ) = abap_false ).
+    
+    temp1 = boolc( check_unassign_initial( val ) = abap_false ).
+    result = temp1.
 
   ENDMETHOD.
 
   METHOD check_unassign_initial.
+    FIELD-SYMBOLS <any> TYPE data.
+    DATA temp2 TYPE xsdboolean.
 
     IF val IS INITIAL.
       result = abap_true.
       RETURN.
     ENDIF.
 
-    FIELD-SYMBOLS <any> TYPE data.
+    
     ASSIGN val->* TO <any>.
 
-    result = xsdbool( <any> IS INITIAL ).
+    
+    temp2 = boolc( <any> IS INITIAL ).
+    result = temp2.
 
   ENDMETHOD.
 
@@ -2843,7 +2871,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <from>   TYPE data.
     FIELD-SYMBOLS <result> TYPE data.
 
-    IF rtti_check_ref_data( from ).
+    IF rtti_check_ref_data( from ) IS NOT INITIAL.
       ASSIGN from->* TO <from>.
       IF <from> IS NOT ASSIGNED.
         " unbound data reference - nothing to copy, return an initial reference
@@ -2877,11 +2905,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_trim.
 
-    result = CONV string( val ).
+    DATA temp326 TYPE string.
+      DATA lv_before LIKE result.
+    temp326 = val.
+    result = temp326.
     " spaces and tabs alternate at either end (`\t \tx`) - one pass of each
     " leaves the inner layer standing, so strip until nothing changes
     DO 10 TIMES.
-      DATA(lv_before) = result.
+      
+      lv_before = result.
       result = shift_left( shift_right( result ) ).
       result = shift_right( val = result
                             sub = cv_char_util_horizontal_tab ).
@@ -2896,25 +2928,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_trim_lower.
 
-    result = to_lower( c_trim( CONV string( val ) ) ).
+    DATA temp327 TYPE string.
+    temp327 = val.
+    result = to_lower( c_trim( temp327 ) ).
 
   ENDMETHOD.
 
   METHOD c_trim_upper.
 
-    result = to_upper( c_trim( CONV string( val ) ) ).
+    DATA temp328 TYPE string.
+    temp328 = val.
+    result = to_upper( c_trim( temp328 ) ).
 
   ENDMETHOD.
 
   METHOD filter_itab.
 
     DATA ref TYPE REF TO data.
+      DATA ls_filter LIKE LINE OF filter.
+        FIELD-SYMBOLS <field> TYPE any.
 
     LOOP AT val REFERENCE INTO ref.
 
-      LOOP AT filter INTO DATA(ls_filter).
+      
+      LOOP AT filter INTO ls_filter.
 
-        ASSIGN ref->(ls_filter-name) TO FIELD-SYMBOL(<field>).
+        
+        ASSIGN ref->(ls_filter-name) TO <field>.
         IF sy-subrc <> 0.
           CONTINUE.
         ENDIF.
@@ -2931,58 +2971,78 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_multi_by_data.
 
-    LOOP AT rtti_get_t_attri_by_any( val ) REFERENCE INTO DATA(lr_comp).
-      INSERT VALUE #( name = lr_comp->name ) INTO TABLE result.
+    DATA temp329 TYPE abap_component_tab.
+    DATA temp54 LIKE LINE OF temp329.
+    DATA lr_comp LIKE REF TO temp54.
+      DATA temp330 TYPE zabaputil_cl_util_context=>ty_s_filter_multi.
+    temp329 = rtti_get_t_attri_by_any( val ).
+    
+    
+    LOOP AT temp329 REFERENCE INTO lr_comp.
+      
+      CLEAR temp330.
+      temp330-name = lr_comp->name.
+      INSERT temp330 INTO TABLE result.
     ENDLOOP.
 
   ENDMETHOD.
 
   METHOD filter_get_range_by_token.
 
-    DATA(lv_value) = val.
+    DATA lv_value LIKE val.
+    DATA lv_length TYPE i.
+    lv_value = val.
     IF lv_value IS INITIAL.
       RETURN.
     ENDIF.
-    DATA(lv_length) = strlen( lv_value ) - 1.
+    
+    lv_length = strlen( lv_value ) - 1.
 
     CASE lv_value(1).
 
       WHEN `=`.
-        result = VALUE #( sign   = `I`
-                          option = `EQ`
-                          low    = lv_value+1 ).
+        CLEAR result.
+        result-sign = `I`.
+        result-option = `EQ`.
+        result-low = lv_value+1.
       WHEN `<`.
         IF lv_value+1(1) = `=`.
-          result = VALUE #( sign   = `I`
-                            option = `LE`
-                            low    = lv_value+2 ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `LE`.
+          result-low = lv_value+2.
         ELSE.
-          result = VALUE #( sign   = `I`
-                            option = `LT`
-                            low    = lv_value+1 ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `LT`.
+          result-low = lv_value+1.
         ENDIF.
       WHEN `>`.
         IF lv_value+1(1) = `=`.
-          result = VALUE #( sign   = `I`
-                            option = `GE`
-                            low    = lv_value+2 ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `GE`.
+          result-low = lv_value+2.
         ELSE.
-          result = VALUE #( sign   = `I`
-                            option = `GT`
-                            low    = lv_value+1 ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `GT`.
+          result-low = lv_value+1.
         ENDIF.
 
       WHEN `*`.
         IF lv_length > 0 AND lv_value+lv_length(1) = `*`.
           lv_value = substring( val = lv_value off = 1 len = lv_length - 1 ).
-          result = VALUE #( sign   = `I`
-                            option = `CP`
-                            low    = lv_value ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `CP`.
+          result-low = lv_value.
         ELSEIF lv_length = 0.
           " Single '*' means contains-pattern with empty value
-          result = VALUE #( sign   = `I`
-                            option = `CP`
-                            low    = `` ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `CP`.
+          result-low = ``.
         ENDIF.
 
       WHEN OTHERS.
@@ -2991,9 +3051,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           result-sign   = `I`.
           result-option = `BT`.
         ELSE.
-          result = VALUE #( sign   = `I`
-                            option = `EQ`
-                            low    = lv_value ).
+          CLEAR result.
+          result-sign = `I`.
+          result-option = `EQ`.
+          result-low = lv_value.
         ENDIF.
 
     ENDCASE.
@@ -3001,31 +3062,58 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD filter_update_tokens.
+    FIELD-SYMBOLS <temp331> TYPE zabaputil_cl_util_context=>ty_s_filter_multi.
+DATA lr_filter LIKE REF TO <temp331>.
+    DATA ls_token LIKE LINE OF lr_filter->t_token_removed.
+      DATA temp332 TYPE zabaputil_cl_util_context=>ty_s_token.
+    DATA lt_range TYPE zabaputil_cl_util_context=>ty_t_range.
+    DATA temp55 LIKE LINE OF result.
+    DATA temp56 LIKE sy-tabix.
 
     result = val.
-    DATA(lr_filter) = REF #( result[ name = name ] ).
-    LOOP AT lr_filter->t_token_removed INTO DATA(ls_token).
+    
+    READ TABLE result WITH KEY name = name ASSIGNING <temp331>.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+
+GET REFERENCE OF <temp331> INTO lr_filter.
+    
+    LOOP AT lr_filter->t_token_removed INTO ls_token.
       DELETE lr_filter->t_token WHERE key = ls_token-key.
     ENDLOOP.
 
     LOOP AT lr_filter->t_token_added INTO ls_token.
-      INSERT VALUE #( key      = ls_token-key
-                      text     = ls_token-text
-                      visible  = abap_true
-                      editable = abap_true ) INTO TABLE lr_filter->t_token.
+      
+      CLEAR temp332.
+      temp332-key = ls_token-key.
+      temp332-text = ls_token-text.
+      temp332-visible = abap_true.
+      temp332-editable = abap_true.
+      INSERT temp332 INTO TABLE lr_filter->t_token.
     ENDLOOP.
 
     CLEAR lr_filter->t_token_removed.
     CLEAR lr_filter->t_token_added.
 
-    DATA(lt_range) = zabaputil_cl_util_context=>filter_get_range_t_by_token_t( result[ name = name ]-t_token ).
+    
+    
+    
+    temp56 = sy-tabix.
+    READ TABLE result WITH KEY name = name INTO temp55.
+    sy-tabix = temp56.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lt_range = zabaputil_cl_util_context=>filter_get_range_t_by_token_t( temp55-t_token ).
     lr_filter->t_range = lt_range.
 
   ENDMETHOD.
 
   METHOD filter_get_range_t_by_token_t.
 
-    LOOP AT val INTO DATA(ls_token).
+    DATA ls_token LIKE LINE OF val.
+    LOOP AT val INTO ls_token.
       INSERT filter_get_range_by_token( ls_token-text ) INTO TABLE result.
     ENDLOOP.
 
@@ -3033,33 +3121,85 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_token_range_mapping.
 
-    result = VALUE #( (   n = `EQ`      v = `={LOW}` )
-                      (   n = `LT`      v = `<{LOW}` )
-                      (   n = `LE`      v = `<={LOW}` )
-                      (   n = `GT`      v = `>{LOW}` )
-                      (   n = `GE`      v = `>={LOW}` )
-                      (   n = `CP`      v = `*{LOW}*` )
-                      (   n = `BT`      v = `{LOW}...{HIGH}` )
-                      (   n = `NB`      v = `!({LOW}...{HIGH})` )
-                      (   n = `NE`      v = `!(={LOW})` )
-                      (   n = `NP`      v = `!(*{LOW}*)` )
-                      (   n = `!<leer>` v = `!(<leer>)` )
-                      (   n = `<leer>`  v = `<leer>` ) ).
+    DATA temp333 TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA temp334 LIKE LINE OF temp333.
+    CLEAR temp333.
+    
+    temp334-n = `EQ`.
+    temp334-v = `={LOW}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `LT`.
+    temp334-v = `<{LOW}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `LE`.
+    temp334-v = `<={LOW}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `GT`.
+    temp334-v = `>{LOW}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `GE`.
+    temp334-v = `>={LOW}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `CP`.
+    temp334-v = `*{LOW}*`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `BT`.
+    temp334-v = `{LOW}...{HIGH}`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `NB`.
+    temp334-v = `!({LOW}...{HIGH})`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `NE`.
+    temp334-v = `!(={LOW})`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `NP`.
+    temp334-v = `!(*{LOW}*)`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `!<leer>`.
+    temp334-v = `!(<leer>)`.
+    INSERT temp334 INTO TABLE temp333.
+    temp334-n = `<leer>`.
+    temp334-v = `<leer>`.
+    INSERT temp334 INTO TABLE temp333.
+    result = temp333.
 
   ENDMETHOD.
 
   METHOD filter_get_token_t_by_range_t.
 
-    DATA(lt_mapping) = filter_get_token_range_mapping( ).
+    DATA lt_mapping TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA temp335 TYPE ty_t_range.
+    DATA lt_tab LIKE temp335.
+    DATA temp336 LIKE LINE OF lt_tab.
+    DATA lr_row LIKE REF TO temp336.
+      DATA lv_value TYPE zabaputil_cl_util_context=>ty_s_name_value-v.
+      DATA temp57 LIKE LINE OF lt_mapping.
+      DATA temp58 LIKE sy-tabix.
+      DATA temp337 TYPE zabaputil_cl_util_context=>ty_s_token.
+    lt_mapping = filter_get_token_range_mapping( ).
 
-    DATA(lt_tab) = VALUE ty_t_range( ).
+    
+    CLEAR temp335.
+    
+    lt_tab = temp335.
 
     itab_corresponding( EXPORTING val = val
                         CHANGING  tab = lt_tab ).
 
-    LOOP AT lt_tab REFERENCE INTO DATA(lr_row).
+    
+    
+    LOOP AT lt_tab REFERENCE INTO lr_row.
 
-      DATA(lv_value) = lt_mapping[ n = lr_row->option ]-v.
+      
+      
+      
+      temp58 = sy-tabix.
+      READ TABLE lt_mapping WITH KEY n = lr_row->option INTO temp57.
+      sy-tabix = temp58.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      lv_value = temp57-v.
       REPLACE `{LOW}`  IN lv_value WITH lr_row->low.
       REPLACE `{HIGH}` IN lv_value WITH lr_row->high.
 
@@ -3069,10 +3209,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         lv_value = |!({ lv_value })|.
       ENDIF.
 
-      INSERT VALUE #( key      = lv_value
-                      text     = lv_value
-                      visible  = abap_true
-                      editable = abap_true ) INTO TABLE result.
+      
+      CLEAR temp337.
+      temp337-key = lv_value.
+      temp337-text = lv_value.
+      temp337-visible = abap_true.
+      temp337-editable = abap_true.
+      INSERT temp337 INTO TABLE result.
     ENDLOOP.
 
   ENDMETHOD.
@@ -3085,16 +3228,34 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <row>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
 
-    DATA(lv_search) = COND string( WHEN ignore_case = abap_true
-                                   THEN to_upper( val )
-                                   ELSE val ).
-    DATA(lv_field_count) = lines( fields ).
+    DATA temp338 TYPE string.
+    DATA lv_search LIKE temp338.
+    DATA lv_field_count TYPE i.
+      DATA lv_tabix LIKE sy-tabix.
+      DATA lv_check_found LIKE abap_false.
+      DATA lv_index TYPE i.
+          DATA lv_name LIKE LINE OF fields.
+          DATA temp59 LIKE LINE OF fields.
+          DATA temp60 LIKE sy-tabix.
+        DATA lv_value TYPE string.
+    IF ignore_case = abap_true.
+      temp338 = to_upper( val ).
+    ELSE.
+      temp338 = val.
+    ENDIF.
+    
+    lv_search = temp338.
+    
+    lv_field_count = lines( fields ).
 
     LOOP AT tab ASSIGNING <row>.
 
-      DATA(lv_tabix) = sy-tabix.
-      DATA(lv_check_found) = abap_false.
-      DATA(lv_index) = 1.
+      
+      lv_tabix = sy-tabix.
+      
+      lv_check_found = abap_false.
+      
+      lv_index = 1.
       DO.
         IF fields IS INITIAL.
           ASSIGN COMPONENT lv_index OF STRUCTURE <row> TO <field>.
@@ -3111,7 +3272,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           IF lv_index > lv_field_count.
             EXIT.
           ENDIF.
-          DATA(lv_name) = fields[ lv_index ].
+          
+          
+          
+          temp60 = sy-tabix.
+          READ TABLE fields INDEX lv_index INTO temp59.
+          sy-tabix = temp60.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          lv_name = temp59.
           ASSIGN COMPONENT lv_name OF STRUCTURE <row> TO <field>.
           IF sy-subrc <> 0.
             lv_index = lv_index + 1.
@@ -3119,7 +3289,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           ENDIF.
         ENDIF.
 
-        DATA(lv_value) = |{ <field> }|.
+        
+        lv_value = |{ <field> }|.
         IF ignore_case = abap_true.
           lv_value = to_upper( lv_value ).
           IF lv_value CS lv_search.
@@ -3149,31 +3320,57 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <tab> TYPE table.
     DATA lt_lines TYPE string_table.
     DATA lv_line TYPE string.
+    DATA temp339 TYPE REF TO cl_abap_tabledescr.
+    DATA tab LIKE temp339.
+    DATA temp340 TYPE REF TO cl_abap_structdescr.
+    DATA struc LIKE temp340.
+    DATA temp341 TYPE abap_component_tab.
+    DATA temp61 LIKE LINE OF temp341.
+    DATA lr_comp LIKE REF TO temp61.
+    DATA lr_row TYPE REF TO data.
+      DATA lv_index TYPE i.
+        FIELD-SYMBOLS <row> TYPE data.
+        FIELD-SYMBOLS <field> TYPE any.
+        DATA lv_field_val TYPE string.
 
     ASSIGN val TO <tab>.
-    DATA(tab) = CAST cl_abap_tabledescr( cl_abap_typedescr=>describe_by_data( <tab> ) ).
+    
+    temp339 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
+    
+    tab = temp339.
 
-    DATA(struc) = CAST cl_abap_structdescr( tab->get_table_line_type( ) ).
+    
+    temp340 ?= tab->get_table_line_type( ).
+    
+    struc = temp340.
 
     CLEAR lv_line.
-    LOOP AT struc->get_components( ) REFERENCE INTO DATA(lr_comp).
+    
+    temp341 = struc->get_components( ).
+    
+    
+    LOOP AT temp341 REFERENCE INTO lr_comp.
       lv_line = |{ lv_line }{ lr_comp->name };|.
     ENDLOOP.
     INSERT lv_line INTO TABLE lt_lines.
 
-    DATA lr_row TYPE REF TO data.
+    
     LOOP AT <tab> REFERENCE INTO lr_row.
 
       CLEAR lv_line.
-      DATA(lv_index) = 1.
+      
+      lv_index = 1.
       DO.
-        ASSIGN lr_row->* TO FIELD-SYMBOL(<row>).
-        ASSIGN COMPONENT lv_index OF STRUCTURE <row> TO FIELD-SYMBOL(<field>).
+        
+        ASSIGN lr_row->* TO <row>.
+        
+        ASSIGN COMPONENT lv_index OF STRUCTURE <row> TO <field>.
         IF sy-subrc <> 0.
           EXIT.
         ENDIF.
         lv_index = lv_index + 1.
-        DATA(lv_field_val) = |{ <field> }|.
+        
+        lv_field_val = |{ <field> }|.
         REPLACE ALL OCCURRENCES OF `;` IN lv_field_val WITH `,`.
         lv_line = |{ lv_line }{ lv_field_val };|.
       ENDDO.
@@ -3190,21 +3387,60 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
     DATA lr_row TYPE REF TO data.
 
-    SPLIT val AT cv_char_util_newline INTO TABLE DATA(lt_rows).
-    SPLIT lt_rows[ 1 ] AT `;` INTO TABLE DATA(lt_cols).
+    TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_rows TYPE temp1.
+    TYPES temp2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_cols TYPE temp2.
+    DATA temp62 LIKE LINE OF lt_rows.
+    DATA temp63 LIKE sy-tabix.
+    DATA temp342 LIKE LINE OF lt_cols.
+    DATA lr_col LIKE REF TO temp342.
+      DATA lv_name TYPE string.
+      DATA temp343 TYPE abap_componentdescr.
+    DATA struc TYPE REF TO cl_abap_structdescr.
+    DATA temp344 TYPE REF TO cl_abap_datadescr.
+    DATA data LIKE temp344.
+    DATA o_table_desc TYPE REF TO cl_abap_tabledescr.
+    DATA temp345 LIKE LINE OF lt_rows.
+    DATA lr_rows LIKE REF TO temp345.
+        FIELD-SYMBOLS <row> TYPE data.
+        FIELD-SYMBOLS <field> TYPE any.
+    SPLIT val AT cv_char_util_newline INTO TABLE lt_rows.
+    
 
-    LOOP AT lt_cols REFERENCE INTO DATA(lr_col).
+    
+    
+    temp63 = sy-tabix.
+    READ TABLE lt_rows INDEX 1 INTO temp62.
+    sy-tabix = temp63.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    SPLIT temp62 AT `;` INTO TABLE lt_cols.
 
-      DATA(lv_name) = c_trim_upper( lr_col->* ).
+    
+    
+    LOOP AT lt_cols REFERENCE INTO lr_col.
+
+      
+      lv_name = c_trim_upper( lr_col->* ).
       REPLACE ALL OCCURRENCES OF ` ` IN lv_name WITH `_`.
 
-      INSERT VALUE #( name = lv_name
-                      type = cl_abap_elemdescr=>get_c( 40 ) ) INTO TABLE lt_comp.
+      
+      CLEAR temp343.
+      temp343-name = lv_name.
+      temp343-type = cl_abap_elemdescr=>get_c( 40 ).
+      INSERT temp343 INTO TABLE lt_comp.
     ENDLOOP.
 
-    DATA(struc) = cl_abap_structdescr=>get( lt_comp ).
-    DATA(data) = CAST cl_abap_datadescr( struc ).
-    DATA(o_table_desc) = cl_abap_tabledescr=>create( p_line_type  = data
+    
+    struc = cl_abap_structdescr=>get( lt_comp ).
+    
+    temp344 ?= struc.
+    
+    data = temp344.
+    
+    o_table_desc = cl_abap_tabledescr=>create( p_line_type  = data
                                                      p_table_kind = cl_abap_tabledescr=>tablekind_std
                                                      p_unique     = abap_false ).
 
@@ -3212,14 +3448,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ASSIGN result->* TO <tab>.
     DELETE lt_rows WHERE table_line IS INITIAL.
 
-    LOOP AT lt_rows REFERENCE INTO DATA(lr_rows) FROM 2.
+    
+    
+    LOOP AT lt_rows REFERENCE INTO lr_rows FROM 2.
 
       SPLIT lr_rows->* AT `;` INTO TABLE lt_cols.
       CREATE DATA lr_row TYPE HANDLE struc.
 
       LOOP AT lt_cols REFERENCE INTO lr_col.
-        ASSIGN lr_row->* TO FIELD-SYMBOL(<row>).
-        ASSIGN COMPONENT sy-tabix OF STRUCTURE <row> TO FIELD-SYMBOL(<field>).
+        
+        ASSIGN lr_row->* TO <row>.
+        
+        ASSIGN COMPONENT sy-tabix OF STRUCTURE <row> TO <field>.
         IF sy-subrc <> 0.
           EXIT.
         ENDIF.
@@ -3232,12 +3472,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD json_parse.
+        DATA x TYPE REF TO cx_root.
     TRY.
 
         zabaputil_cl_ajson=>parse( val )->to_abap( EXPORTING iv_corresponding = abap_true
                                                IMPORTING ev_container     = data ).
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = x.
@@ -3245,13 +3487,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD json_stringify.
+        DATA temp346 TYPE REF TO zabaputil_if_ajson.
+        DATA li_ajson LIKE temp346.
+        DATA x TYPE REF TO cx_root.
     TRY.
 
-        DATA(li_ajson) = CAST zabaputil_if_ajson( zabaputil_cl_ajson=>create_empty( ) ).
+        
+        temp346 ?= zabaputil_cl_ajson=>create_empty( ).
+        
+        li_ajson = temp346.
         result = li_ajson->set( iv_path = `/`
                                 iv_val  = any )->stringify( ).
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = x.
@@ -3262,9 +3511,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " cached per name - see gt_class_exists at the declaration
     DATA lv_name TYPE string.
+    DATA lr_hit TYPE REF TO zabaputil_cl_util_context=>ty_s_class_exists.
+    DATA temp347 TYPE zabaputil_cl_util_context=>ty_s_class_exists.
     lv_name = to_upper( val ).
 
-    READ TABLE gt_class_exists REFERENCE INTO DATA(lr_hit) WITH TABLE KEY name = lv_name.
+    
+    READ TABLE gt_class_exists REFERENCE INTO lr_hit WITH TABLE KEY name = lv_name.
     IF sy-subrc = 0.
       result = lr_hit->exists.
       RETURN.
@@ -3280,12 +3532,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
-    INSERT VALUE #( name   = lv_name
-                    exists = result ) INTO TABLE gt_class_exists.
+    
+    CLEAR temp347.
+    temp347-name = lv_name.
+    temp347-exists = result.
+    INSERT temp347 INTO TABLE gt_class_exists.
 
   ENDMETHOD.
 
   METHOD rtti_check_ref_data.
+        DATA lo_typdescr TYPE REF TO cl_abap_typedescr.
+        DATA temp348 TYPE REF TO cl_abap_refdescr.
+        DATA lo_referenced TYPE REF TO cl_abap_typedescr.
+        DATA temp3 TYPE xsdboolean.
 
     TRY.
         " a kind comparison, not a CAST probe: the cast raised
@@ -3295,7 +3554,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         " exception is orders of magnitude more expensive than comparing.
         " cl_abap_refdescr covers data and object references alike, and so
         " does kind_ref
-        DATA(lo_typdescr) = cl_abap_typedescr=>describe_by_data( val ).
+        
+        lo_typdescr = cl_abap_typedescr=>describe_by_data( val ).
         IF lo_typdescr->kind <> cl_abap_typedescr=>kind_ref.
           RETURN.
         ENDIF.
@@ -3303,9 +3563,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         " dereferences on a true answer (conv_copy_ref_data: `from->*`)
         " cannot do that to an object reference. Only a reference to DATA
         " answers true
-        DATA(lo_referenced) = CAST cl_abap_refdescr( lo_typdescr )->get_referenced_type( ).
-        result = xsdbool( lo_referenced->kind <> cl_abap_typedescr=>kind_class
-                      AND lo_referenced->kind <> cl_abap_typedescr=>kind_intf ).
+        
+        temp348 ?= lo_typdescr.
+        
+        lo_referenced = temp348->get_referenced_type( ).
+        
+        temp3 = boolc( lo_referenced->kind <> cl_abap_typedescr=>kind_class AND lo_referenced->kind <> cl_abap_typedescr=>kind_intf ).
+        result = temp3.
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
@@ -3313,12 +3577,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_check_type_kind_dref.
 
-    DATA(lv_type_kind) = cl_abap_datadescr=>get_data_type_kind( val ).
-    result = xsdbool( lv_type_kind = cl_abap_typedescr=>typekind_dref ).
+    DATA lv_type_kind TYPE abap_typekind.
+    DATA temp4 TYPE xsdboolean.
+    lv_type_kind = cl_abap_datadescr=>get_data_type_kind( val ).
+    
+    temp4 = boolc( lv_type_kind = cl_abap_typedescr=>typekind_dref ).
+    result = temp4.
 
   ENDMETHOD.
 
   METHOD rtti_get_classname_by_ref.
+    DATA lv_classname TYPE abap_abstypename.
 
     " an unbound reference has no class - answer with an empty name instead
     " of letting the RTTI call fail. Callers ask this while rendering (error
@@ -3327,7 +3596,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(lv_classname) = cl_abap_classdescr=>get_class_name( val ).
+    
+    lv_classname = cl_abap_classdescr=>get_class_name( val ).
     result = substring_after( val = lv_classname
                               sub = `\CLASS=` ).
 
@@ -3335,9 +3605,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_intfname_by_ref.
 
-    DATA(rtti) = cl_abap_typedescr=>describe_by_data( in  ).
-    DATA(ref) = CAST cl_abap_refdescr( rtti ).
-    DATA(name) = ref->get_referenced_type( )->absolute_name.
+    DATA rtti TYPE REF TO cl_abap_typedescr.
+    DATA temp349 TYPE REF TO cl_abap_refdescr.
+    DATA ref LIKE temp349.
+    DATA name TYPE abap_abstypename.
+    rtti = cl_abap_typedescr=>describe_by_data( in  ).
+    
+    temp349 ?= rtti.
+    
+    ref = temp349.
+    
+    name = ref->get_referenced_type( )->absolute_name.
     result = substring_after( val = name
                               sub = `\INTERFACE=` ).
 
@@ -3350,10 +3628,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rtti_get_type_name.
+        DATA lo_descr TYPE REF TO cl_abap_typedescr.
+        DATA temp350 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_ele LIKE temp350.
     TRY.
 
-        DATA(lo_descr) = cl_abap_elemdescr=>describe_by_data( val ).
-        DATA(lo_ele) = CAST cl_abap_elemdescr( lo_descr ).
+        
+        lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
+        
+        temp350 ?= lo_descr.
+        
+        lo_ele = temp350.
         result = lo_ele->get_relative_name( ).
 
       CATCH cx_root ##NO_HANDLER.
@@ -3362,8 +3647,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_t_attri_by_include.
 
+    DATA type_desc TYPE REF TO cl_abap_typedescr.
+    DATA temp351 TYPE REF TO cl_abap_structdescr.
+    DATA sdescr LIKE temp351.
+    DATA comps TYPE abap_component_tab.
     cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = type->absolute_name
-                                         RECEIVING  p_descr_ref    = DATA(type_desc)
+                                         RECEIVING  p_descr_ref    = type_desc
                                          EXCEPTIONS type_not_found = 1 ).
     " classic exception method: a missing type sets sy-subrc and leaves the
     " ref unbound instead of raising - check it, or get_components below
@@ -3373,14 +3662,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         EXPORTING
           val = |Include type '{ type->absolute_name }' not found|.
     ENDIF.
-    DATA(sdescr) = CAST cl_abap_structdescr( type_desc ).
-    DATA(comps) = sdescr->get_components( ).
+    
+    temp351 ?= type_desc.
+    
+    sdescr = temp351.
+    
+    comps = sdescr->get_components( ).
     result = expand_components( val   = comps
                                 depth = depth ).
 
   ENDMETHOD.
 
   METHOD expand_components.
+    DATA temp352 LIKE LINE OF val.
+    DATA lr_comp LIKE REF TO temp352.
+        DATA lt_incl TYPE abap_component_tab.
 
     " see the declaration: bounded so a cyclic include chain surfaces as a
     " readable error instead of a stack-overflow dump. 16 nested include
@@ -3391,9 +3687,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           val = `RTTI_INCLUDE_RECURSION - include expansion exceeded 16 levels (cyclic include?)`.
     ENDIF.
 
-    LOOP AT val REFERENCE INTO DATA(lr_comp).
+    
+    
+    LOOP AT val REFERENCE INTO lr_comp.
       IF lr_comp->as_include = abap_true.
-        DATA(lt_incl) = rtti_get_t_attri_by_include( type  = lr_comp->type
+        
+        lt_incl = rtti_get_t_attri_by_include( type  = lr_comp->type
                                                      depth = depth + 1 ).
         APPEND LINES OF lt_incl TO result.
       ELSE.
@@ -3405,8 +3704,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_t_attri_by_oref.
 
-    DATA(lo_obj_ref) = cl_abap_objectdescr=>describe_by_object_ref( val ).
-    result = CAST cl_abap_classdescr( lo_obj_ref )->attributes.
+    DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
+    DATA temp353 TYPE REF TO cl_abap_classdescr.
+    lo_obj_ref = cl_abap_objectdescr=>describe_by_object_ref( val ).
+    
+    temp353 ?= lo_obj_ref.
+    result = temp353->attributes.
 
   ENDMETHOD.
 
@@ -3416,6 +3719,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lo_type          TYPE REF TO cl_abap_typedescr.
     " declared, not CONV string( ) - see error_get_attributes
     DATA lv_absolute_name TYPE string.
+        DATA temp354 TYPE REF TO cl_abap_structdescr.
+        DATA temp355 TYPE REF TO cl_abap_structdescr.
+        DATA temp64 TYPE REF TO cl_abap_tabledescr.
+    DATA lr_cache TYPE REF TO zabaputil_cl_util_context=>ty_s_attri_cache.
+    DATA comps TYPE abap_component_tab.
+      DATA temp356 TYPE zabaputil_cl_util_context=>ty_s_attri_cache.
 
     TRY.
         lo_type = cl_abap_typedescr=>describe_by_data( val ).
@@ -3432,9 +3741,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
-        lo_struct = CAST #( lo_type ).
+        
+        temp354 ?= lo_type.
+        lo_struct = temp354.
       WHEN cl_abap_typedescr=>kind_table.
-        lo_struct = CAST #( CAST cl_abap_tabledescr( lo_type )->get_table_line_type( ) ).
+        
+        
+        temp64 ?= lo_type.
+        temp355 ?= temp64->get_table_line_type( ).
+        lo_struct = temp355.
       WHEN OTHERS.
         lo_struct ?= lo_type.
     ENDCASE.
@@ -3442,28 +3757,37 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " descriptor instances are singletons per type, so the identity check
     " guards against absolute names reused by other (local/anonymous) types
     lv_absolute_name = lo_struct->absolute_name.
-    READ TABLE mt_attri_cache REFERENCE INTO DATA(lr_cache)
+    
+    READ TABLE mt_attri_cache REFERENCE INTO lr_cache
          WITH TABLE KEY absolute_name = lv_absolute_name.
     IF sy-subrc = 0 AND lr_cache->o_struct = lo_struct.
       result = lr_cache->t_attri.
       RETURN.
     ENDIF.
 
-    DATA(comps) = lo_struct->get_components( ).
+    
+    comps = lo_struct->get_components( ).
     result = expand_components( comps ).
 
     IF lr_cache IS BOUND.
       lr_cache->o_struct = lo_struct.
       lr_cache->t_attri  = result.
     ELSE.
-      INSERT VALUE #( absolute_name = lv_absolute_name
-                      o_struct      = lo_struct
-                      t_attri       = result ) INTO TABLE mt_attri_cache.
+      
+      CLEAR temp356.
+      temp356-absolute_name = lv_absolute_name.
+      temp356-o_struct = lo_struct.
+      temp356-t_attri = result.
+      INSERT temp356 INTO TABLE mt_attri_cache.
     ENDIF.
 
   ENDMETHOD.
 
   METHOD rtti_get_t_ddic_fixed_values.
+        DATA temp357 TYPE string.
+        DATA typedescr TYPE REF TO cl_abap_typedescr.
+        DATA temp358 TYPE REF TO cl_abap_elemdescr.
+        DATA elemdescr LIKE temp358.
 
     IF rollname IS INITIAL.
       RETURN.
@@ -3471,15 +3795,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     TRY.
 
-        cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = CONV string( rollname )
-                                             RECEIVING  p_descr_ref    = DATA(typedescr)
+        
+        temp357 = rollname.
+        
+        cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = temp357
+                                             RECEIVING  p_descr_ref    = typedescr
                                              EXCEPTIONS type_not_found = 1
                                                         OTHERS         = 2 ).
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
 
-        DATA(elemdescr) = CAST cl_abap_elemdescr( typedescr ).
+        
+        temp358 ?= typedescr.
+        
+        elemdescr = temp358.
 
         result = rtti_get_t_fixvalues( elemdescr = elemdescr
                                        langu     = langu ).
@@ -3492,15 +3822,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD rtti_tab_get_relative_name.
 
     FIELD-SYMBOLS <table> TYPE any.
+        DATA typedesc TYPE REF TO cl_abap_typedescr.
+            DATA temp359 TYPE REF TO cl_abap_tabledescr.
+            DATA tabledesc LIKE temp359.
+            DATA temp360 TYPE REF TO cl_abap_structdescr.
+            DATA structdesc LIKE temp360.
 
     TRY.
-        DATA(typedesc) = cl_abap_typedescr=>describe_by_data( table ).
+        
+        typedesc = cl_abap_typedescr=>describe_by_data( table ).
 
         CASE typedesc->kind.
 
           WHEN cl_abap_typedescr=>kind_table.
-            DATA(tabledesc) = CAST cl_abap_tabledescr( typedesc ).
-            DATA(structdesc) = CAST cl_abap_structdescr( tabledesc->get_table_line_type( ) ).
+            
+            temp359 ?= typedesc.
+            
+            tabledesc = temp359.
+            
+            temp360 ?= tabledesc->get_table_line_type( ).
+            
+            structdesc = temp360.
             result = structdesc->get_relative_name( ).
             RETURN.
 
@@ -3517,9 +3859,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD conv_exit.
 
-    DATA(conex) = COND string( WHEN output = abap_true
-                               THEN |CONVERSION_EXIT_{ convexit }_OUTPUT|
-                               ELSE |CONVERSION_EXIT_{ convexit }_INPUT| ).
+    DATA temp361 TYPE string.
+    DATA conex LIKE temp361.
+    IF output = abap_true.
+      temp361 = |CONVERSION_EXIT_{ convexit }_OUTPUT|.
+    ELSE.
+      temp361 = |CONVERSION_EXIT_{ convexit }_INPUT|.
+    ENDIF.
+    
+    conex = temp361.
 
     TRY.
         IF convexit = `CUNIT`.
@@ -3551,18 +3899,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convexit_ext.
+      DATA conv TYPE string.
+      DATA conex TYPE c LENGTH 30.
+      DATA lv_tab TYPE c LENGTH 5.
 
-    IF check_abap_cloud( ).
+    IF check_abap_cloud( ) IS NOT INITIAL.
 
     ELSE.
 
-      DATA(conv) = |CONVERSION_EXIT_{ name-convexit }_INPUT|.
-      DATA conex TYPE c LENGTH 30.
-      DATA(lv_tab) = 'TFDIR'.
+      
+      conv = |CONVERSION_EXIT_{ name-convexit }_INPUT|.
+      
+      
+      lv_tab = 'TFDIR'.
 
-      SELECT SINGLE funcname FROM (lv_tab)
-        WHERE funcname = @conv
-        INTO @conex.
+      SELECT SINGLE funcname FROM (lv_tab) INTO conex
+        WHERE funcname = conv
+        .
 
       IF sy-subrc = 0.
 
@@ -3586,20 +3939,34 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_sql_by_sql_string.
 
-    DATA(lv_sql) = CONV string( val ).
+    DATA temp362 TYPE string.
+    DATA lv_sql LIKE temp362.
+    DATA lv_squished LIKE lv_sql.
+    DATA lv_dummy TYPE string.
+    DATA lv_tab TYPE string.
+    DATA lv_upper TYPE string.
+      DATA lv_pos TYPE i.
+    temp362 = val.
+    
+    lv_sql = temp362.
 
-    DATA(lv_squished) = lv_sql.
+    
+    lv_squished = lv_sql.
     REPLACE ALL OCCURRENCES OF ` ` IN lv_squished WITH ``.
     lv_squished = to_upper( lv_squished ).
-    SPLIT lv_squished AT `SELECTFROM` INTO DATA(lv_dummy) DATA(lv_tab).
+    
+    
+    SPLIT lv_squished AT `SELECTFROM` INTO lv_dummy lv_tab.
     SPLIT lv_tab AT `FIELDS` INTO lv_tab lv_dummy.
     SPLIT lv_tab AT `WHERE` INTO lv_tab lv_dummy.
 
     result-tabname = lv_tab.
 
-    DATA(lv_upper) = to_upper( lv_sql ).
+    
+    lv_upper = to_upper( lv_sql ).
     IF lv_upper CS ` WHERE `.
-      DATA(lv_pos) = sy-fdpos + 7.
+      
+      lv_pos = sy-fdpos + 7.
       result-where = c_trim( substring( val = lv_sql
                                         off = lv_pos ) ).
       result-t_filter = filter_get_multi_by_sql_where( result-where ).
@@ -3608,8 +3975,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD time_get_date_by_stampl.
-    DATA(ls_sy) = zabaputil_cl_util_context=>context_get_sy( ).
-    CONVERT TIME STAMP val TIME ZONE ls_sy-zonlo INTO DATE result TIME DATA(lv_dummy).
+    DATA ls_sy TYPE zabaputil_cl_util_context=>ty_syst.
+    DATA lv_dummy TYPE t.
+    ls_sy = zabaputil_cl_util_context=>context_get_sy( ).
+    
+    CONVERT TIME STAMP val TIME ZONE ls_sy-zonlo INTO DATE result TIME lv_dummy.
   ENDMETHOD.
 
   METHOD time_get_timestampl.
@@ -3617,8 +3987,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD time_get_time_by_stampl.
-    DATA(ls_sy) = zabaputil_cl_util_context=>context_get_sy( ).
-    CONVERT TIME STAMP val TIME ZONE ls_sy-zonlo INTO DATE DATA(lv_dummy) TIME result.
+    DATA ls_sy TYPE zabaputil_cl_util_context=>ty_syst.
+    DATA lv_dummy TYPE d.
+    ls_sy = zabaputil_cl_util_context=>context_get_sy( ).
+    
+    CONVERT TIME STAMP val TIME ZONE ls_sy-zonlo INTO DATE lv_dummy TIME result.
   ENDMETHOD.
 
   METHOD time_subtract_seconds.
@@ -3661,7 +4034,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD url_param_create_url.
 
-    LOOP AT t_params INTO DATA(ls_param).
+    DATA ls_param LIKE LINE OF t_params.
+    LOOP AT t_params INTO ls_param.
       result = |{ result }{ ls_param-n }={ ls_param-v }&|.
     ENDLOOP.
     result = shift_right( val = result
@@ -3671,9 +4045,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD url_param_get.
 
-    DATA(lt_params) = url_param_get_tab( url ).
-    DATA(lv_val) = c_trim_lower( val ).
-    result = VALUE #( lt_params[ n = lv_val ]-v OPTIONAL ).
+    DATA lt_params TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA lv_val TYPE string.
+    DATA temp363 TYPE string.
+    DATA temp364 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    lt_params = url_param_get_tab( url ).
+    
+    lv_val = c_trim_lower( val ).
+    
+    CLEAR temp363.
+    
+    READ TABLE lt_params INTO temp364 WITH KEY n = lv_val.
+    IF sy-subrc = 0.
+      temp363 = temp364-v.
+    ENDIF.
+    result = temp363.
 
   ENDMETHOD.
 
@@ -3686,6 +4072,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " declared, not DATA( ) from a generic CLIKE parameter, which is
     " "fixed type STRING used for generic type CLIKE" in the extended check
     DATA lv_search TYPE string.
+    DATA lv_startup TYPE string.
+      DATA lv_packed TYPE string.
+      DATA lv_rest TYPE string.
+    TYPES temp3 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_param TYPE temp3.
+    DATA temp365 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp365.
+      DATA lv_name TYPE string.
+      DATA lv_value TYPE string.
+      DATA temp366 TYPE zabaputil_cl_util_context=>ty_s_name_value.
     lv_search = val.
     IF lv_search CS `?`.
       lv_search = substring_after( val = lv_search
@@ -3700,10 +4096,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " encoded `&` or `=` in any other value apart (`a=x%26y` became the
     " two parameters a=x and y=), and url_param_create_url wrote the
     " damage back into every generated link
-    DATA(lv_startup) = substring_after( val = |&{ lv_search }|
+    
+    lv_startup = substring_after( val = |&{ lv_search }|
                                         sub = `&sap-startup-params=` ).
     IF lv_startup IS NOT INITIAL.
-      SPLIT lv_startup AT `&` INTO DATA(lv_packed) DATA(lv_rest).
+      
+      
+      SPLIT lv_startup AT `&` INTO lv_packed lv_rest.
       lv_packed = replace( val  = lv_packed
                            sub  = `%3D`
                            with = `=`
@@ -3724,10 +4123,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ENDIF.
     ENDIF.
 
-    SPLIT lv_search AT `&` INTO TABLE DATA(lt_param).
+    
 
-    LOOP AT lt_param REFERENCE INTO DATA(lr_param).
-      SPLIT lr_param->* AT `=` INTO DATA(lv_name) DATA(lv_value).
+    SPLIT lv_search AT `&` INTO TABLE lt_param.
+
+    
+    
+    LOOP AT lt_param REFERENCE INTO lr_param.
+      
+      
+      SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       " an empty segment (empty search string, trailing &) would otherwise
       " produce a phantom nameless parameter that url_param_create_url
       " writes back out as a stray `=&`
@@ -3737,25 +4142,41 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       " normalize the name so lookups are case-insensitive on every input
       " shape (with or without a leading path/question mark) - the value
       " keeps its original case
-      INSERT VALUE #( n = c_trim_lower( lv_name )
-                      v = lv_value ) INTO TABLE result.
+      
+      CLEAR temp366.
+      temp366-n = c_trim_lower( lv_name ).
+      temp366-v = lv_value.
+      INSERT temp366 INTO TABLE result.
     ENDLOOP.
 
   ENDMETHOD.
 
   METHOD url_param_set.
 
-    DATA(lt_params) = url_param_get_tab( url ).
-    DATA(lv_n) = c_trim_lower( name ).
-    DATA(lv_v) = c_trim( value ).
+    DATA lt_params TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA lv_n TYPE string.
+    DATA lv_v TYPE string.
+    DATA temp367 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp367.
+      DATA temp368 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    lt_params = url_param_get_tab( url ).
+    
+    lv_n = c_trim_lower( name ).
+    
+    lv_v = c_trim( value ).
 
-    LOOP AT lt_params REFERENCE INTO DATA(lr_params)
+    
+    
+    LOOP AT lt_params REFERENCE INTO lr_params
          WHERE n = lv_n.
       lr_params->v = lv_v.
     ENDLOOP.
     IF sy-subrc <> 0.
-      INSERT VALUE #( n = lv_n
-                      v = lv_v ) INTO TABLE lt_params.
+      
+      CLEAR temp368.
+      temp368-n = lv_n.
+      temp368-v = lv_v.
+      INSERT temp368 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -3778,28 +4199,37 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD xml_srtti_parse.
 
     DATA srtti TYPE REF TO object.
+    DATA rtti_type TYPE REF TO cl_abap_typedescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    FIELD-SYMBOLS <variable> TYPE data.
     CALL TRANSFORMATION id SOURCE XML rtti_data RESULT srtti = srtti.
 
-    DATA rtti_type TYPE REF TO cl_abap_typedescr.
+    
     CALL METHOD srtti->(`GET_RTTI`)
       RECEIVING
         rtti = rtti_type.
 
-    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    
     lo_datadescr ?= rtti_type.
 
     CREATE DATA result TYPE HANDLE lo_datadescr.
-    ASSIGN result->* TO FIELD-SYMBOL(<variable>).
+    
+    ASSIGN result->* TO <variable>.
     CALL TRANSFORMATION id SOURCE XML rtti_data RESULT dobj = <variable>.
 
   ENDMETHOD.
 
   METHOD xml_srtti_stringify.
+      DATA srtti TYPE REF TO object.
+      DATA lv_classname TYPE string.
+          DATA lx_srtti TYPE REF TO cx_root.
+          DATA lv_text TYPE string.
 
     IF rtti_check_class_exists( `ZCL_SRTTI_TYPEDESCR` ) = abap_true.
 
-      DATA srtti TYPE REF TO object.
-      DATA(lv_classname) = `ZCL_SRTTI_TYPEDESCR`.
+      
+      
+      lv_classname = `ZCL_SRTTI_TYPEDESCR`.
       CALL METHOD (lv_classname)=>(`CREATE_BY_DATA_OBJECT`)
         EXPORTING
           data_object = data
@@ -3817,11 +4247,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               srtti       = srtti.
           CALL TRANSFORMATION id SOURCE srtti = srtti dobj = data RESULT XML result.
 
-        CATCH cx_root INTO DATA(lx_srtti).
+          
+        CATCH cx_root INTO lx_srtti.
 
           " keep the root cause - a transformation error on the caller's own
           " data must not be masked behind a bare UNSUPPORTED_FEATURE
-          DATA(lv_text) = `UNSUPPORTED_FEATURE`.
+          
+          lv_text = `UNSUPPORTED_FEATURE`.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
               val      = lv_text
@@ -3853,7 +4285,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD x_get_last_t100.
 
-    DATA(x) = val.
+    DATA x LIKE val.
+    x = val.
     DO.
 
       IF x->previous IS BOUND.
@@ -3877,6 +4310,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rtti_get_t_attri_by_table_name.
+        DATA lo_obj TYPE REF TO cl_abap_typedescr.
+        DATA temp369 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp369.
+            DATA temp370 TYPE REF TO cl_abap_tabledescr.
+            DATA lo_tab LIKE temp370.
+            DATA temp371 TYPE REF TO cl_abap_structdescr.
+    DATA lt_comps TYPE abap_component_tab.
+    DATA temp372 LIKE LINE OF lt_comps.
+    DATA lr_comp LIKE REF TO temp372.
+        DATA lt_attri TYPE abap_component_tab.
 
     IF table_name IS INITIAL.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
@@ -3885,8 +4328,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     TRY.
+        
         cl_abap_structdescr=>describe_by_name( EXPORTING  p_name         = table_name
-                                               RECEIVING  p_descr_ref    = DATA(lo_obj)
+                                               RECEIVING  p_descr_ref    = lo_obj
                                                EXCEPTIONS type_not_found = 1
                                                           OTHERS         = 2
             ).
@@ -3896,7 +4340,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             EXPORTING
               val = |TABLE_NOT_FOUD_NAME___{ table_name }|.
         ENDIF.
-        DATA(lo_struct) = CAST cl_abap_structdescr( lo_obj ).
+        
+        temp369 ?= lo_obj.
+        
+        lo_struct = temp369.
 
       CATCH cx_root.
 
@@ -3912,19 +4359,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                   val = |TABLE_NOT_FOUD_NAME___{ table_name }|.
             ENDIF.
 
-            DATA(lo_tab) = CAST cl_abap_tabledescr( lo_obj ).
-            lo_struct = CAST cl_abap_structdescr( lo_tab->get_table_line_type( ) ).
+            
+            temp370 ?= lo_obj.
+            
+            lo_tab = temp370.
+            
+            temp371 ?= lo_tab->get_table_line_type( ).
+            lo_struct = temp371.
           CATCH cx_root.
             RETURN.
         ENDTRY.
 
     ENDTRY.
 
-    DATA(lt_comps) = lo_struct->get_components( ).
+    
+    lt_comps = lo_struct->get_components( ).
 
-    LOOP AT lt_comps REFERENCE INTO DATA(lr_comp).
+    
+    
+    LOOP AT lt_comps REFERENCE INTO lr_comp.
       IF lr_comp->as_include = abap_true.
-        DATA(lt_attri) = rtti_get_t_attri_by_include( lr_comp->type ).
+        
+        lt_attri = rtti_get_t_attri_by_include( lr_comp->type ).
         INSERT LINES OF lt_attri INTO TABLE result.
       ELSE.
         INSERT lr_comp->* INTO TABLE result.
@@ -3947,10 +4403,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD itab_get_by_struc.
 
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri).
+    DATA lt_attri TYPE abap_component_tab.
+    DATA temp373 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp373.
+      FIELD-SYMBOLS <component> TYPE any.
+          DATA temp374 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    lt_attri = rtti_get_t_attri_by_any( val ).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO lr_attri.
 
-      ASSIGN COMPONENT lr_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<component>).
+      
+      ASSIGN COMPONENT lr_attri->name OF STRUCTURE val TO <component>.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
@@ -3967,10 +4431,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
              cl_abap_typedescr=>typekind_oref.
 
         WHEN OTHERS.
-          INSERT VALUE #(
-            n = lr_attri->name
-            v = <component>
-            ) INTO TABLE result.
+          
+          CLEAR temp374.
+          temp374-n = lr_attri->name.
+          temp374-v = <component>.
+          INSERT temp374 INTO TABLE result.
       ENDCASE.
 
     ENDLOOP.
@@ -3980,15 +4445,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD itab_filter_by_t_range.
 
     DATA ref TYPE REF TO data.
+      DATA ls_filter LIKE LINE OF val.
+        FIELD-SYMBOLS <field> TYPE any.
 
     LOOP AT tab REFERENCE INTO ref.
-      LOOP AT val INTO DATA(ls_filter).
+      
+      LOOP AT val INTO ls_filter.
 
         IF ls_filter-t_range IS INITIAL.
           CONTINUE.
         ENDIF.
 
-        ASSIGN ref->(ls_filter-name) TO FIELD-SYMBOL(<field>).
+        
+        ASSIGN ref->(ls_filter-name) TO <field>.
         IF sy-subrc <> 0.
           CONTINUE.
         ENDIF.
@@ -4004,7 +4473,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_data_by_multi.
 
-    LOOP AT val INTO DATA(ls_filter).
+    DATA ls_filter LIKE LINE OF val.
+    LOOP AT val INTO ls_filter.
       IF lines( ls_filter-t_range ) > 0
         OR lines( ls_filter-t_token ) > 0.
         INSERT ls_filter INTO TABLE result.
@@ -4015,15 +4485,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_sql_where.
 
-    LOOP AT val INTO DATA(ls_filter).
+    DATA ls_filter LIKE LINE OF val.
+      DATA lv_field_where TYPE string.
+      DATA ls_range LIKE LINE OF ls_filter-t_range.
+        DATA lv_cond TYPE string.
+    LOOP AT val INTO ls_filter.
 
       IF ls_filter-t_range IS INITIAL.
         CONTINUE.
       ENDIF.
 
-      DATA(lv_field_where) = ``.
-      LOOP AT ls_filter-t_range INTO DATA(ls_range).
-        DATA(lv_cond) = filter_get_sql_cond_by_range( fieldname = ls_filter-name
+      
+      lv_field_where = ``.
+      
+      LOOP AT ls_filter-t_range INTO ls_range.
+        
+        lv_cond = filter_get_sql_cond_by_range( fieldname = ls_filter-name
                                                       range     = ls_range ).
         IF lv_cond IS INITIAL.
           CONTINUE.
@@ -4051,15 +4528,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_sql_cond_by_range.
 
-    DATA(lv_low) = replace( val  = range-low
+    DATA lv_low TYPE string.
+    DATA lv_high TYPE string.
+    DATA lv_option LIKE range-option.
+    DATA lv_like TYPE string.
+    lv_low = replace( val  = range-low
                             sub  = `'`
                             with = `''`
                             occ  = 0 ).
-    DATA(lv_high) = replace( val  = range-high
+    
+    lv_high = replace( val  = range-high
                              sub  = `'`
                              with = `''`
                              occ  = 0 ).
-    DATA(lv_option) = range-option.
+    
+    lv_option = range-option.
 
     IF range-sign = `E`.
       CASE lv_option.
@@ -4076,7 +4559,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ENDCASE.
     ENDIF.
 
-    DATA(lv_like) = ``.
+    
+    lv_like = ``.
     CASE lv_option.
       WHEN `EQ`.
         result = |{ fieldname } = '{ lv_low }'|.
@@ -4110,18 +4594,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_get_multi_by_sql_where.
 
-    DATA(lv_where) = c_trim( CONV string( val ) ).
+    DATA temp375 TYPE string.
+    DATA lv_where TYPE string.
+    DATA lt_groups TYPE string_table.
+    DATA lv_group LIKE LINE OF lt_groups.
+      DATA lv_len TYPE i.
+      DATA lt_conds TYPE string_table.
+      DATA ls_filter TYPE ty_s_filter_multi.
+      DATA lv_cond LIKE LINE OF lt_conds.
+        DATA ls_range TYPE ty_s_range.
+        DATA lv_fieldname TYPE string.
+    temp375 = val.
+    
+    lv_where = c_trim( temp375 ).
     IF lv_where IS INITIAL.
       RETURN.
     ENDIF.
 
-    DATA(lt_groups) = filter_sql_split_top_level( val = lv_where
+    
+    lt_groups = filter_sql_split_top_level( val = lv_where
                                                   sep = ` AND ` ).
 
-    LOOP AT lt_groups INTO DATA(lv_group).
+    
+    LOOP AT lt_groups INTO lv_group.
 
       lv_group = c_trim( lv_group ).
-      DATA(lv_len) = strlen( lv_group ).
+      
+      lv_len = strlen( lv_group ).
 
       IF lv_len >= 2
          AND lv_group(1) = `(`
@@ -4133,16 +4632,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                                       len = lv_len - 2 ) ).
       ENDIF.
 
-      DATA(lt_conds) = filter_sql_split_top_level( val = lv_group
+      
+      lt_conds = filter_sql_split_top_level( val = lv_group
                                                    sep = ` OR ` ).
 
-      DATA ls_filter TYPE ty_s_filter_multi.
+      
       CLEAR ls_filter.
 
-      LOOP AT lt_conds INTO DATA(lv_cond).
+      
+      LOOP AT lt_conds INTO lv_cond.
 
-        DATA ls_range TYPE ty_s_range.
-        DATA lv_fieldname TYPE string.
+        
+        
         CLEAR ls_range.
         CLEAR lv_fieldname.
 
@@ -4171,17 +4672,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD filter_get_range_by_sql_cond.
-
-    CLEAR range.
-    CLEAR fieldname.
-
-    DATA(lv_cond) = CONV string( val ).
-    range-sign = `I`.
-
+    DATA temp376 TYPE string.
+    DATA lv_cond LIKE temp376.
     DATA lv_rest TYPE string.
     DATA lv_low TYPE string.
     DATA lv_high TYPE string.
     DATA lv_like TYPE string.
+
+    CLEAR range.
+    CLEAR fieldname.
+
+    
+    temp376 = val.
+    
+    lv_cond = temp376.
+    range-sign = `I`.
+
+    
+    
+    
+    
 
     IF lv_cond CS ` NOT BETWEEN `.
       SPLIT lv_cond AT ` NOT BETWEEN ` INTO fieldname lv_rest.
@@ -4267,15 +4777,39 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD filter_sql_split_top_level.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_sep) = CONV string( sep ).
-    DATA(lv_len) = strlen( lv_val ).
-    DATA(lv_sep_len) = strlen( lv_sep ).
-    DATA(lv_depth) = 0.
-    DATA(lv_start) = 0.
-    DATA(lv_pos) = 0.
-    DATA(lv_in_quote) = abap_false.
-    DATA(lv_in_between) = abap_false.
+    DATA temp377 TYPE string.
+    DATA lv_val LIKE temp377.
+    DATA temp378 TYPE string.
+    DATA lv_sep LIKE temp378.
+    DATA lv_len TYPE i.
+    DATA lv_sep_len TYPE i.
+    DATA lv_depth TYPE i.
+    DATA lv_start TYPE i.
+    DATA lv_pos TYPE i.
+    DATA lv_in_quote LIKE abap_false.
+    DATA lv_in_between LIKE abap_false.
+      DATA lv_char TYPE string.
+    temp377 = val.
+    
+    lv_val = temp377.
+    
+    temp378 = sep.
+    
+    lv_sep = temp378.
+    
+    lv_len = strlen( lv_val ).
+    
+    lv_sep_len = strlen( lv_sep ).
+    
+    lv_depth = 0.
+    
+    lv_start = 0.
+    
+    lv_pos = 0.
+    
+    lv_in_quote = abap_false.
+    
+    lv_in_between = abap_false.
 
     IF lv_val IS INITIAL.
       RETURN.
@@ -4288,7 +4822,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     WHILE lv_pos < lv_len.
 
-      DATA(lv_char) = lv_val+lv_pos(1).
+      
+      lv_char = lv_val+lv_pos(1).
 
       IF lv_char = `'`.
         IF lv_in_quote = abap_false.
@@ -4361,9 +4896,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD filter_sql_strip_quotes.
+    DATA lv_len TYPE i.
 
     result = c_trim( val ).
-    DATA(lv_len) = strlen( result ).
+    
+    lv_len = strlen( result ).
 
     IF lv_len >= 2
        AND result(1) = `'`
@@ -4396,7 +4933,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " reports them for an actual data object, so branching on them was dead.
     " N/D/T are character-like in every operation that matters here (they can
     " be moved to a string and rendered in a string template without a dump).
-    DATA(lv_type) = rtti_get_type_kind( val ).
+    DATA lv_type TYPE string.
+    lv_type = rtti_get_type_kind( val ).
     CASE lv_type.
       WHEN cl_abap_datadescr=>typekind_char OR
           cl_abap_datadescr=>typekind_string OR
@@ -4485,18 +5023,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_name TYPE string.
 
     FIELD-SYMBOLS <comp> TYPE any.
+        DATA lt_attri TYPE abap_attrdescr_tab.
+    DATA temp379 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp379.
+      DATA temp380 TYPE zabaputil_cl_util_context=>ty_s_name_value.
 
     IF val IS NOT BOUND.
       RETURN.
     ENDIF.
 
     TRY.
-        DATA(lt_attri) = rtti_get_t_attri_by_oref( val ).
+        
+        lt_attri = rtti_get_t_attri_by_oref( val ).
       CATCH cx_root ##NO_HANDLER.
         RETURN.
     ENDTRY.
 
-    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri)
+    
+    
+    LOOP AT lt_attri REFERENCE INTO lr_attri
          WHERE visibility  = cv_objectdescr_public
            AND is_constant = abap_false
            AND is_class    = abap_false.
@@ -4517,8 +5062,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
-      INSERT VALUE #( n = lv_name
-                      v = c_trim( |{ <comp> }| ) ) INTO TABLE result.
+      
+      CLEAR temp380.
+      temp380-n = lv_name.
+      temp380-v = c_trim( |{ <comp> }| ).
+      INSERT temp380 INTO TABLE result.
     ENDLOOP.
 
   ENDMETHOD.
@@ -4540,25 +5088,56 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_create_tab_by_name.
 
-    DATA(struct_desc) = cl_abap_structdescr=>describe_by_name( val ).
-    DATA(data_desc) = CAST cl_abap_datadescr( struct_desc ).
-    DATA(gr_dyntable_typ) = cl_abap_tabledescr=>create( data_desc ).
+    DATA struct_desc TYPE REF TO cl_abap_typedescr.
+    DATA temp381 TYPE REF TO cl_abap_datadescr.
+    DATA data_desc LIKE temp381.
+    DATA gr_dyntable_typ TYPE REF TO cl_abap_tabledescr.
+    struct_desc = cl_abap_structdescr=>describe_by_name( val ).
+    
+    temp381 ?= struct_desc.
+    
+    data_desc = temp381.
+    
+    gr_dyntable_typ = cl_abap_tabledescr=>create( data_desc ).
     CREATE DATA result TYPE HANDLE gr_dyntable_typ.
 
   ENDMETHOD.
 
   METHOD msg_get.
 
-    DATA(lt_msg) = msg_get_t( val  = val
+    DATA lt_msg TYPE zabaputil_cl_util_context=>ty_t_msg.
+    DATA temp382 TYPE zabaputil_cl_util_context=>ty_s_msg.
+    DATA temp383 TYPE zabaputil_cl_util_context=>ty_s_msg.
+    lt_msg = msg_get_t( val  = val
                               val2 = val2 ).
-    result = VALUE #( lt_msg[ 1 ] OPTIONAL ).
+    
+    CLEAR temp382.
+    
+    READ TABLE lt_msg INTO temp383 INDEX 1.
+    IF sy-subrc = 0.
+      temp382 = temp383.
+    ENDIF.
+    result = temp382.
 
   ENDMETHOD.
 
   METHOD msg_get_collect.
 
+    DATA temp384 TYPE string_table.
+    DATA temp65 TYPE zabaputil_cl_util_context=>ty_t_msg.
+    FIELD-SYMBOLS <r> LIKE LINE OF temp65.
+      DATA temp66 LIKE LINE OF temp384.
+    CLEAR temp384.
+    
+    temp65 = msg_get_t( val = val val2 = val2 ).
+    
+    LOOP AT temp65 ASSIGNING <r>.
+      
+      temp66 = |- { <r>-text }|.
+      INSERT temp66 INTO TABLE temp384.
+    ENDLOOP.
     result = concat_lines_of(
-      table = VALUE string_table( FOR <r> IN msg_get_t( val = val val2 = val2 ) ( |- { <r>-text }| ) )
+      table = temp384
       sep   = cv_char_util_newline ).
 
   ENDMETHOD.
@@ -4571,7 +5150,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_ddic_type_name.
 
-    result = substring_after( val = CAST cl_abap_elemdescr( type )->absolute_name
+    DATA temp386 TYPE REF TO cl_abap_elemdescr.
+    temp386 ?= type.
+    result = substring_after( val = temp386->absolute_name
                               sub = `\TYPE=` ).
 
   ENDMETHOD.
@@ -4593,40 +5174,78 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lt_comp TYPE cl_abap_structdescr=>component_table.
 
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    DATA temp387 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_table LIKE temp387.
+        DATA temp388 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp388.
+        DATA temp389 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_elem LIKE temp389.
+        DATA temp390 TYPE abap_componentdescr.
+    DATA temp391 LIKE sy-subrc.
+      DATA lo_type_bool TYPE REF TO cl_abap_typedescr.
+      DATA temp392 TYPE abap_componentdescr.
+      DATA temp67 TYPE REF TO cl_abap_datadescr.
+    DATA lo_line_type TYPE REF TO cl_abap_structdescr.
     ASSIGN ir_tab->* TO <tab>.
 
-    DATA(lo_table) = CAST cl_abap_tabledescr( cl_abap_typedescr=>describe_by_data( <tab> ) ).
+    
+    temp387 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
+    
+    lo_table = temp387.
     TRY.
-        DATA(lo_struct) = CAST cl_abap_structdescr( lo_table->get_table_line_type( ) ).
+        
+        temp388 ?= lo_table->get_table_line_type( ).
+        
+        lo_struct = temp388.
         lt_comp = lo_struct->get_components( ).
       CATCH cx_root.
         result-check_table_line = abap_true.
-        DATA(lo_elem) = CAST cl_abap_elemdescr( lo_table->get_table_line_type( ) ).
-        INSERT VALUE #( name = `TAB_LINE`
-                        type = lo_elem ) INTO TABLE lt_comp.
+        
+        temp389 ?= lo_table->get_table_line_type( ).
+        
+        lo_elem = temp389.
+        
+        CLEAR temp390.
+        temp390-name = `TAB_LINE`.
+        temp390-type = lo_elem.
+        INSERT temp390 INTO TABLE lt_comp.
     ENDTRY.
 
+    
+    READ TABLE lt_comp WITH KEY name = sel_field_name TRANSPORTING NO FIELDS.
+    temp391 = sy-subrc.
     IF add_sel_field = abap_true
-        AND NOT line_exists( lt_comp[ name = sel_field_name ] ).
-      DATA(lo_type_bool) = cl_abap_typedescr=>describe_by_name( `ABAP_BOOL` ).
-      INSERT VALUE #( name = sel_field_name
-                      type = CAST #( lo_type_bool ) ) INTO TABLE lt_comp.
+        AND NOT temp391 = 0.
+      
+      lo_type_bool = cl_abap_typedescr=>describe_by_name( `ABAP_BOOL` ).
+      
+      CLEAR temp392.
+      temp392-name = sel_field_name.
+      
+      temp67 ?= lo_type_bool.
+      temp392-type = temp67.
+      INSERT temp392 INTO TABLE lt_comp.
     ENDIF.
 
-    DATA(lo_line_type) = cl_abap_structdescr=>create( lt_comp ).
+    
+    lo_line_type = cl_abap_structdescr=>create( lt_comp ).
     result-tabledescr = cl_abap_tabledescr=>create( lo_line_type ).
 
   ENDMETHOD.
 
   METHOD msg_get_by_msg.
 
-    DATA(ls_msg) = VALUE ty_s_msg(
-      id         = id
-      no         = no
-      v1         = v1
-      v2         = v2
-      v3         = v3
-      v4         = v4 ).
+    DATA temp393 TYPE ty_s_msg.
+    DATA ls_msg LIKE temp393.
+    CLEAR temp393.
+    temp393-id = id.
+    temp393-no = no.
+    temp393-v1 = v1.
+    temp393-v2 = v2.
+    temp393-v3 = v3.
+    temp393-v4 = v4.
+    
+    ls_msg = temp393.
     result = msg_get( ls_msg ).
 
   ENDMETHOD.
@@ -4635,39 +5254,76 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " Note: ABAP CS operator is CASE-INSENSITIVE.
     " JS transpilation must use a case-insensitive comparison
     " (e.g. val.toLowerCase().includes(sub.toLowerCase())).
-    result = xsdbool( CONV string( val ) CS sub ).
+    DATA temp394 TYPE string.
+    DATA temp5 TYPE xsdboolean.
+    temp394 = val.
+    
+    temp5 = boolc( temp394 CS sub ).
+    result = temp5.
 
   ENDMETHOD.
 
   METHOD c_starts_with.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_prefix) = CONV string( prefix ).
-    DATA(lv_len) = strlen( lv_prefix ).
+    DATA temp395 TYPE string.
+    DATA lv_val LIKE temp395.
+    DATA temp396 TYPE string.
+    DATA lv_prefix LIKE temp396.
+    DATA lv_len TYPE i.
+    DATA temp6 TYPE xsdboolean.
+    temp395 = val.
+    
+    lv_val = temp395.
+    
+    temp396 = prefix.
+    
+    lv_prefix = temp396.
+    
+    lv_len = strlen( lv_prefix ).
 
     IF strlen( lv_val ) < lv_len.
       result = abap_false.
       RETURN.
     ENDIF.
 
-    result = xsdbool( lv_val(lv_len) = lv_prefix ).
+    
+    temp6 = boolc( lv_val(lv_len) = lv_prefix ).
+    result = temp6.
 
   ENDMETHOD.
 
   METHOD c_ends_with.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_suffix) = CONV string( suffix ).
-    DATA(lv_len_suffix) = strlen( lv_suffix ).
-    DATA(lv_len_val) = strlen( lv_val ).
+    DATA temp397 TYPE string.
+    DATA lv_val LIKE temp397.
+    DATA temp398 TYPE string.
+    DATA lv_suffix LIKE temp398.
+    DATA lv_len_suffix TYPE i.
+    DATA lv_len_val TYPE i.
+    DATA lv_off TYPE i.
+    DATA temp7 TYPE xsdboolean.
+    temp397 = val.
+    
+    lv_val = temp397.
+    
+    temp398 = suffix.
+    
+    lv_suffix = temp398.
+    
+    lv_len_suffix = strlen( lv_suffix ).
+    
+    lv_len_val = strlen( lv_val ).
 
     IF lv_len_val < lv_len_suffix.
       result = abap_false.
       RETURN.
     ENDIF.
 
-    DATA(lv_off) = lv_len_val - lv_len_suffix.
-    result = xsdbool( lv_val+lv_off(lv_len_suffix) = lv_suffix ).
+    
+    lv_off = lv_len_val - lv_len_suffix.
+    
+    temp7 = boolc( lv_val+lv_off(lv_len_suffix) = lv_suffix ).
+    result = temp7.
 
   ENDMETHOD.
 
@@ -4679,7 +5335,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_join.
 
-    LOOP AT tab INTO DATA(lv_line).
+    DATA lv_line LIKE LINE OF tab.
+    LOOP AT tab INTO lv_line.
       IF sy-tabix > 1.
         result = result && sep.
       ENDIF.
@@ -4690,16 +5347,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_check_table.
 
-    DATA(lv_type_kind) = cl_abap_datadescr=>get_data_type_kind( val ).
-    result = xsdbool( lv_type_kind = cl_abap_typedescr=>typekind_table ).
+    DATA lv_type_kind TYPE abap_typekind.
+    DATA temp8 TYPE xsdboolean.
+    lv_type_kind = cl_abap_datadescr=>get_data_type_kind( val ).
+    
+    temp8 = boolc( lv_type_kind = cl_abap_typedescr=>typekind_table ).
+    result = temp8.
 
   ENDMETHOD.
 
   METHOD rtti_check_structure.
+        DATA lo_type TYPE REF TO cl_abap_typedescr.
+        DATA temp9 TYPE xsdboolean.
 
     TRY.
-        DATA(lo_type) = cl_abap_typedescr=>describe_by_data( val ).
-        result = xsdbool( lo_type->kind = cl_abap_typedescr=>kind_struct ).
+        
+        lo_type = cl_abap_typedescr=>describe_by_data( val ).
+        
+        temp9 = boolc( lo_type->kind = cl_abap_typedescr=>kind_struct ).
+        result = temp9.
       CATCH cx_root.
         result = abap_false.
     ENDTRY.
@@ -4708,7 +5374,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_check_numeric.
 
-    DATA(lv_type_kind) = cl_abap_datadescr=>get_data_type_kind( val ).
+    DATA lv_type_kind TYPE abap_typekind.
+    lv_type_kind = cl_abap_datadescr=>get_data_type_kind( val ).
     CASE lv_type_kind.
       WHEN cl_abap_typedescr=>typekind_int
           OR cl_abap_typedescr=>typekind_int1
@@ -4733,14 +5400,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD time_get_stampl_by_date_time.
 
-    DATA(ls_sy) = zabaputil_cl_util_context=>context_get_sy( ).
+    DATA ls_sy TYPE zabaputil_cl_util_context=>ty_syst.
+    ls_sy = zabaputil_cl_util_context=>context_get_sy( ).
     CONVERT DATE date TIME time INTO TIME STAMP result TIME ZONE ls_sy-zonlo.
 
   ENDMETHOD.
 
   METHOD time_diff_seconds.
 
-    DATA(lv_diff) = cl_abap_tstmp=>subtract( tstmp1 = time_to
+    DATA lv_diff TYPE i.
+    lv_diff = cl_abap_tstmp=>subtract( tstmp1 = time_to
                                               tstmp2 = time_from ).
     result = lv_diff.
 
@@ -4748,23 +5417,50 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD conv_string_to_date.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_fmt) = CONV string( format ).
-    DATA(lv_yyyy_off) = find( val = lv_fmt sub = `YYYY` ).
-    DATA(lv_mm_off)   = find( val = lv_fmt sub = `MM` ).
-    DATA(lv_dd_off)   = find( val = lv_fmt sub = `DD` ).
+    DATA temp399 TYPE string.
+    DATA lv_val LIKE temp399.
+    DATA temp400 TYPE string.
+    DATA lv_fmt LIKE temp400.
+    DATA lv_yyyy_off TYPE i.
+    DATA lv_mm_off TYPE i.
+    DATA lv_dd_off TYPE i.
+    DATA lv_clean TYPE string.
+    DATA lv_i TYPE i.
+      DATA lv_c TYPE string.
+    DATA lv_fmt_clean TYPE string.
+    DATA lv_year TYPE string.
+    DATA lv_month TYPE string.
+    DATA lv_day TYPE string.
+    DATA lv_pos TYPE i.
+    temp399 = val.
+    
+    lv_val = temp399.
+    
+    temp400 = format.
+    
+    lv_fmt = temp400.
+    
+    lv_yyyy_off = find( val = lv_fmt sub = `YYYY` ).
+    
+    lv_mm_off   = find( val = lv_fmt sub = `MM` ).
+    
+    lv_dd_off   = find( val = lv_fmt sub = `DD` ).
 
-    DATA(lv_clean) = ``.
-    DATA(lv_i) = 0.
+    
+    lv_clean = ``.
+    
+    lv_i = 0.
     WHILE lv_i < strlen( lv_val ).
-      DATA(lv_c) = lv_val+lv_i(1).
+      
+      lv_c = lv_val+lv_i(1).
       IF lv_c >= `0` AND lv_c <= `9`.
         lv_clean = lv_clean && lv_c.
       ENDIF.
       lv_i = lv_i + 1.
     ENDWHILE.
 
-    DATA(lv_fmt_clean) = ``.
+    
+    lv_fmt_clean = ``.
     lv_i = 0.
     WHILE lv_i < strlen( lv_fmt ).
       lv_c = lv_fmt+lv_i(1).
@@ -4774,11 +5470,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       lv_i = lv_i + 1.
     ENDWHILE.
 
-    DATA(lv_year)  = ``.
-    DATA(lv_month) = ``.
-    DATA(lv_day)   = ``.
+    
+    lv_year  = ``.
+    
+    lv_month = ``.
+    
+    lv_day   = ``.
 
-    DATA(lv_pos) = 0.
+    
+    lv_pos = 0.
     lv_i = 0.
     WHILE lv_i < strlen( lv_fmt_clean ).
       lv_c = lv_fmt_clean+lv_i(1).
@@ -4800,12 +5500,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD conv_date_to_string.
 
-    DATA(lv_fmt) = CONV string( format ).
-    DATA(lv_date) = CONV string( val ).
+    DATA temp401 TYPE string.
+    DATA lv_fmt LIKE temp401.
+    DATA temp402 TYPE string.
+    DATA lv_date LIKE temp402.
+    DATA lv_year TYPE string.
+    DATA lv_month TYPE string.
+    DATA lv_day TYPE string.
+    temp401 = format.
+    
+    lv_fmt = temp401.
+    
+    temp402 = val.
+    
+    lv_date = temp402.
 
-    DATA(lv_year)  = lv_date(4).
-    DATA(lv_month) = lv_date+4(2).
-    DATA(lv_day)   = lv_date+6(2).
+    
+    lv_year  = lv_date(4).
+    
+    lv_month = lv_date+4(2).
+    
+    lv_day   = lv_date+6(2).
 
     result = lv_fmt.
     REPLACE `YYYY` IN result WITH lv_year.
@@ -4816,7 +5531,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD ui5_msg_box_format.
 
-    DATA(lt_msg) = msg_get_t( val ).
+    DATA lt_msg TYPE zabaputil_cl_util_context=>ty_t_msg.
+    DATA lv_lines TYPE i.
+    DATA lv_type TYPE string.
+    DATA temp68 LIKE LINE OF lt_msg.
+    DATA temp69 LIKE sy-tabix.
+      DATA temp403 LIKE LINE OF lt_msg.
+      DATA temp404 LIKE sy-tabix.
+    DATA lt_detail_items TYPE string_table.
+    DATA temp405 LIKE LINE OF lt_msg.
+    DATA lr_msg LIKE REF TO temp405.
+      DATA temp406 LIKE LINE OF lt_detail_items.
+    lt_msg = msg_get_t( val ).
 
     " a structure that carries none of the message components maps to an
     " entry with no text at all - that is not a message, it is data, and it
@@ -4825,7 +5551,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " the caller fall back to ui5_data_box_format( )
     DELETE lt_msg WHERE text IS INITIAL.
 
-    DATA(lv_lines) = lines( lt_msg ).
+    
+    lv_lines = lines( lt_msg ).
 
     IF lv_lines = 0.
       result-skip = abap_true.
@@ -4834,20 +5561,41 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " the box takes its type/title from the FIRST message, also when several
     " are collapsed into one box below
-    DATA(lv_type) = ui5_get_msg_type( lt_msg[ 1 ]-type ).
+    
+    
+    
+    temp69 = sy-tabix.
+    READ TABLE lt_msg INDEX 1 INTO temp68.
+    sy-tabix = temp69.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lv_type = ui5_get_msg_type( temp68-type ).
     result-title = lv_type.
     result-type  = to_lower( lv_type ).
 
     IF lv_lines = 1.
-      result-text = lt_msg[ 1 ]-text.
+      
+      
+      temp404 = sy-tabix.
+      READ TABLE lt_msg INDEX 1 INTO temp403.
+      sy-tabix = temp404.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      result-text = temp403-text.
       RETURN.
     ENDIF.
 
     " several messages: a counting headline plus every text as a bullet
     result-text = | { lv_lines } Messages found: |.
-    DATA lt_detail_items TYPE string_table.
-    LOOP AT lt_msg REFERENCE INTO DATA(lr_msg).
-      INSERT |<li>{ lr_msg->text }</li>| INTO TABLE lt_detail_items.
+    
+    
+    
+    LOOP AT lt_msg REFERENCE INTO lr_msg.
+      
+      temp406 = |<li>{ lr_msg->text }</li>|.
+      INSERT temp406 INTO TABLE lt_detail_items.
     ENDLOOP.
     result-details = `<ul>` && concat_lines_of( lt_detail_items ) && `</ul>`.
 
@@ -4930,21 +5678,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_no   TYPE i.
 
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <row> TYPE ANY.
+        DATA temp407 LIKE LINE OF lt_item.
+      DATA temp408 LIKE LINE OF lt_item.
 
     ASSIGN val TO <tab>.
     IF sy-subrc <> 0.
       RETURN.
     ENDIF.
 
-    LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<row>).
+    
+    LOOP AT <tab> ASSIGNING <row>.
       lv_no = lv_no + 1.
       IF lv_no > cv_data_max_rows.
-        INSERT |<li><em>... { lines( <tab> ) - cv_data_max_rows } more entries</em></li>|
+        
+        temp407 = |<li><em>... { lines( <tab> ) - cv_data_max_rows } more entries</em></li>|.
+        INSERT temp407
                INTO TABLE lt_item.
         EXIT.
       ENDIF.
-      INSERT |<li>{ data_render( val   = <row>
-                                 depth = depth + 1 ) }</li>| INTO TABLE lt_item.
+      
+      temp408 = |<li>{ data_render( val = <row> depth = depth + 1 ) }</li>|.
+      INSERT temp408 INTO TABLE lt_item.
     ENDLOOP.
 
     result = html_get_list( items   = lt_item
@@ -4959,16 +5714,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_name TYPE string.
 
     FIELD-SYMBOLS <comp> TYPE any.
+        DATA lt_attri TYPE abap_component_tab.
+    DATA temp409 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp409.
 
     TRY.
-        DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
+        
+        lt_attri = rtti_get_t_attri_by_any( val ).
       CATCH cx_root.
         " a structure RTTI cannot describe still has a value - the caller
         " keeps the headline, the details stay empty
         RETURN.
     ENDTRY.
 
-    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO lr_attri.
       lv_name = lr_attri->name.
       ASSIGN COMPONENT lv_name OF STRUCTURE val TO <comp>.
       IF sy-subrc <> 0.
@@ -4991,6 +5752,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_name TYPE string.
 
     FIELD-SYMBOLS <comp> TYPE any.
+        DATA lt_attri TYPE abap_attrdescr_tab.
+    DATA temp410 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp410.
 
     TRY.
         lo_obj = val.
@@ -5010,14 +5774,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     TRY.
-        DATA(lt_attri) = rtti_get_t_attri_by_oref( lo_obj ).
+        
+        lt_attri = rtti_get_t_attri_by_oref( lo_obj ).
       CATCH cx_root.
         RETURN.
     ENDTRY.
 
     " the public state is what an object can show of itself; a constant is
     " the type's, not this instance's, and a class attribute is nobody's
-    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri)                  "#EC CI_SORTSEQ
+    
+    
+    LOOP AT lt_attri REFERENCE INTO lr_attri                  "#EC CI_SORTSEQ
          WHERE visibility  = cv_objectdescr_public
            AND is_constant = abap_false
            AND is_class    = abap_false.
@@ -5065,7 +5832,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD data_render_item.
 
-    DATA(lv_val) = data_render( val   = val
+    DATA lv_val TYPE string.
+    lv_val = data_render( val   = val
                                 depth = depth + 1 ).
 
     result = |<li><strong>{ c_escape_html( name ) }</strong>: { lv_val }</li>|.
@@ -5075,12 +5843,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD data_get_headline.
 
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+        DATA lv_lines TYPE i.
+            DATA lt_attri TYPE abap_component_tab.
+        DATA lo_obj TYPE REF TO object.
 
     CASE rtti_get_type_kind( val ).
 
       WHEN cl_abap_datadescr=>typekind_table.
         ASSIGN val TO <tab>.
-        DATA(lv_lines) = lines( <tab> ).
+        
+        lv_lines = lines( <tab> ).
         IF lv_lines = 1.
           result = `Table with 1 entry`.
         ELSE.
@@ -5089,14 +5861,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       WHEN cl_abap_datadescr=>typekind_struct1 OR cl_abap_datadescr=>typekind_struct2.
         TRY.
-            DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
+            
+            lt_attri = rtti_get_t_attri_by_any( val ).
             result = |Structure with { lines( lt_attri ) } fields|.
           CATCH cx_root.
             result = `Structure`.
         ENDTRY.
 
       WHEN cl_abap_datadescr=>typekind_oref.
-        DATA lo_obj TYPE REF TO object.
+        
         TRY.
             lo_obj = val.
             result = |Object { rtti_get_classname_by_ref( lo_obj ) }|.
@@ -5129,9 +5902,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD data_get_exc_text.
+        DATA temp411 TYPE REF TO cx_root.
+        DATA lx LIKE temp411.
 
     TRY.
-        DATA(lx) = CAST cx_root( val ).
+        
+        temp411 ?= val.
+        
+        lx = temp411.
         result = lx->get_text( ).
       CATCH cx_root ##NO_HANDLER.
         " not an exception, or one that cannot render itself
@@ -5158,10 +5936,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " a closing tag is the one shape a business text does not produce by
     " accident; the void elements are the ones that have none. CS ignores
     " case, so `</DIV>` and `<BR/>` are covered with it
-    result = xsdbool( val CS `</`
-                   OR val CS `<br`
-                   OR val CS `<hr`
-                   OR val CS `<img` ).
+    DATA temp10 TYPE xsdboolean.
+    temp10 = boolc( val CS `</` OR val CS `<br` OR val CS `<hr` OR val CS `<img` ).
+    result = temp10.
 
   ENDMETHOD.
 
@@ -5208,27 +5985,37 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD rtti_check_table_standard.
 
     DATA lo_tab TYPE REF TO cl_abap_tabledescr.
+        DATA lo_type TYPE REF TO cl_abap_typedescr.
+        DATA temp11 TYPE xsdboolean.
 
     TRY.
-        DATA(lo_type) = cl_abap_typedescr=>describe_by_data_ref( val ).
+        
+        lo_type = cl_abap_typedescr=>describe_by_data_ref( val ).
         IF lo_type->kind <> cl_abap_typedescr=>kind_table.
           RETURN.
         ENDIF.
         lo_tab ?= lo_type.
-        result = xsdbool( lo_tab->table_kind = cl_abap_tabledescr=>tablekind_std ).
+        
+        temp11 = boolc( lo_tab->table_kind = cl_abap_tabledescr=>tablekind_std ).
+        result = temp11.
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
   ENDMETHOD.
 
   METHOD rtti_check_serializable.
+        DATA temp412 TYPE REF TO if_serializable_object.
+        DATA lo_dummy LIKE temp412.
 
     IF val IS NOT BOUND.
       result = abap_true.
       RETURN.
     ENDIF.
     TRY.
-        DATA(lo_dummy) = CAST if_serializable_object( val ) ##NEEDED.
+        
+        temp412 ?= val.
+        
+        lo_dummy = temp412.
         result = abap_true.
       CATCH cx_root.
         result = abap_false.
@@ -5238,19 +6025,32 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD app_get_url.
 
-    DATA(lt_param) = url_param_get_tab( search ).
+    DATA lt_param TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA temp413 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    DATA temp414 TYPE string.
+    DATA lv_hash LIKE temp414.
+      DATA lv_content LIKE lv_hash.
+        DATA lv_off TYPE i.
+    lt_param = url_param_get_tab( search ).
     DELETE lt_param WHERE n = `app_start`.
-    INSERT VALUE #( n = `app_start`
-                    v = to_lower( classname ) ) INTO TABLE lt_param.
+    
+    CLEAR temp413.
+    temp413-n = `app_start`.
+    temp413-v = to_lower( classname ).
+    INSERT temp413 INTO TABLE lt_param.
 
     " keep only the launchpad shell part of the hash: the app-owned part
     " (leading `/` standalone, or everything after `&/` inside the FLP)
     " carries THIS app's route/app-state, which the backend prefers over
     " app_start - appending it verbatim would re-open the current app
     " instead of the requested one
-    DATA(lv_hash) = CONV string( hash ).
+    
+    temp414 = hash.
+    
+    lv_hash = temp414.
     IF lv_hash IS NOT INITIAL.
-      DATA(lv_content) = lv_hash.
+      
+      lv_content = lv_hash.
       IF lv_content(1) = `#`.
         lv_content = substring( val = lv_content
                                 off = 1 ).
@@ -5260,7 +6060,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         lv_hash = ``.
       ELSE.
         " inside the FLP keep the shell part, cut the app part after `&/`
-        DATA(lv_off) = find( val = lv_content
+        
+        lv_off = find( val = lv_content
                              sub = `&/` ).
         IF lv_off = 0.
           lv_hash = ``.
@@ -5285,10 +6086,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   " ========== String Extras ==========
 
   METHOD c_pad_left.
+    DATA temp415 TYPE string.
+    DATA temp70 TYPE string.
+    DATA lv_pad LIKE temp70.
 
     result = val.
     " pad is TYPE c - space value would be trimmed by && (same as c_pad_right fix)
-    DATA(lv_pad) = COND string( WHEN pad IS INITIAL THEN ` ` ELSE CONV #( pad ) ).
+    
+    temp415 = pad.
+    
+    IF pad IS INITIAL.
+      temp70 = ` `.
+    ELSE.
+      temp70 = temp415.
+    ENDIF.
+    
+    lv_pad = temp70.
     WHILE strlen( result ) < len.
       result = lv_pad && result.
     ENDWHILE.
@@ -5296,11 +6109,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD c_pad_right.
+    DATA temp416 TYPE string.
+    DATA temp71 TYPE string.
+    DATA lv_pad LIKE temp71.
 
     result = val.
     " pad is TYPE c - a space value IS INITIAL in ABAP and CONV string trims it.
     " Preserve the space explicitly via COND.
-    DATA(lv_pad) = COND string( WHEN pad IS INITIAL THEN ` ` ELSE CONV #( pad ) ).
+    
+    temp416 = pad.
+    
+    IF pad IS INITIAL.
+      temp71 = ` `.
+    ELSE.
+      temp71 = temp416.
+    ENDIF.
+    
+    lv_pad = temp71.
     WHILE strlen( result ) < len.
       result = result && lv_pad.
     ENDWHILE.
@@ -5309,13 +6134,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_truncate.
 
-    DATA(lv_val) = CONV string( val ).
+    DATA temp417 TYPE string.
+    DATA lv_val LIKE temp417.
+      DATA lv_ellipsis_len TYPE i.
+        DATA lv_cut TYPE i.
+    temp417 = val.
+    
+    lv_val = temp417.
     IF strlen( lv_val ) <= max.
       result = lv_val.
     ELSE.
-      DATA(lv_ellipsis_len) = strlen( ellipsis ).
+      
+      lv_ellipsis_len = strlen( ellipsis ).
       IF max > lv_ellipsis_len.
-        DATA(lv_cut) = max - lv_ellipsis_len.
+        
+        lv_cut = max - lv_ellipsis_len.
         result = substring( val = lv_val off = 0 len = lv_cut ) && ellipsis.
       ELSE.
         result = substring( val = lv_val off = 0 len = max ).
@@ -5326,10 +6159,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_substring_safe.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_strlen) = strlen( lv_val ).
+    DATA temp418 TYPE string.
+    DATA lv_val LIKE temp418.
+    DATA lv_strlen TYPE i.
+    DATA lv_off LIKE off.
+    DATA lv_len LIKE len.
+    temp418 = val.
+    
+    lv_val = temp418.
+    
+    lv_strlen = strlen( lv_val ).
 
-    DATA(lv_off) = off.
+    
+    lv_off = off.
     IF lv_off < 0.
       lv_off = 0.
     ENDIF.
@@ -5338,7 +6180,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(lv_len) = len.
+    
+    lv_len = len.
     IF lv_len < 0 OR lv_off + lv_len > lv_strlen.
       lv_len = lv_strlen - lv_off.
     ENDIF.
@@ -5356,8 +6199,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_is_blank.
 
-    DATA(lv_val) = CONV string( val ).
-    result = xsdbool( c_trim( lv_val ) IS INITIAL ).
+    DATA temp419 TYPE string.
+    DATA lv_val LIKE temp419.
+    DATA temp12 TYPE xsdboolean.
+    temp419 = val.
+    
+    lv_val = temp419.
+    
+    temp12 = boolc( c_trim( lv_val ) IS INITIAL ).
+    result = temp12.
 
   ENDMETHOD.
 
@@ -5366,43 +6216,84 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD conv_number_to_string.
 
     DATA lv_str TYPE string.
+      DATA lv_fmt TYPE string.
+      DATA lv_dot_pos TYPE i.
+        DATA lv_int_part TYPE string.
+        DATA lv_dec_part TYPE string.
+        DATA temp420 TYPE string.
+      DATA lv_dot TYPE i.
+      DATA temp421 TYPE string.
+      DATA lv_integer LIKE temp421.
+      DATA temp422 TYPE string.
+      DATA lv_decimal LIKE temp422.
+      DATA lv_negative TYPE string.
+      DATA lv_result TYPE string.
+      DATA lv_count TYPE i.
+      DATA lv_i TYPE i.
 
     IF decimals >= 0.
-      DATA(lv_fmt) = |{ val }|.
-      DATA(lv_dot_pos) = find( val = lv_fmt sub = `.` ).
+      
+      lv_fmt = |{ val }|.
+      
+      lv_dot_pos = find( val = lv_fmt sub = `.` ).
       IF lv_dot_pos < 0.
         lv_str = lv_fmt.
         IF decimals > 0.
           lv_str = lv_str && `.` && repeat( val = `0` occ = decimals ).
         ENDIF.
       ELSE.
-        DATA(lv_int_part) = lv_fmt(lv_dot_pos).
-        DATA(lv_dec_part) = substring( val = lv_fmt off = lv_dot_pos + 1 ).
+        
+        lv_int_part = lv_fmt(lv_dot_pos).
+        
+        lv_dec_part = substring( val = lv_fmt off = lv_dot_pos + 1 ).
         IF strlen( lv_dec_part ) > decimals.
           lv_dec_part = lv_dec_part(decimals).
         ELSEIF strlen( lv_dec_part ) < decimals.
           lv_dec_part = lv_dec_part && repeat( val = `0` occ = decimals - strlen( lv_dec_part ) ).
         ENDIF.
-        lv_str = COND #( WHEN decimals > 0 THEN lv_int_part && `.` && lv_dec_part
-                                           ELSE lv_int_part ).
+        
+        IF decimals > 0.
+          temp420 = lv_int_part && `.` && lv_dec_part.
+        ELSE.
+          temp420 = lv_int_part.
+        ENDIF.
+        lv_str = temp420.
       ENDIF.
     ELSE.
       lv_str = |{ val }|.
     ENDIF.
 
     IF sep_thousands IS NOT INITIAL.
-      DATA(lv_dot) = find( val = lv_str sub = `.` ).
-      DATA(lv_integer) = COND string( WHEN lv_dot >= 0 THEN lv_str(lv_dot)
-                                                       ELSE lv_str ).
-      DATA(lv_decimal) = COND string( WHEN lv_dot >= 0 THEN substring( val = lv_str off = lv_dot ) ).
-      DATA(lv_negative) = ``.
+      
+      lv_dot = find( val = lv_str sub = `.` ).
+      
+      IF lv_dot >= 0.
+        temp421 = lv_str(lv_dot).
+      ELSE.
+        temp421 = lv_str.
+      ENDIF.
+      
+      lv_integer = temp421.
+      
+      IF lv_dot >= 0.
+        temp422 = substring( val = lv_str off = lv_dot ).
+      ELSE.
+        CLEAR temp422.
+      ENDIF.
+      
+      lv_decimal = temp422.
+      
+      lv_negative = ``.
       IF strlen( lv_integer ) > 0 AND lv_integer(1) = `-`.
         lv_negative = `-`.
         lv_integer = substring( val = lv_integer off = 1 ).
       ENDIF.
-      DATA(lv_result) = ``.
-      DATA(lv_count) = 0.
-      DATA(lv_i) = strlen( lv_integer ) - 1.
+      
+      lv_result = ``.
+      
+      lv_count = 0.
+      
+      lv_i = strlen( lv_integer ) - 1.
       WHILE lv_i >= 0.
         IF lv_count > 0 AND lv_count MOD 3 = 0.
           lv_result = sep_thousands && lv_result.
@@ -5420,7 +6311,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD conv_string_to_number.
 
-    DATA(lv_val) = c_trim( CONV string( val ) ).
+    DATA temp423 TYPE string.
+    DATA lv_val TYPE string.
+    DATA lv_clean TYPE string.
+    DATA lv_i TYPE i.
+      DATA lv_c TYPE string.
+        DATA lv_rest TYPE string.
+    DATA lv_dot_count TYPE i.
+    temp423 = val.
+    
+    lv_val = c_trim( temp423 ).
 
     " Heuristic: A comma is treated as DECIMAL separator when it is the
     " LAST separator in the string (no further comma or dot follows).
@@ -5428,10 +6328,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " Edge case: '1,000' (no dot) is interpreted as 1.000 (decimal), NOT 1000.
     " This matches European number formatting conventions.
     " Normalize: keep only digits, minus, and decimal point
-    DATA(lv_clean) = ``.
-    DATA(lv_i) = 0.
+    
+    lv_clean = ``.
+    
+    lv_i = 0.
     WHILE lv_i < strlen( lv_val ).
-      DATA(lv_c) = lv_val+lv_i(1).
+      
+      lv_c = lv_val+lv_i(1).
       IF lv_c >= `0` AND lv_c <= `9`.
         lv_clean = lv_clean && lv_c.
       ELSEIF lv_c = `-` AND lv_i = 0.
@@ -5440,7 +6343,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         lv_clean = lv_clean && lv_c.
       ELSEIF lv_c = `,`.
         " Check if comma is decimal separator (last separator in string)
-        DATA(lv_rest) = substring( val = lv_val off = lv_i + 1 ).
+        
+        lv_rest = substring( val = lv_val off = lv_i + 1 ).
         IF lv_rest NA `,` AND lv_rest NA `.`.
           lv_clean = lv_clean && `.`.
         ENDIF.
@@ -5453,7 +6357,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " digit and at most one decimal point (e.g. European format `1.234,56`
     " normalizes to the invalid `1.234.56`). Return 0 for invalid input -
     " the JS transpiler converts such strings leniently instead of raising
-    DATA lv_dot_count TYPE i.
+    
     FIND ALL OCCURRENCES OF `.` IN lv_clean MATCH COUNT lv_dot_count.
     IF lv_dot_count > 1 OR lv_clean NA `0123456789`.
       result = 0.
@@ -5482,21 +6386,34 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
              key_num TYPE decfloat34,
              idx     TYPE i,
            END OF ty_s_sort_key.
-    DATA lt_key TYPE STANDARD TABLE OF ty_s_sort_key WITH EMPTY KEY.
+    TYPES temp4 TYPE STANDARD TABLE OF ty_s_sort_key WITH DEFAULT KEY.
+DATA lt_key TYPE temp4.
     DATA lv_numeric TYPE abap_bool.
 
-    DATA(lv_field) = to_upper( fieldname ).
+    DATA lv_field TYPE string.
+    FIELD-SYMBOLS <row> TYPE ANY.
+      DATA lv_tabix LIKE sy-tabix.
+      FIELD-SYMBOLS <val> TYPE any.
+      FIELD-SYMBOLS <key> LIKE LINE OF lt_key.
+    DATA lr_copy TYPE REF TO data.
+    FIELD-SYMBOLS <tab_copy> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <src> TYPE any.
+    lv_field = to_upper( fieldname ).
 
-    LOOP AT tab ASSIGNING FIELD-SYMBOL(<row>).
-      DATA(lv_tabix) = sy-tabix.
-      ASSIGN COMPONENT lv_field OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
+    
+    LOOP AT tab ASSIGNING <row>.
+      
+      lv_tabix = sy-tabix.
+      
+      ASSIGN COMPONENT lv_field OF STRUCTURE <row> TO <val>.
       IF sy-subrc <> 0.
         RETURN.
       ENDIF.
       IF lv_tabix = 1.
         lv_numeric = rtti_check_numeric( <val> ).
       ENDIF.
-      APPEND INITIAL LINE TO lt_key ASSIGNING FIELD-SYMBOL(<key>).
+      
+      APPEND INITIAL LINE TO lt_key ASSIGNING <key>.
       IF lv_numeric = abap_true.
         <key>-key_num = <val>.
       ELSE.
@@ -5511,15 +6428,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       SORT lt_key BY key_num ASCENDING key_str ASCENDING.
     ENDIF.
 
-    DATA lr_copy TYPE REF TO data.
+    
     CREATE DATA lr_copy LIKE tab.
-    FIELD-SYMBOLS <tab_copy> TYPE STANDARD TABLE.
+    
     ASSIGN lr_copy->* TO <tab_copy>.
     <tab_copy> = tab.
 
     CLEAR tab.
     LOOP AT lt_key ASSIGNING <key>.
-      READ TABLE <tab_copy> INDEX <key>-idx ASSIGNING FIELD-SYMBOL(<src>).
+      
+      READ TABLE <tab_copy> INDEX <key>-idx ASSIGNING <src>.
       IF sy-subrc = 0.
         APPEND <src> TO tab.
       ENDIF.
@@ -5530,17 +6448,42 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD itab_slice.
 
     " Create a copy of the source table (same type) and return the slice.
-    DATA(lo_tabledescr) = CAST cl_abap_tabledescr(
-      cl_abap_typedescr=>describe_by_data( tab ) ).
+    DATA temp424 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_tabledescr LIKE temp424.
+    FIELD-SYMBOLS <result> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    DATA lv_lines TYPE i.
+    DATA temp425 TYPE i.
+    DATA lv_to LIKE temp425.
+    DATA temp426 TYPE i.
+    DATA lv_from LIKE temp426.
+    temp424 ?= cl_abap_typedescr=>describe_by_data( tab ).
+    
+    lo_tabledescr = temp424.
     CREATE DATA result TYPE HANDLE lo_tabledescr.
 
-    FIELD-SYMBOLS <result> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <row>    TYPE any.
+    
+    
     ASSIGN result->* TO <result>.
 
-    DATA(lv_lines) = lines( tab ).
-    DATA(lv_to) = COND i( WHEN to <= 0 OR to > lv_lines THEN lv_lines ELSE to ).
-    DATA(lv_from) = COND i( WHEN from < 1 THEN 1 ELSE from ).
+    
+    lv_lines = lines( tab ).
+    
+    IF to <= 0 OR to > lv_lines.
+      temp425 = lv_lines.
+    ELSE.
+      temp425 = to.
+    ENDIF.
+    
+    lv_to = temp425.
+    
+    IF from < 1.
+      temp426 = 1.
+    ELSE.
+      temp426 = from.
+    ENDIF.
+    
+    lv_from = temp426.
 
     LOOP AT tab ASSIGNING <row> FROM lv_from TO lv_to.
       INSERT <row> INTO TABLE <result>.
@@ -5549,13 +6492,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD itab_paginate.
+    DATA temp427 TYPE i.
+    DATA lv_from TYPE i.
+    DATA lv_to TYPE i.
 
     total_count = lines( tab ).
-    total_pages = COND #( WHEN page_size <= 0 THEN 1
-                          ELSE ( total_count + page_size - 1 ) / page_size ).
+    
+    IF page_size <= 0.
+      temp427 = 1.
+    ELSE.
+      temp427 = ( total_count + page_size - 1 ) / page_size.
+    ENDIF.
+    total_pages = temp427.
 
-    DATA(lv_from) = ( page - 1 ) * page_size + 1.
-    DATA(lv_to)   = page * page_size.
+    
+    lv_from = ( page - 1 ) * page_size + 1.
+    
+    lv_to   = page * page_size.
 
     result = itab_slice( tab  = tab
                          from = lv_from
@@ -5580,19 +6533,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <row>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
+      DATA lv_val TYPE string.
+      FIELD-SYMBOLS <entry> TYPE zabaputil_cl_util_context=>ty_s_name_value.
+        DATA temp428 TYPE i.
+        DATA lv_count TYPE i.
+        DATA temp429 TYPE zabaputil_cl_util_context=>ty_s_name_value.
 
     LOOP AT tab ASSIGNING <row>.
       ASSIGN COMPONENT fieldname OF STRUCTURE <row> TO <field>.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
-      DATA(lv_val) = |{ <field> }|.
-      READ TABLE result ASSIGNING FIELD-SYMBOL(<entry>) WITH KEY n = lv_val.
+      
+      lv_val = |{ <field> }|.
+      
+      READ TABLE result ASSIGNING <entry> WITH KEY n = lv_val.
       IF sy-subrc = 0.
-        DATA(lv_count) = CONV i( <entry>-v ) + 1.
+        
+        temp428 = <entry>-v.
+        
+        lv_count = temp428 + 1.
         <entry>-v = |{ lv_count }|.
       ELSE.
-        INSERT VALUE #( n = lv_val v = `1` ) INTO TABLE result.
+        
+        CLEAR temp429.
+        temp429-n = lv_val.
+        temp429-v = `1`.
+        INSERT temp429 INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
@@ -5602,7 +6569,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD check_is_email.
 
-    DATA(lv_val) = c_trim( CONV string( val ) ).
+    DATA temp430 TYPE string.
+    DATA lv_val TYPE string.
+    DATA lv_local TYPE string.
+    DATA lv_domain TYPE string.
+    DATA lv_extra TYPE string.
+    temp430 = val.
+    
+    lv_val = c_trim( temp430 ).
 
     IF lv_val IS INITIAL.
       result = abap_false.
@@ -5611,7 +6585,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " Basic email validation: contains exactly one @, has text before and after,
     " domain part contains at least one dot
-    SPLIT lv_val AT `@` INTO DATA(lv_local) DATA(lv_domain) DATA(lv_extra).
+    
+    
+    
+    SPLIT lv_val AT `@` INTO lv_local lv_domain lv_extra.
     IF lv_extra IS NOT INITIAL OR lv_local IS INITIAL OR lv_domain IS INITIAL.
       result = abap_false.
       RETURN.
@@ -5628,17 +6605,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD check_is_numeric_string.
 
-    DATA(lv_val) = c_trim( CONV string( val ) ).
+    DATA temp431 TYPE string.
+    DATA lv_val TYPE string.
+    DATA lv_i TYPE i.
+    DATA lv_has_dot LIKE abap_false.
+      DATA lv_c TYPE string.
+    temp431 = val.
+    
+    lv_val = c_trim( temp431 ).
 
     IF lv_val IS INITIAL.
       result = abap_false.
       RETURN.
     ENDIF.
 
-    DATA(lv_i) = 0.
-    DATA(lv_has_dot) = abap_false.
+    
+    lv_i = 0.
+    
+    lv_has_dot = abap_false.
     WHILE lv_i < strlen( lv_val ).
-      DATA(lv_c) = lv_val+lv_i(1).
+      
+      lv_c = lv_val+lv_i(1).
       IF lv_c >= `0` AND lv_c <= `9`.
         " digit ok
       ELSEIF lv_c = `-` AND lv_i = 0.
@@ -5662,9 +6649,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     " declared, not CONV string( ) - see error_get_attributes
     DATA lv_check TYPE string.
+        DATA lv_date TYPE d.
+        DATA temp13 TYPE xsdboolean.
 
     TRY.
-        DATA(lv_date) = conv_string_to_date( val = val format = format ).
+        
+        lv_date = conv_string_to_date( val = val format = format ).
         " Check the date is actually valid (not 00000000 and not invalid like Feb 30)
         IF lv_date IS INITIAL.
           result = abap_false.
@@ -5672,7 +6662,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ENDIF.
         " ABAP validates dates on assignment — if it passed conv_string_to_date it's valid
         lv_check = lv_date.
-        result = xsdbool( lv_check <> `00000000` ).
+        
+        temp13 = boolc( lv_check <> `00000000` ).
+        result = temp13.
       CATCH cx_root.
         result = abap_false.
     ENDTRY.
@@ -5681,9 +6673,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD check_is_guid.
 
-    DATA(lv_val) = c_trim( CONV string( val ) ).
-    DATA(lv_clean) = c_replace_all( val = lv_val sub = `-` new_val = `` ).
-    DATA(lv_len) = strlen( lv_clean ).
+    DATA temp432 TYPE string.
+    DATA lv_val TYPE string.
+    DATA lv_clean TYPE string.
+    DATA lv_len TYPE i.
+    DATA lv_upper TYPE string.
+    DATA lv_i TYPE i.
+      DATA lv_c TYPE string.
+    temp432 = val.
+    
+    lv_val = c_trim( temp432 ).
+    
+    lv_clean = c_replace_all( val = lv_val sub = `-` new_val = `` ).
+    
+    lv_len = strlen( lv_clean ).
 
     " Accept 32 chars (raw) or 36 chars (with dashes)
     IF lv_len <> 32.
@@ -5692,10 +6695,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " All characters must be hex digits
-    DATA(lv_upper) = to_upper( lv_clean ).
-    DATA(lv_i) = 0.
+    
+    lv_upper = to_upper( lv_clean ).
+    
+    lv_i = 0.
     WHILE lv_i < 32.
-      DATA(lv_c) = lv_upper+lv_i(1).
+      
+      lv_c = lv_upper+lv_i(1).
       IF NOT ( ( lv_c >= `0` AND lv_c <= `9` ) OR ( lv_c >= `A` AND lv_c <= `F` ) ).
         result = abap_false.
         RETURN.
@@ -5709,17 +6715,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD check_max_length.
 
-    DATA(lv_val) = CONV string( val ).
-    result = xsdbool( strlen( lv_val ) <= max ).
+    DATA temp433 TYPE string.
+    DATA lv_val LIKE temp433.
+    DATA temp14 TYPE xsdboolean.
+    temp433 = val.
+    
+    lv_val = temp433.
+    
+    temp14 = boolc( strlen( lv_val ) <= max ).
+    result = temp14.
 
   ENDMETHOD.
 
   " ========== Deep Comparison ==========
 
   METHOD data_equals.
+        DATA temp15 TYPE xsdboolean.
 
     TRY.
-        result = xsdbool( a = b ).
+        
+        temp15 = boolc( a = b ).
+        result = temp15.
       CATCH cx_root.
         result = abap_false.
     ENDTRY.
@@ -5731,9 +6747,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <old_field> TYPE any.
     FIELD-SYMBOLS <new_field> TYPE any.
 
-    DATA(lt_comps) = rtti_get_t_attri_by_any( old ).
+    DATA lt_comps TYPE abap_component_tab.
+    DATA temp434 LIKE LINE OF lt_comps.
+    DATA lr_comp LIKE REF TO temp434.
+        DATA temp435 TYPE zabaputil_cl_util_context=>ty_s_field_diff.
+    lt_comps = rtti_get_t_attri_by_any( old ).
 
-    LOOP AT lt_comps REFERENCE INTO DATA(lr_comp).
+    
+    
+    LOOP AT lt_comps REFERENCE INTO lr_comp.
       ASSIGN COMPONENT lr_comp->name OF STRUCTURE old TO <old_field>.
       IF sy-subrc <> 0.
         CONTINUE.
@@ -5743,9 +6765,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         CONTINUE.
       ENDIF.
       IF <old_field> <> <new_field>.
-        INSERT VALUE #( fieldname = lr_comp->name
-                        old_value = |{ <old_field> }|
-                        new_value = |{ <new_field> }| ) INTO TABLE result.
+        
+        CLEAR temp435.
+        temp435-fieldname = lr_comp->name.
+        temp435-old_value = |{ <old_field> }|.
+        temp435-new_value = |{ <new_field> }|.
+        INSERT temp435 INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
@@ -5761,8 +6786,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD time_measure_stop.
 
-    DATA(lv_now) = time_get_timestampl( ).
-    DATA(lv_diff) = cl_abap_tstmp=>subtract( tstmp1 = lv_now
+    DATA lv_now TYPE timestampl.
+    DATA lv_diff TYPE i.
+    lv_now = time_get_timestampl( ).
+    
+    lv_diff = cl_abap_tstmp=>subtract( tstmp1 = lv_now
                                               tstmp2 = start_time ).
     result = lv_diff * 1000.  " convert seconds to milliseconds
 
@@ -5774,30 +6802,63 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD enum_to_text.
 
-    DATA(lt_all) = enum_get_all( domain = domain langu = langu ).
-    DATA(lv_val) = CONV string( value ).
-    result = VALUE #( lt_all[ n = lv_val ]-v OPTIONAL ).
+    DATA lt_all TYPE zabaputil_cl_util_context=>ty_t_name_value.
+    DATA temp436 TYPE string.
+    DATA lv_val LIKE temp436.
+    DATA temp437 TYPE string.
+    DATA temp438 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    lt_all = enum_get_all( domain = domain langu = langu ).
+    
+    temp436 = value.
+    
+    lv_val = temp436.
+    
+    CLEAR temp437.
+    
+    READ TABLE lt_all INTO temp438 WITH KEY n = lv_val.
+    IF sy-subrc = 0.
+      temp437 = temp438-v.
+    ENDIF.
+    result = temp437.
 
   ENDMETHOD.
 
   METHOD enum_get_all.
+        DATA temp439 TYPE string.
+        DATA lo_type TYPE REF TO cl_abap_typedescr.
+        DATA temp440 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_elem LIKE temp440.
+        DATA lt_fix TYPE zabaputil_cl_util_context=>ty_t_fix_val.
+        DATA ls_fix LIKE LINE OF lt_fix.
+          DATA temp441 TYPE zabaputil_cl_util_context=>ty_s_name_value.
 
     TRY.
-        cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = CONV string( domain )
-                                             RECEIVING  p_descr_ref    = DATA(lo_type)
+        
+        temp439 = domain.
+        
+        cl_abap_typedescr=>describe_by_name( EXPORTING  p_name         = temp439
+                                             RECEIVING  p_descr_ref    = lo_type
                                              EXCEPTIONS type_not_found = 1
                                                         OTHERS         = 2 ).
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
 
-        DATA(lo_elem) = CAST cl_abap_elemdescr( lo_type ).
-        DATA(lt_fix) = rtti_get_t_fixvalues( elemdescr = lo_elem
+        
+        temp440 ?= lo_type.
+        
+        lo_elem = temp440.
+        
+        lt_fix = rtti_get_t_fixvalues( elemdescr = lo_elem
                                               langu     = langu ).
 
-        LOOP AT lt_fix INTO DATA(ls_fix).
-          INSERT VALUE #( n = ls_fix-low
-                          v = ls_fix-descr ) INTO TABLE result.
+        
+        LOOP AT lt_fix INTO ls_fix.
+          
+          CLEAR temp441.
+          temp441-n = ls_fix-low.
+          temp441-v = ls_fix-descr.
+          INSERT temp441 INTO TABLE result.
         ENDLOOP.
 
       CATCH cx_root ##NO_HANDLER.
@@ -5811,13 +6872,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <current> TYPE any.
     FIELD-SYMBOLS <field>   TYPE any.
+    TYPES temp5 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_segments TYPE temp5.
+    DATA lv_segment LIKE LINE OF lt_segments.
+      DATA lv_seg TYPE string.
 
     ASSIGN data TO <current>.
 
-    SPLIT path AT `-` INTO TABLE DATA(lt_segments).
+    
 
-    LOOP AT lt_segments INTO DATA(lv_segment).
-      DATA(lv_seg) = c_trim_upper( lv_segment ).
+    SPLIT path AT `-` INTO TABLE lt_segments.
+
+    
+    LOOP AT lt_segments INTO lv_segment.
+      
+      lv_seg = c_trim_upper( lv_segment ).
       IF lv_seg IS INITIAL.
         CONTINUE.
       ENDIF.
@@ -5837,14 +6906,24 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <current> TYPE any.
     FIELD-SYMBOLS <field>   TYPE any.
+    TYPES temp6 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_segments TYPE temp6.
+    DATA lv_last_idx TYPE i.
+    DATA lv_segment LIKE LINE OF lt_segments.
+      DATA lv_seg TYPE string.
 
     ASSIGN data TO <current>.
 
-    SPLIT path AT `-` INTO TABLE DATA(lt_segments).
-    DATA(lv_last_idx) = lines( lt_segments ).
+    
 
-    LOOP AT lt_segments INTO DATA(lv_segment).
-      DATA(lv_seg) = c_trim_upper( lv_segment ).
+    SPLIT path AT `-` INTO TABLE lt_segments.
+    
+    lv_last_idx = lines( lt_segments ).
+
+    
+    LOOP AT lt_segments INTO lv_segment.
+      
+      lv_seg = c_trim_upper( lv_segment ).
       IF lv_seg IS INITIAL.
         CONTINUE.
       ENDIF.
@@ -5876,13 +6955,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   " ========== Email ==========
 
   METHOD context_get_user_tech.
+        DATA temp442 TYPE string.
+        DATA lv_result LIKE temp442.
+        DATA lv_class TYPE string.
+        DATA x TYPE REF TO cx_root.
 
     TRY.
 
-        DATA(lv_result) = VALUE string( ).
-        DATA(lv_class) = `CL_ABAP_CONTEXT_INFO`.
+        
+        CLEAR temp442.
+        
+        lv_result = temp442.
+        
+        lv_class = `CL_ABAP_CONTEXT_INFO`.
 
-        IF check_abap_cloud( ).
+        IF check_abap_cloud( ) IS NOT INITIAL.
           CALL METHOD (lv_class)=>(`GET_USER_TECHNICAL_NAME`)
             RECEIVING
               rv_technical_name = lv_result.
@@ -5894,7 +6981,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_result.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -6092,7 +7180,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_get_classes_impl_intf.
 
-    IF check_abap_cloud( ).
+    IF check_abap_cloud( ) IS NOT INITIAL.
       result = rtti_get_classes_intf_cloud( val              = val
                                             read_description = read_description ).
     ELSE.
@@ -6168,7 +7256,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " a STANDARD TABLE WITH DEFAULT KEY. WITH EMPTY KEY makes the table type
     " incompatible, so the CALL FUNCTION fails and no implementers are returned
     " (silently breaking user-exit discovery). Never change this key type.
-    DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
+    TYPES temp7 TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
+DATA lt_impl TYPE temp7.
     "#EC DEFAULT_KEY
     TYPES BEGIN OF ty_s_key.
     TYPES intkey TYPE c LENGTH 30.
@@ -6435,6 +7524,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_uuid      TYPE c LENGTH 32.
     DATA lv_classname TYPE string.
     DATA lv_fm        TYPE string.
+        DATA lx_uuid TYPE REF TO cx_root.
 
     TRY.
 
@@ -6456,7 +7546,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_uuid.
 
-      CATCH cx_root INTO DATA(lx_uuid).
+        
+      CATCH cx_root INTO lx_uuid.
         " both UUID mechanisms failed - raise the framework exception so the
         " consumer's single top-level catch can turn it into a handled error.
         " ASSERT would raise the uncatchable ASSERTION_FAILED and bypass that
@@ -6480,12 +7571,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rtti_get_class_descr_on_cloud.
+        DATA obj TYPE REF TO object.
+        DATA content TYPE REF TO object.
+        DATA lv_classname TYPE c LENGTH 30.
+        DATA xco_cp_abap TYPE c LENGTH 11.
     TRY.
 
-        DATA obj          TYPE REF TO object.
-        DATA content      TYPE REF TO object.
-        DATA lv_classname TYPE c LENGTH 30.
-        DATA xco_cp_abap  TYPE c LENGTH 11.
+        
+        
+        
+        
 
         lv_classname = classname.
 
@@ -6516,9 +7611,6 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD context_get_callstack.
-
-    IF check_abap_cloud( ).
-
       DATA current_obj TYPE REF TO object.
       DATA stack TYPE REF TO object.
       DATA full_stack TYPE REF TO object.
@@ -6533,9 +7625,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       FIELD-SYMBOLS <call_stack> TYPE any.
       FIELD-SYMBOLS <format> TYPE any.
       FIELD-SYMBOLS <format2> TYPE any.
+      DATA lv_assign TYPE string.
+      DATA r TYPE REF TO data.
+      FIELD-SYMBOLS <lt_lines> TYPE string_table.
+      DATA text LIKE LINE OF <lt_lines>.
+        DATA temp443 TYPE ty_s_stack.
+        DATA ls_stack LIKE temp443.
+
+    IF check_abap_cloud( ) IS NOT INITIAL.
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
       "1 format source
-      DATA(lv_assign) = `XCO_CP_CALL_STACK=>LINE_NUMBER_FLAVOR->SOURCE`.
+      
+      lv_assign = `XCO_CP_CALL_STACK=>LINE_NUMBER_FLAVOR->SOURCE`.
       ASSIGN (lv_assign) TO <format>.
 
       lv_assign = `XCO_CP_CALL_STACK=>FORMAT`.
@@ -6563,7 +7679,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         RECEIVING
           ro_full = full_stack.
 
-      DATA r TYPE REF TO data.
+      
       CREATE DATA r TYPE REF TO (`IF_XCO_CS_FORMAT`).
       ASSIGN r->* TO <any>.
       <any> ?= format_source.
@@ -6578,11 +7694,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         RECEIVING
           ro_lines = ro_lines.
 
-      FIELD-SYMBOLS <lt_lines> TYPE string_table.
+      
       ASSIGN ro_lines->(`IF_XCO_STRINGS~VALUE`) TO <lt_lines>.
 
-      LOOP AT <lt_lines> INTO DATA(text).
-        DATA(ls_stack) = VALUE ty_s_stack( ).
+      
+      LOOP AT <lt_lines> INTO text.
+        
+        CLEAR temp443.
+        
+        ls_stack = temp443.
         SPLIT text AT ` ` INTO ls_stack-class ls_stack-include ls_stack-method.
         INSERT ls_stack INTO TABLE result.
       ENDLOOP.
@@ -6595,16 +7715,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD context_get_sy.
 
-    result = CORRESPONDING #( sy ).
+    MOVE-CORRESPONDING sy TO result.
 
   ENDMETHOD.
 
 
   METHOD msg_get_text.
 
-    DATA(lt_msg) = msg_get_t( val = val val2 = val2 ).
+    DATA lt_msg TYPE zabaputil_cl_util_context=>ty_t_msg.
+      DATA temp444 LIKE LINE OF lt_msg.
+      DATA temp445 LIKE sy-tabix.
+    lt_msg = msg_get_t( val = val val2 = val2 ).
     IF lt_msg IS NOT INITIAL.
-      result = lt_msg[ 1 ]-text.
+      
+      
+      temp445 = sy-tabix.
+      READ TABLE lt_msg INDEX 1 INTO temp444.
+      sy-tabix = temp445.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      result = temp444-text.
     ENDIF.
 
   ENDMETHOD.
@@ -6617,14 +7748,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_internal.
 
-    DATA(lv_kind) = rtti_get_type_kind( val ).
+    DATA lv_kind TYPE string.
+        FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+        FIELD-SYMBOLS <row> TYPE ANY.
+          DATA lt_tab TYPE zabaputil_cl_util_context=>ty_t_msg.
+        DATA lt_attri TYPE abap_component_tab.
+        DATA temp446 TYPE ty_s_msg.
+        DATA ls_result LIKE temp446.
+        DATA temp447 LIKE LINE OF lt_attri.
+        DATA ls_attri LIKE REF TO temp447.
+          FIELD-SYMBOLS <comp> TYPE any.
+          DATA temp448 TYPE zabaputil_cl_util_context=>ty_s_msg.
+    lv_kind = rtti_get_type_kind( val ).
     CASE lv_kind.
 
       WHEN cl_abap_datadescr=>typekind_table.
-        FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+        
         ASSIGN val TO <tab>.
-        LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<row>).
-          DATA(lt_tab) = msg_get_internal( <row> ).
+        
+        LOOP AT <tab> ASSIGNING <row>.
+          
+          lt_tab = msg_get_internal( <row> ).
           INSERT LINES OF lt_tab INTO TABLE result.
         ENDLOOP.
 
@@ -6639,11 +7783,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           RETURN.
         ENDIF.
 
-        DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
+        
+        lt_attri = rtti_get_t_attri_by_any( val ).
 
-        DATA(ls_result) = VALUE ty_s_msg( ).
-        LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
-          ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
+        
+        CLEAR temp446.
+        
+        ls_result = temp446.
+        
+        
+        LOOP AT lt_attri REFERENCE INTO ls_attri.
+          
+          ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO <comp>.
           IF sy-subrc <> 0.
             CONTINUE.
           ENDIF.
@@ -6673,8 +7824,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         " skip an empty character value like the struct branch does -
         " otherwise msg_get_t's val2 fallback can never take over and the
         " caller renders a message box with blank text
-        IF rtti_check_clike( val ) AND val IS NOT INITIAL.
-          INSERT VALUE #( text = val ) INTO TABLE result.
+        IF rtti_check_clike( val ) IS NOT INITIAL AND val IS NOT INITIAL.
+          
+          CLEAR temp448.
+          temp448-text = val.
+          INSERT temp448 INTO TABLE result.
         ENDIF.
     ENDCASE.
 
@@ -6683,14 +7837,38 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD msg_get_by_oref.
 
     FIELD-SYMBOLS <comp> TYPE any.
+        DATA temp449 TYPE REF TO cx_root.
+        DATA lx LIKE temp449.
+        DATA temp450 TYPE ty_s_msg.
+        DATA ls_result LIKE temp450.
+        DATA lt_attri_o TYPE abap_attrdescr_tab.
+        DATA temp451 LIKE LINE OF lt_attri_o.
+        DATA ls_attri_o LIKE REF TO temp451.
+          DATA lv_name LIKE ls_attri_o->name.
+        DATA obj TYPE REF TO object.
+            DATA lr_tab TYPE REF TO data.
+            FIELD-SYMBOLS <tab2> TYPE data.
+            DATA lt_tab2 TYPE zabaputil_cl_util_context=>ty_t_msg.
 
     TRY.
-        DATA(lx) = CAST cx_root( val ).
-        DATA(ls_result) = VALUE ty_s_msg( type = `E` text = lx->get_text( ) ).
-        DATA(lt_attri_o) = rtti_get_t_attri_by_oref( val ).
-        LOOP AT lt_attri_o REFERENCE INTO DATA(ls_attri_o)
+        
+        temp449 ?= val.
+        
+        lx = temp449.
+        
+        CLEAR temp450.
+        temp450-type = `E`.
+        temp450-text = lx->get_text( ).
+        
+        ls_result = temp450.
+        
+        lt_attri_o = rtti_get_t_attri_by_oref( val ).
+        
+        
+        LOOP AT lt_attri_o REFERENCE INTO ls_attri_o
              WHERE visibility = cv_objectdescr_public.
-          DATA(lv_name) = ls_attri_o->name.
+          
+          lv_name = ls_attri_o->name.
           ASSIGN lx->(lv_name) TO <comp>.
           IF sy-subrc <> 0.
             CONTINUE.
@@ -6700,20 +7878,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         INSERT ls_result INTO TABLE result.
       CATCH cx_root.
 
-        DATA obj TYPE REF TO object.
+        
         obj = val.
 
         TRY.
 
-            DATA lr_tab TYPE REF TO data.
+            
             CREATE DATA lr_tab TYPE (`if_bali_log=>ty_item_table`).
-            ASSIGN lr_tab->* TO FIELD-SYMBOL(<tab2>).
+            
+            ASSIGN lr_tab->* TO <tab2>.
 
             CALL METHOD obj->(`IF_BALI_LOG~GET_ALL_ITEMS`)
               RECEIVING
                 item_table = <tab2>.
 
-            DATA(lt_tab2) = msg_get_internal( <tab2> ).
+            
+            lt_tab2 = msg_get_internal( <tab2> ).
             INSERT LINES OF lt_tab2 INTO TABLE result.
 
           CATCH cx_root.
@@ -6778,9 +7958,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD check_is_rap_struct.
 
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
+    DATA lt_attri TYPE abap_component_tab.
+    DATA temp452 LIKE LINE OF lt_attri.
+    DATA ls_attri LIKE REF TO temp452.
+      FIELD-SYMBOLS <tab> TYPE any.
+          DATA temp453 TYPE REF TO cl_abap_tabledescr.
+          DATA lo_tab LIKE temp453.
+          DATA lo_line TYPE REF TO cl_abap_datadescr.
+          DATA temp454 TYPE REF TO cl_abap_structdescr.
+          DATA lt_comps TYPE abap_component_tab.
+          DATA temp455 LIKE LINE OF lt_comps.
+          DATA ls_comp LIKE REF TO temp455.
+    lt_attri = rtti_get_t_attri_by_any( val ).
 
-    LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO ls_attri.
       CASE ls_attri->name.
         WHEN `%MSG` OR `%FAIL` OR `%OTHER`.
           result = abap_true.
@@ -6789,16 +7982,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDLOOP.
 
     LOOP AT lt_attri REFERENCE INTO ls_attri.
-      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<tab>).
+      
+      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO <tab>.
       CHECK sy-subrc = 0.
       CHECK rtti_get_type_kind( <tab> ) = cl_abap_datadescr=>typekind_table.
 
       TRY.
-          DATA(lo_tab) = CAST cl_abap_tabledescr( cl_abap_typedescr=>describe_by_data( <tab> ) ).
-          DATA(lo_line) = lo_tab->get_table_line_type( ).
+          
+          temp453 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
+          
+          lo_tab = temp453.
+          
+          lo_line = lo_tab->get_table_line_type( ).
           CHECK lo_line->kind = cl_abap_typedescr=>kind_struct.
-          DATA(lt_comps) = CAST cl_abap_structdescr( lo_line )->get_components( ).
-          LOOP AT lt_comps REFERENCE INTO DATA(ls_comp).
+          
+          temp454 ?= lo_line.
+          
+          lt_comps = temp454->get_components( ).
+          
+          
+          LOOP AT lt_comps REFERENCE INTO ls_comp.
             IF ls_comp->name = `%MSG` OR ls_comp->name = `%FAIL`.
               result = abap_true.
               RETURN.
@@ -6812,30 +8015,44 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_rap.
 
-    DATA(lv_kind) = rtti_get_type_kind( val ).
+    DATA lv_kind TYPE string.
+    DATA lv_is_row TYPE abap_bool.
+    DATA lt_attri TYPE abap_component_tab.
+    DATA temp456 LIKE LINE OF lt_attri.
+    DATA ls_attri LIKE REF TO temp456.
+      FIELD-SYMBOLS <tab> TYPE any.
+      FIELD-SYMBOLS <ftab> TYPE ANY TABLE.
+      FIELD-SYMBOLS <row> TYPE ANY.
+    lv_kind = rtti_get_type_kind( val ).
     IF lv_kind <> cl_abap_datadescr=>typekind_struct1
        AND lv_kind <> cl_abap_datadescr=>typekind_struct2.
       RETURN.
     ENDIF.
 
+    
     msg_get_rap_row( EXPORTING val         = val
                                entity_name = entity_name
                      IMPORTING messages    = result
-                               is_row      = DATA(lv_is_row) ).
+                               is_row      = lv_is_row ).
     IF lv_is_row = abap_true.
       RETURN.
     ENDIF.
 
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
-      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<tab>).
+    
+    lt_attri = rtti_get_t_attri_by_any( val ).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO ls_attri.
+      
+      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO <tab>.
       CHECK sy-subrc = 0.
       CHECK rtti_get_type_kind( <tab> ) = cl_abap_datadescr=>typekind_table.
 
-      FIELD-SYMBOLS <ftab> TYPE ANY TABLE.
+      
       ASSIGN <tab> TO <ftab>.
 
-      LOOP AT <ftab> ASSIGNING FIELD-SYMBOL(<row>).
+      
+      LOOP AT <ftab> ASSIGNING <row>.
         IF rtti_get_type_kind( <row> ) = cl_abap_datadescr=>typekind_oref.
           IF <row> IS NOT INITIAL.
             TRY.
@@ -6853,6 +8070,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD msg_get_rap_row.
+    DATA lv_meta_built TYPE abap_bool.
+    DATA lt_meta TYPE ty_t_name_value.
+    FIELD-SYMBOLS <msg> TYPE any.
+            DATA lt_one TYPE zabaputil_cl_util_context=>ty_t_msg.
+            FIELD-SYMBOLS <m> LIKE LINE OF lt_one.
+    FIELD-SYMBOLS <fail> TYPE any.
+      FIELD-SYMBOLS <cause> TYPE any.
+        DATA lv_cause TYPE i.
+        DATA lv_text TYPE string.
+        DATA temp457 TYPE zabaputil_cl_util_context=>ty_s_msg.
 
     CLEAR messages.
     is_row = abap_false.
@@ -6861,18 +8088,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " components three times over (element/action/tky scans), and the
     " common row in a RAP response table carries neither a filled %MSG nor
     " a %FAIL - building the block up front threw that work away per row
-    DATA lv_meta_built TYPE abap_bool.
-    DATA lt_meta TYPE ty_t_name_value.
+    
+    
 
-    ASSIGN COMPONENT `%MSG` OF STRUCTURE val TO FIELD-SYMBOL(<msg>).
+    
+    ASSIGN COMPONENT `%MSG` OF STRUCTURE val TO <msg>.
     IF sy-subrc = 0.
       is_row = abap_true.
       IF <msg> IS NOT INITIAL.
         lt_meta = msg_get_rap_meta( val ).
         lv_meta_built = abap_true.
         TRY.
-            DATA(lt_one) = msg_get_t( <msg> ).
-            LOOP AT lt_one ASSIGNING FIELD-SYMBOL(<m>).
+            
+            lt_one = msg_get_t( <msg> ).
+            
+            LOOP AT lt_one ASSIGNING <m>.
               <m>-t_meta = lt_meta.
             ENDLOOP.
             INSERT LINES OF lt_one INTO TABLE messages.
@@ -6881,23 +8111,29 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ENDIF.
     ENDIF.
 
-    ASSIGN COMPONENT `%FAIL` OF STRUCTURE val TO FIELD-SYMBOL(<fail>).
+    
+    ASSIGN COMPONENT `%FAIL` OF STRUCTURE val TO <fail>.
     IF sy-subrc = 0.
       is_row = abap_true.
-      ASSIGN COMPONENT `CAUSE` OF STRUCTURE <fail> TO FIELD-SYMBOL(<cause>).
+      
+      ASSIGN COMPONENT `CAUSE` OF STRUCTURE <fail> TO <cause>.
       IF sy-subrc = 0.
         IF lv_meta_built = abap_false.
           lt_meta = msg_get_rap_meta( val ).
         ENDIF.
-        DATA lv_cause TYPE i.
+        
         lv_cause = <cause>.
-        DATA(lv_text) = msg_get_rap_fail_text( lv_cause ).
+        
+        lv_text = msg_get_rap_fail_text( lv_cause ).
         IF entity_name IS NOT INITIAL.
           lv_text = |{ entity_name }: { lv_text }|.
         ENDIF.
-        INSERT VALUE #( type   = `E`
-                        text   = lv_text
-                        t_meta = lt_meta ) INTO TABLE messages.
+        
+        CLEAR temp457.
+        temp457-type = `E`.
+        temp457-text = lv_text.
+        temp457-t_meta = lt_meta.
+        INSERT temp457 INTO TABLE messages.
       ENDIF.
     ENDIF.
 
@@ -6905,7 +8141,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD get_comp_str.
 
-    ASSIGN COMPONENT comp OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
+    FIELD-SYMBOLS <comp> TYPE any.
+    ASSIGN COMPONENT comp OF STRUCTURE val TO <comp>.
     IF sy-subrc = 0.
       result = <comp>.
     ENDIF.
@@ -6914,12 +8151,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD scan_flag_prefix.
 
-    DATA(lv_len) = strlen( prefix ).
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
+    DATA lv_len TYPE i.
+    DATA lt_attri TYPE abap_component_tab.
+    DATA temp458 LIKE LINE OF lt_attri.
+    DATA ls_attri LIKE REF TO temp458.
+      FIELD-SYMBOLS <flag> TYPE any.
+    lv_len = strlen( prefix ).
+    
+    lt_attri = rtti_get_t_attri_by_any( val ).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO ls_attri.
       CHECK strlen( ls_attri->name ) > lv_len.
       CHECK ls_attri->name(lv_len) = prefix.
-      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<flag>).
+      
+      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO <flag>.
       CHECK sy-subrc = 0.
       CHECK <flag> IS NOT INITIAL.
       APPEND ls_attri->name+lv_len TO result.
@@ -6929,7 +8175,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_rap_element.
 
-    DATA(lt_suffix) = scan_flag_prefix( val       = val
+    DATA lt_suffix TYPE string_table.
+    lt_suffix = scan_flag_prefix( val       = val
                                         prefix = `%ELEMENT-` ).
     result = concat_lines_of( table = lt_suffix
                               sep   = `, ` ).
@@ -6945,9 +8192,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_rap_action.
 
-    DATA(lt_suffix) = scan_flag_prefix( val       = val
+    DATA lt_suffix TYPE string_table.
+    DATA temp459 TYPE string.
+    DATA temp460 TYPE string.
+    lt_suffix = scan_flag_prefix( val       = val
                                         prefix = `%OP-%ACTION-` ).
-    result = VALUE #( lt_suffix[ 1 ] OPTIONAL ).
+    
+    CLEAR temp459.
+    
+    READ TABLE lt_suffix INTO temp460 INDEX 1.
+    IF sy-subrc = 0.
+      temp459 = temp460.
+    ENDIF.
+    result = temp459.
 
   ENDMETHOD.
 
@@ -6967,7 +8224,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_rap_tky.
 
-    ASSIGN COMPONENT `%TKY` OF STRUCTURE val TO FIELD-SYMBOL(<tky>).
+    FIELD-SYMBOLS <tky> TYPE any.
+    ASSIGN COMPONENT `%TKY` OF STRUCTURE val TO <tky>.
     IF sy-subrc <> 0 OR <tky> IS INITIAL.
       RETURN.
     ENDIF.
@@ -6977,21 +8235,35 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD msg_get_rap_flatten.
 
-    DATA(lv_kind) = rtti_get_type_kind( val ).
+    DATA lv_kind TYPE string.
+    DATA lt_attri TYPE abap_component_tab.
+    DATA temp461 LIKE LINE OF lt_attri.
+    DATA ls_attri LIKE REF TO temp461.
+      FIELD-SYMBOLS <comp> TYPE any.
+      DATA lv_sub_kind TYPE string.
+        DATA lv_sub TYPE string.
+            DATA lv_str TYPE string.
+    lv_kind = rtti_get_type_kind( val ).
     IF lv_kind <> cl_abap_datadescr=>typekind_struct1
        AND lv_kind <> cl_abap_datadescr=>typekind_struct2.
       RETURN.
     ENDIF.
 
-    DATA(lt_attri) = rtti_get_t_attri_by_any( val ).
-    LOOP AT lt_attri REFERENCE INTO DATA(ls_attri).
-      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO FIELD-SYMBOL(<comp>).
+    
+    lt_attri = rtti_get_t_attri_by_any( val ).
+    
+    
+    LOOP AT lt_attri REFERENCE INTO ls_attri.
+      
+      ASSIGN COMPONENT ls_attri->name OF STRUCTURE val TO <comp>.
       CHECK sy-subrc = 0.
 
-      DATA(lv_sub_kind) = rtti_get_type_kind( <comp> ).
+      
+      lv_sub_kind = rtti_get_type_kind( <comp> ).
       IF lv_sub_kind = cl_abap_datadescr=>typekind_struct1
          OR lv_sub_kind = cl_abap_datadescr=>typekind_struct2.
-        DATA(lv_sub) = msg_get_rap_flatten( <comp> ).
+        
+        lv_sub = msg_get_rap_flatten( <comp> ).
         IF lv_sub IS NOT INITIAL.
           IF result IS NOT INITIAL.
             result = |{ result }, |.
@@ -7000,7 +8272,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ENDIF.
       ELSEIF <comp> IS NOT INITIAL.
         TRY.
-            DATA lv_str TYPE string.
+            
             lv_str = <comp>.
             IF result IS NOT INITIAL.
               result = |{ result }, |.
@@ -7016,55 +8288,101 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD msg_get_rap_meta.
 
     DATA lv TYPE string.
+      DATA temp462 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+      DATA temp463 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+      DATA temp464 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+      DATA temp465 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+      DATA temp466 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+      DATA temp467 TYPE zabaputil_cl_util_context=>ty_s_name_value.
 
     lv = msg_get_rap_element( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `element` v = lv ) INTO TABLE result.
+      
+      CLEAR temp462.
+      temp462-n = `element`.
+      temp462-v = lv.
+      INSERT temp462 INTO TABLE result.
     ENDIF.
 
     lv = msg_get_rap_state_area( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `state_area` v = lv ) INTO TABLE result.
+      
+      CLEAR temp463.
+      temp463-n = `state_area`.
+      temp463-v = lv.
+      INSERT temp463 INTO TABLE result.
     ENDIF.
 
     lv = msg_get_rap_action( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `action` v = lv ) INTO TABLE result.
+      
+      CLEAR temp464.
+      temp464-n = `action`.
+      temp464-v = lv.
+      INSERT temp464 INTO TABLE result.
     ENDIF.
 
     lv = msg_get_rap_pid( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `pid` v = lv ) INTO TABLE result.
+      
+      CLEAR temp465.
+      temp465-n = `pid`.
+      temp465-v = lv.
+      INSERT temp465 INTO TABLE result.
     ENDIF.
 
     lv = msg_get_rap_cid( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `cid` v = lv ) INTO TABLE result.
+      
+      CLEAR temp466.
+      temp466-n = `cid`.
+      temp466-v = lv.
+      INSERT temp466 INTO TABLE result.
     ENDIF.
 
     lv = msg_get_rap_tky( val ).
     IF lv IS NOT INITIAL.
-      INSERT VALUE #( n = `tky` v = lv ) INTO TABLE result.
+      
+      CLEAR temp467.
+      temp467-n = `tky`.
+      temp467-v = lv.
+      INSERT temp467 INTO TABLE result.
     ENDIF.
 
   ENDMETHOD.
 
   METHOD msg_get_rap_fail_text.
 
-    result = SWITCH string( cause
-      WHEN 0  THEN `Operation failed`
-      WHEN 1  THEN `Entity not found`
-      WHEN 2  THEN `Entity is locked`
-      WHEN 3  THEN `Authorization failure`
-      WHEN 4  THEN `Concurrent modification`
-      WHEN 5  THEN `Concurrent modification`
-      WHEN 6  THEN `Operation disabled`
-      WHEN 7  THEN `Operation forbidden`
-      WHEN 8  THEN `Semantic error`
-      WHEN 9  THEN `Determination failed`
-      WHEN 10 THEN `Permission denied`
-      WHEN 11 THEN `Validation failed`
-      ELSE         |Operation failed (cause code { cause })| ).
+    DATA temp468 TYPE string.
+    CASE cause.
+      WHEN 0.
+        temp468 = `Operation failed`.
+      WHEN 1.
+        temp468 = `Entity not found`.
+      WHEN 2.
+        temp468 = `Entity is locked`.
+      WHEN 3.
+        temp468 = `Authorization failure`.
+      WHEN 4.
+        temp468 = `Concurrent modification`.
+      WHEN 5.
+        temp468 = `Concurrent modification`.
+      WHEN 6.
+        temp468 = `Operation disabled`.
+      WHEN 7.
+        temp468 = `Operation forbidden`.
+      WHEN 8.
+        temp468 = `Semantic error`.
+      WHEN 9.
+        temp468 = `Determination failed`.
+      WHEN 10.
+        temp468 = `Permission denied`.
+      WHEN 11.
+        temp468 = `Validation failed`.
+      WHEN OTHERS.
+        temp468 = |Operation failed (cause code { cause })|.
+    ENDCASE.
+    result = temp468.
 
   ENDMETHOD.
 
@@ -7207,17 +8525,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_tabname TYPE c LENGTH 16.
     DATA lr_ddfields TYPE REF TO data.
     TYPES ty_c30 TYPE c LENGTH 30.
-    DATA names TYPE STANDARD TABLE OF ty_c30 WITH EMPTY KEY.
+    TYPES temp8 TYPE STANDARD TABLE OF ty_c30 WITH DEFAULT KEY.
+DATA names TYPE temp8.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <field> TYPE simple.
     FIELD-SYMBOLS <ddfields> TYPE ANY TABLE.
+            DATA lv_method2 TYPE string.
+            DATA workaround TYPE string.
+            DATA temp469 TYPE REF TO cl_abap_structdescr.
+    DATA lt_comp TYPE abap_component_tab.
+    DATA temp470 LIKE LINE OF lt_comp.
+    DATA lr_comp LIKE REF TO temp470.
+      DATA lv_check_key LIKE abap_false.
+      DATA temp471 LIKE sy-subrc.
+      DATA temp472 TYPE zabaputil_cl_util_context=>ty_s_dfies.
 
 * convert to correct type,
     lv_tabname = tabname.
 
     TRY.
         TRY.
-            DATA(lv_method2) = `XCO_CP_ABAP_DICTIONARY`.
+            
+            lv_method2 = `XCO_CP_ABAP_DICTIONARY`.
             CALL METHOD (lv_method2)=>(`DATABASE_TABLE`)
               EXPORTING
                 iv_name           = lv_tabname
@@ -7233,12 +8562,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               RECEIVING
                 rt_names = names.
           CATCH cx_sy_dyn_call_illegal_class.
-            DATA(workaround) = `DDFIELDS`.
+            
+            workaround = `DDFIELDS`.
             CREATE DATA lr_ddfields TYPE (workaround).
             ASSIGN lr_ddfields->* TO <ddfields>.
             ASSERT sy-subrc = 0.
-            <ddfields> = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name(
-              lv_tabname ) )->get_ddic_field_list( ).
+            
+            temp469 ?= cl_abap_typedescr=>describe_by_name( lv_tabname ).
+            <ddfields> = temp469->get_ddic_field_list( ).
             LOOP AT <ddfields> ASSIGNING <any>.
               ASSIGN COMPONENT `KEYFLAG` OF STRUCTURE <any> TO <field>.
               IF sy-subrc <> 0 OR <field> <> abap_true.
@@ -7253,22 +8584,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDTRY.
 
 
-    DATA(lt_comp)  =  zabaputil_cl_util_context=>rtti_get_t_attri_by_any( tabname ).
-    LOOP AT lt_comp REFERENCE INTO DATA(lr_comp).
+    
+    lt_comp  =  zabaputil_cl_util_context=>rtti_get_t_attri_by_any( tabname ).
+    
+    
+    LOOP AT lt_comp REFERENCE INTO lr_comp.
 
-      DATA(lv_check_key) = abap_false.
-      IF line_exists( names[ table_line = lr_comp->name ] ).
+      
+      lv_check_key = abap_false.
+      
+      READ TABLE names WITH KEY table_line = lr_comp->name TRANSPORTING NO FIELDS.
+      temp471 = sy-subrc.
+      IF temp471 = 0.
         lv_check_key = abap_true.
       ENDIF.
 
-      INSERT VALUE #(
-          fieldname = lr_comp->name
-          rollname  = lr_comp->name
-          keyflag = lv_check_key
-        scrtext_s =  lr_comp->name
-        scrtext_m =  lr_comp->name
-        scrtext_l =  lr_comp->name
-       ) INTO TABLE result.
+      
+      CLEAR temp472.
+      temp472-fieldname = lr_comp->name.
+      temp472-rollname = lr_comp->name.
+      temp472-keyflag = lv_check_key.
+      temp472-scrtext_s = lr_comp->name.
+      temp472-scrtext_m = lr_comp->name.
+      temp472-scrtext_l = lr_comp->name.
+      INSERT temp472 INTO TABLE result.
 
     ENDLOOP.
 *            structdescr->
@@ -7440,26 +8779,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD rtti_get_table_desrc.
 
     DATA ddtext TYPE c LENGTH 60.
+      DATA lan LIKE sy-langu.
+          DATA lv_tabname TYPE string.
 
     IF langu IS NOT SUPPLIED.
-      DATA(lan) = sy-langu.
+      
+      lan = sy-langu.
     ELSE.
       lan = langu.
     ENDIF.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
       ddtext = tabname.
 
     ELSE.
 
       TRY.
-          DATA(lv_tabname) = `dd02t`.
+          
+          lv_tabname = `dd02t`.
           SELECT SINGLE ddtext
-            FROM (lv_tabname)
-            WHERE tabname    = @tabname
-              AND ddlanguage = @lan
-            INTO @ddtext.
+            FROM (lv_tabname) INTO ddtext
+            WHERE tabname    = tabname
+              AND ddlanguage = lan
+            .
         CATCH cx_root ##NO_HANDLER.
           " DD02T not available (e.g. JS transpiler runtime) - fall
           " back to the table name below
@@ -7477,7 +8820,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bus_search_help_read.
 
-    DATA lt_result_tab TYPE TABLE OF string.
+    TYPES temp9 TYPE TABLE OF string.
+DATA lt_result_tab TYPE temp9.
     DATA ls_comp       TYPE abap_componentdescr.
     DATA lt_comps      TYPE abap_component_tab.
     DATA lo_datadescr  TYPE REF TO cl_abap_datadescr.
@@ -7487,19 +8831,57 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lr_shlp       TYPE REF TO data.
 
-    DATA(lv_type) = `SHLP_DESCR`.
-    CREATE DATA lr_shlp TYPE (lv_type).
+    DATA lv_type TYPE string.
     FIELD-SYMBOLS <shlp> TYPE any.
+    DATA lv_tabname TYPE c LENGTH 30.
+    DATA lv_fieldname TYPE c LENGTH 30.
+      DATA lv_fm TYPE string.
+        DATA lr_t_shlp TYPE REF TO data.
+        DATA lv_type2 TYPE string.
+        FIELD-SYMBOLS <shlp2> TYPE STANDARD TABLE.
+        FIELD-SYMBOLS <row2> TYPE any.
+      DATA temp473 LIKE LINE OF ms_shlp-interface.
+      DATA r_interface LIKE REF TO temp473.
+        FIELD-SYMBOLS <any> TYPE any.
+        FIELD-SYMBOLS <value> TYPE any.
+    DATA interface LIKE LINE OF ms_shlp-interface.
+        DATA temp474 TYPE zabaputil_cl_util_context=>ty_shlp_descr-selopt.
+        DATA temp475 LIKE LINE OF temp474.
+        DATA temp72 TYPE zabaputil_cl_util_context=>ty_ddshselopt-option.
+    DATA fieldrop LIKE LINE OF ms_shlp-fieldprop.
+      DATA valule LIKE fieldrop-defaultval.
+      DATA temp476 TYPE zabaputil_cl_util_context=>ty_shlp_descr-selopt.
+      DATA temp477 LIKE LINE OF temp476.
+      DATA temp73 TYPE zabaputil_cl_util_context=>ty_ddshselopt-option.
+    DATA field_props LIKE LINE OF ms_shlp-fieldprop.
+      DATA temp478 TYPE zabaputil_cl_util_context=>ty_s_dfies_2.
+      DATA temp479 TYPE zabaputil_cl_util_context=>ty_s_dfies_2.
+      DATA descption LIKE temp478.
+    DATA temp480 LIKE sy-subrc.
+    DATA strucdescr TYPE REF TO cl_abap_structdescr.
+    DATA tabdescr TYPE REF TO cl_abap_tabledescr.
+    FIELD-SYMBOLS <fs_target_tab> TYPE STANDARD TABLE.
+    DATA result_line LIKE LINE OF lt_result_tab.
+      FIELD-SYMBOLS <fs_line> TYPE data.
+      DATA result_desc LIKE LINE OF mt_result_desc.
+        FIELD-SYMBOLS <line_content> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <line> TYPE any.
+      FIELD-SYMBOLS <row> TYPE any.
+    lv_type = `SHLP_DESCR`.
+    CREATE DATA lr_shlp TYPE (lv_type).
+    
     ASSIGN lr_shlp->* TO <shlp>.
 
-    DATA lv_tabname   TYPE c LENGTH 30.
-    DATA lv_fieldname TYPE c LENGTH 30.
+    
+    
     lv_tabname = mv_table.
     lv_fieldname = mv_fname.
 
     IF ms_shlp IS INITIAL.
       " Suchhilfe lesen
-      DATA(lv_fm) = `F4IF_DETERMINE_SEARCHHELP`.
+      
+      lv_fm = `F4IF_DETERMINE_SEARCHHELP`.
       CALL FUNCTION lv_fm
         EXPORTING
           tabname           = lv_tabname
@@ -7516,15 +8898,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           EXPORTING
             val = |F4IF_DETERMINE_SEARCHHELP failed for { lv_tabname }-{ lv_fieldname }|.
       ENDIF.
-      ms_shlp = CORRESPONDING #( <shlp> ).
+      MOVE-CORRESPONDING <shlp> TO ms_shlp.
 
       IF ms_shlp-intdescr-issimple = abap_false.
 
 *      DATA lt_shlp       TYPE shlp_desct.
-        DATA lr_t_shlp TYPE REF TO data.
-        DATA(lv_type2) = `SHLP_DESCT`.
+        
+        
+        lv_type2 = `SHLP_DESCT`.
         CREATE DATA lr_t_shlp TYPE (lv_type2).
-        FIELD-SYMBOLS <shlp2> TYPE STANDARD TABLE.
+        
         ASSIGN lr_t_shlp->* TO <shlp2>.
 
         lv_fm = `F4IF_EXPAND_SEARCHHELP`.
@@ -7535,19 +8918,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             shlp_tab = <shlp2>.
 
 *        DATA(ls_row) = CORRESPONDING #( <shlp2>[ 1 ] OPTIONAL ).
-        FIELD-SYMBOLS <row2> TYPE any.
-        ASSIGN  <shlp2>[ 1 ] TO <row2>.
-        ms_shlp = CORRESPONDING #( <row2> ).
+        
+        READ TABLE <shlp2> INDEX 1 ASSIGNING <row2>.
+        MOVE-CORRESPONDING <row2> TO ms_shlp.
       ENDIF.
     ENDIF.
 
     IF mr_data IS BOUND.
       " Values from Caller app to Interface Values
-      LOOP AT ms_shlp-interface REFERENCE INTO DATA(r_interface) WHERE value IS INITIAL.
+      
+      
+      LOOP AT ms_shlp-interface REFERENCE INTO r_interface WHERE value IS INITIAL.
 
-        FIELD-SYMBOLS <any> TYPE any.
+        
         ASSIGN mr_data->* TO <any>.
-        FIELD-SYMBOLS <value> TYPE any.
+        
         ASSIGN COMPONENT r_interface->shlpfield OF STRUCTURE <any> TO <value>.
 
         IF sy-subrc <> 0.
@@ -7560,7 +8945,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Interface Fixed Values to Selopt
-    LOOP AT ms_shlp-interface INTO DATA(interface).
+    
+    LOOP AT ms_shlp-interface INTO interface.
 
       " Match the name of the SH Field to the Input field name
       IF interface-valfield = mv_fname.
@@ -7569,32 +8955,55 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       IF interface-value IS NOT INITIAL.
 
-        ms_shlp-selopt = VALUE #( BASE ms_shlp-selopt
-                                  ( shlpfield = interface-shlpfield
-                                    shlpname  = interface-valtabname
-                                    option    = COND #( WHEN interface-value CA `*` THEN `CP` ELSE `EQ` )
-                                    sign      = `I`
-                                    low       = interface-value  ) ).
+        
+        CLEAR temp474.
+        temp474 = ms_shlp-selopt.
+        
+        temp475-shlpfield = interface-shlpfield.
+        temp475-shlpname = interface-valtabname.
+        
+        IF interface-value CA `*`.
+          temp72 = `CP`.
+        ELSE.
+          temp72 = `EQ`.
+        ENDIF.
+        temp475-option = temp72.
+        temp475-sign = `I`.
+        temp475-low = interface-value.
+        INSERT temp475 INTO TABLE temp474.
+        ms_shlp-selopt = temp474.
 
       ENDIF.
 
     ENDLOOP.
 
-    LOOP AT ms_shlp-fieldprop INTO DATA(fieldrop).
+    
+    LOOP AT ms_shlp-fieldprop INTO fieldrop.
 
       IF fieldrop-defaultval IS INITIAL.
         CONTINUE.
       ENDIF.
 
-      DATA(valule) = fieldrop-defaultval.
+      
+      valule = fieldrop-defaultval.
       REPLACE ALL OCCURRENCES OF `'` IN valule WITH ``.
 
-      ms_shlp-selopt = VALUE #( BASE ms_shlp-selopt
-                                ( shlpfield = fieldrop-fieldname
-*                                  shlpname  =
-                                  option    = COND #( WHEN fieldrop-defaultval CA `*` THEN `CP` ELSE `EQ` )
-                                  sign      = `I`
-                                  low       = valule  ) ).
+      
+      CLEAR temp476.
+      temp476 = ms_shlp-selopt.
+      
+      temp477-shlpfield = fieldrop-fieldname.
+      
+      IF fieldrop-defaultval CA `*`.
+        temp73 = `CP`.
+      ELSE.
+        temp73 = `EQ`.
+      ENDIF.
+      temp477-option = temp73.
+      temp477-sign = `I`.
+      temp477-low = valule.
+      INSERT temp477 INTO TABLE temp476.
+      ms_shlp-selopt = temp476.
 
     ENDLOOP.
 
@@ -7615,9 +9024,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     SORT ms_shlp-fieldprop BY shlplispos ASCENDING.
 
-    LOOP AT ms_shlp-fieldprop INTO DATA(field_props) WHERE shlplispos IS NOT INITIAL.
+    
+    LOOP AT ms_shlp-fieldprop INTO field_props WHERE shlplispos IS NOT INITIAL.
 
-      DATA(descption) = VALUE #( mt_result_desc[ fieldname = field_props-fieldname ] OPTIONAL ).
+      
+      CLEAR temp478.
+      
+      READ TABLE mt_result_desc INTO temp479 WITH KEY fieldname = field_props-fieldname.
+      IF sy-subrc = 0.
+        temp478 = temp479.
+      ENDIF.
+      
+      descption = temp478.
 
       ls_comp-name  = descption-fieldname.
       ls_comp-type ?= cl_abap_datadescr=>describe_by_name( descption-rollname ).
@@ -7625,22 +9043,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     ENDLOOP.
 
-    IF NOT line_exists( lt_comps[ name = `ROW_ID` ] ).
+    
+    READ TABLE lt_comps WITH KEY name = `ROW_ID` TRANSPORTING NO FIELDS.
+    temp480 = sy-subrc.
+    IF NOT temp480 = 0.
       lo_datadescr ?= cl_abap_datadescr=>describe_by_name( `INT4` ).
       ls_comp-name  = `ROW_ID`.
       ls_comp-type ?= lo_datadescr.
       APPEND ls_comp TO lt_comps.
     ENDIF.
 
-    DATA(strucdescr) = cl_abap_structdescr=>create( p_components = lt_comps ).
+    
+    strucdescr = cl_abap_structdescr=>create( p_components = lt_comps ).
 
-    DATA(tabdescr) = cl_abap_tabledescr=>create( p_line_type = strucdescr ).
+    
+    tabdescr = cl_abap_tabledescr=>create( p_line_type = strucdescr ).
 
     IF mt_data IS NOT BOUND.
       CREATE DATA mt_data TYPE HANDLE tabdescr.
     ENDIF.
 
-    FIELD-SYMBOLS <fs_target_tab> TYPE STANDARD TABLE.
+    
     ASSIGN mt_data->* TO <fs_target_tab>.
 
     CLEAR <fs_target_tab>.
@@ -7650,15 +9073,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       CREATE DATA ms_data_row TYPE HANDLE strucdescr.
     ENDIF.
 
-    LOOP AT lt_result_tab INTO DATA(result_line).
+    
+    LOOP AT lt_result_tab INTO result_line.
 
       CREATE DATA lr_line TYPE HANDLE strucdescr.
-      ASSIGN lr_line->* TO FIELD-SYMBOL(<fs_line>).
+      
+      ASSIGN lr_line->* TO <fs_line>.
 
-      LOOP AT mt_result_desc INTO DATA(result_desc).
+      
+      LOOP AT mt_result_desc INTO result_desc.
 
+        
         ASSIGN COMPONENT result_desc-fieldname OF STRUCTURE <fs_line>
-               TO FIELD-SYMBOL(<line_content>).
+               TO <line_content>.
 
         IF sy-subrc <> 0.
           CONTINUE.
@@ -7722,14 +9149,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
 *    set_row_id( ).
 
-    FIELD-SYMBOLS <tab>  TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <line> TYPE any.
+    
+    
 
     ASSIGN mt_data->* TO <tab>.
 
     LOOP AT <tab> ASSIGNING <line>.
 
-      ASSIGN COMPONENT 'ROW_ID' OF STRUCTURE <line> TO FIELD-SYMBOL(<row>).
+      
+      ASSIGN COMPONENT 'ROW_ID' OF STRUCTURE <line> TO <row>.
       IF <row> IS ASSIGNED.
         <row> = sy-tabix.
       ENDIF.
@@ -7741,15 +9169,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA val TYPE string.
 
-    LOOP AT it_dfies REFERENCE INTO DATA(dfies).
+    DATA temp481 LIKE LINE OF it_dfies.
+    DATA dfies LIKE REF TO temp481.
+      FIELD-SYMBOLS <row> TYPE data.
+      FIELD-SYMBOLS <value> TYPE any.
+        DATA and TYPE string.
+        DATA escape TYPE string.
+    LOOP AT it_dfies REFERENCE INTO dfies.
 
       IF NOT ( dfies->keyflag = abap_true OR dfies->fieldname = mv_check_tab_field ).
         CONTINUE.
       ENDIF.
 
-      ASSIGN ms_data_row->* TO FIELD-SYMBOL(<row>).
+      
+      ASSIGN ms_data_row->* TO <row>.
 
-      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE <row> TO FIELD-SYMBOL(<value>).
+      
+      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE <row> TO <value>.
       IF <value> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
@@ -7758,11 +9194,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ENDIF.
 
       IF result IS NOT INITIAL.
-        DATA(and) = ` AND `.
+        
+        and = ` AND `.
       ENDIF.
 
       IF <value> CA `_`.
-        DATA(escape) = `ESCAPE '#'`.
+        
+        escape = `ESCAPE '#'`.
       ELSE.
         CLEAR escape.
       ENDIF.
@@ -7787,9 +9225,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_field_len  TYPE i.
     DATA lv_offset     TYPE i.
 
-    LOOP AT dfies INTO DATA(s_dfies) WHERE keyflag = abap_true.
+    DATA s_dfies LIKE LINE OF dfies.
+      FIELD-SYMBOLS <value> TYPE any.
+    LOOP AT dfies INTO s_dfies WHERE keyflag = abap_true.
 
-      ASSIGN COMPONENT s_dfies-fieldname OF STRUCTURE line TO FIELD-SYMBOL(<value>).
+      
+      ASSIGN COMPONENT s_dfies-fieldname OF STRUCTURE line TO <value>.
       IF <value> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
@@ -7824,19 +9265,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bus_tr_add.
+      FIELD-SYMBOLS <e071> TYPE any.
+      FIELD-SYMBOLS <t_e071k> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <t_e071> TYPE STANDARD TABLE.
+      DATA r_e071k TYPE REF TO data.
+      DATA r_e071 TYPE REF TO data.
+      DATA fb1 TYPE c LENGTH 27.
+      DATA fb2 TYPE c LENGTH 25.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
     ELSE.
 
-      FIELD-SYMBOLS <e071>    TYPE any.
-      FIELD-SYMBOLS <t_e071k> TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <t_e071>  TYPE STANDARD TABLE.
+      
+      
+      
 
       " We need to set the MANDT is necessary
       set_mandt( ir_data ).
 
-      DATA(r_e071k) = _set_e071k( ir_data      = ir_data
+      
+      r_e071k = _set_e071k( ir_data      = ir_data
                                   iv_tabname   = iv_tabname
                                   is_transport = is_transport ).
       ASSIGN r_e071k->* TO <e071>.
@@ -7844,13 +9293,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         RETURN.
       ENDIF.
 
-      DATA(r_e071) = _set_e071( iv_tabname   = iv_tabname
+      
+      r_e071 = _set_e071( iv_tabname   = iv_tabname
                                 is_transport = is_transport ).
 
       ASSIGN r_e071k->* TO <t_e071k>.
       ASSIGN r_e071->* TO <t_e071>.
 
-      DATA(fb1) = 'TR_APPEND_TO_COMM_OBJS_KEYS'.
+      
+      fb1 = 'TR_APPEND_TO_COMM_OBJS_KEYS'.
       CALL FUNCTION fb1
         EXPORTING
           wi_trkorr     = is_transport-transport
@@ -7865,7 +9316,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error.
       ENDIF.
 
-      DATA(fb2) = 'TR_SORT_AND_COMPRESS_COMM'.
+      
+      fb2 = 'TR_SORT_AND_COMPRESS_COMM'.
       CALL FUNCTION fb2
         EXPORTING
           iv_trkorr     = is_transport-task
@@ -7893,13 +9345,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <tab>     TYPE STANDARD TABLE.
     FIELD-SYMBOLS <line>    TYPE any.
 
-    DATA(t_comp) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( 'E071K' ).
+    DATA t_comp TYPE abap_component_tab.
+        DATA struct_desc TYPE REF TO cl_abap_structdescr.
+        DATA table_desc TYPE REF TO cl_abap_tabledescr.
+    DATA dfies TYPE zabaputil_cl_util_context=>ty_t_dfies.
+    t_comp = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( 'E071K' ).
 
     TRY.
 
-        DATA(struct_desc) = cl_abap_structdescr=>create( t_comp ).
+        
+        struct_desc = cl_abap_structdescr=>create( t_comp ).
 
-        DATA(table_desc) = cl_abap_tabledescr=>create( p_line_type  = struct_desc
+        
+        table_desc = cl_abap_tabledescr=>create( p_line_type  = struct_desc
                                                        p_table_kind = cl_abap_tabledescr=>tablekind_std ).
 
         CREATE DATA t_e071k TYPE HANDLE table_desc.
@@ -7911,7 +9369,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
-    DATA(dfies) = rtti_get_t_dfies_by_table_name( iv_tabname ).
+    
+    dfies = rtti_get_t_dfies_by_table_name( iv_tabname ).
 
 *   is_transport-transport = assign_value( component = 'TRKORR'
 *                                          structure = <s_e071k> ).                                         )
@@ -7992,13 +9451,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <s_e071> TYPE any.
     FIELD-SYMBOLS <value>  TYPE any.
 
-    DATA(t_comp) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( 'E071' ).
+    DATA t_comp TYPE abap_component_tab.
+        DATA struct_desc_new TYPE REF TO cl_abap_structdescr.
+        DATA table_desc_new TYPE REF TO cl_abap_tabledescr.
+    t_comp = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( 'E071' ).
 
     TRY.
 
-        DATA(struct_desc_new) = cl_abap_structdescr=>create( t_comp ).
+        
+        struct_desc_new = cl_abap_structdescr=>create( t_comp ).
 
-        DATA(table_desc_new) = cl_abap_tabledescr=>create( p_line_type  = struct_desc_new
+        
+        table_desc_new = cl_abap_tabledescr=>create( p_line_type  = struct_desc_new
                                                            p_table_kind = cl_abap_tabledescr=>tablekind_std ).
 
         CREATE DATA t_e071 TYPE HANDLE table_desc_new.
@@ -8062,14 +9526,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <line>  TYPE any.
     FIELD-SYMBOLS <value> TYPE any.
 
-    DATA(table_name) = 'E070'.
+    DATA table_name TYPE c LENGTH 4.
+        DATA t_comp TYPE abap_component_tab.
+        DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
+        DATA new_table_desc TYPE REF TO cl_abap_tabledescr.
+        DATA where TYPE string.
+    table_name = 'E070'.
 
     TRY.
-        DATA(t_comp) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( table_name ).
+        
+        t_comp = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( table_name ).
 
-        DATA(new_struct_desc) = cl_abap_structdescr=>create( t_comp ).
+        
+        new_struct_desc = cl_abap_structdescr=>create( t_comp ).
 
-        DATA(new_table_desc) = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
+        
+        new_table_desc = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
                                                            p_table_kind = cl_abap_tabledescr=>tablekind_std ).
 
         CREATE DATA lo_tab TYPE HANDLE new_table_desc.
@@ -8078,21 +9550,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ASSIGN lo_tab->* TO <table>.
         ASSIGN lo_line->* TO <line>.
 
-        DATA(where) =
+        
+        where =
         |( TRFUNCTION EQ 'Q' ) AND ( TRSTATUS EQ 'D' ) AND ( KORRDEV EQ 'CUST' ) AND ( AS4USER EQ '{ sy-uname }' )|.
 
-        SELECT trkorr,
-               trfunction,
-               trstatus,
-               tarsystem,
-               korrdev,
-               as4user,
-               as4date,
-               as4time,
+        SELECT trkorr
+               trfunction
+               trstatus
+               tarsystem
+               korrdev
+               as4user
+               as4date
+               as4time
                strkorr
-          FROM (table_name)
+          FROM (table_name) INTO TABLE <table>
           WHERE (where)
-          INTO TABLE @<table>.
+          .
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
@@ -8126,8 +9599,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bus_tr_read.
+      DATA lo_tab TYPE REF TO data.
+      DATA lo_line TYPE REF TO data.
+      FIELD-SYMBOLS <table> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <line> TYPE any.
+      FIELD-SYMBOLS <value> TYPE any.
+      DATA table_name TYPE c LENGTH 4.
+          DATA t_comp TYPE abap_component_tab.
+          DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
+          DATA new_table_desc TYPE REF TO cl_abap_tabledescr.
+          DATA index TYPE i.
+          DATA line LIKE LINE OF mt_data.
+              DATA where TYPE string.
+          DATA data TYPE REF TO zabaputil_cl_util_context=>ty_s_transport.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
 *          data(lo_current_user) = xco_cp=>sy->user( ).
 *
@@ -8165,23 +9651,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     ELSE.
 
-      DATA lo_tab  TYPE REF TO data.
-      DATA lo_line TYPE REF TO data.
+      
+      
 
-      FIELD-SYMBOLS <table> TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <line>  TYPE any.
-      FIELD-SYMBOLS <value> TYPE any.
+      
+      
+      
 
       _read_e070( CHANGING mt_data = mt_data ).
 
-      DATA(table_name) = 'E07T'.
+      
+      table_name = 'E07T'.
 
       TRY.
-          DATA(t_comp) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( table_name ).
+          
+          t_comp = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( table_name ).
 
-          DATA(new_struct_desc) = cl_abap_structdescr=>create( t_comp ).
+          
+          new_struct_desc = cl_abap_structdescr=>create( t_comp ).
 
-          DATA(new_table_desc) = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
+          
+          new_table_desc = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
                                                              p_table_kind = cl_abap_tabledescr=>tablekind_std ).
 
           CREATE DATA lo_tab TYPE HANDLE new_table_desc.
@@ -8190,24 +9680,27 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           ASSIGN lo_tab->* TO <table>.
           ASSIGN lo_line->* TO <line>.
 
-          DATA(index) = 0.
+          
+          index = 0.
 
-          LOOP AT mt_data INTO DATA(line).
+          
+          LOOP AT mt_data INTO line.
             index = index + 1.
             IF index = 1.
-              DATA(where) = |TRKORR EQ '{ line-task }'|.
+              
+              where = |TRKORR EQ '{ line-task }'|.
             ELSE.
               where = |{ where } OR TRKORR EQ '{ line-task }'|.
             ENDIF.
             where = |( { where } )|.
           ENDLOOP.
 
-          SELECT trkorr,
-                 langu,
+          SELECT trkorr
+                 langu
                  as4text
-            FROM (table_name)
+            FROM (table_name) INTO TABLE <table>
             WHERE (where)
-            INTO TABLE @<table>.
+            .
           IF sy-subrc <> 0.
             RETURN.
           ENDIF.
@@ -8222,7 +9715,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           CONTINUE.
         ELSE.
 
-          READ TABLE mt_data REFERENCE INTO DATA(data) WITH KEY task = <value>.
+          
+          READ TABLE mt_data REFERENCE INTO data WITH KEY task = <value>.
           IF sy-subrc = 0.
 
             ASSIGN COMPONENT 'AS4TEXT' OF STRUCTURE <line> TO <value>.
@@ -8248,12 +9742,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <tab>  TYPE STANDARD TABLE.
     FIELD-SYMBOLS <line> TYPE any.
+      FIELD-SYMBOLS <row> TYPE any.
 
     ASSIGN ir_data->* TO <tab>.
 
     LOOP AT <tab> ASSIGNING <line>.
 
-      ASSIGN COMPONENT `MANDT` OF STRUCTURE <line> TO FIELD-SYMBOL(<row>).
+      
+      ASSIGN COMPONENT `MANDT` OF STRUCTURE <line> TO <row>.
       IF <row> IS ASSIGNED.
 
         TRY.
@@ -8267,13 +9763,47 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bal_search.
-
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
-      " Cloud: use CL_BALI_LOG_FILTER + CL_BALI_LOG_DB
       DATA lo_filter TYPE REF TO object.
-      DATA lo_db     TYPE REF TO object.
-      DATA lt_logs   TYPE STANDARD TABLE OF REF TO object.
-      DATA lv_class  TYPE string.
+      DATA lo_db TYPE REF TO object.
+      TYPES temp10 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_logs TYPE temp10.
+      DATA lv_class TYPE string.
+          DATA temp482 TYPE string.
+          DATA lv_obj_f LIKE temp482.
+          DATA temp483 TYPE string.
+          DATA lv_sub_f LIKE temp483.
+          DATA temp484 TYPE string.
+          DATA lv_id_f LIKE temp484.
+            DATA temp485 TYPE d.
+            DATA lv_from LIKE temp485.
+            DATA temp486 TYPE d.
+            DATA lv_to LIKE temp486.
+          DATA lo_log LIKE LINE OF lt_logs.
+            DATA temp487 TYPE ty_s_bal_header.
+            DATA ls_hdr_c LIKE temp487.
+                DATA lo_header TYPE REF TO object.
+    DATA lv_fm TYPE string.
+    DATA lr_filter TYPE REF TO data.
+    DATA lr_headers TYPE REF TO data.
+    FIELD-SYMBOLS <filter> TYPE any.
+    FIELD-SYMBOLS <headers> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <header> TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+    FIELD-SYMBOLS <range> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <rline> TYPE any.
+    DATA lr_rline TYPE REF TO data.
+          DATA temp488 TYPE d.
+          DATA temp489 TYPE d.
+          DATA temp490 TYPE ty_s_bal_header.
+          DATA ls_hdr LIKE temp490.
+
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
+      " Cloud: use CL_BALI_LOG_FILTER + CL_BALI_LOG_DB
+      
+      
+      
+
+      
 
       TRY.
           lv_class = `CL_BALI_LOG_FILTER`.
@@ -8281,9 +9811,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               filter = lo_filter.
 
-          DATA(lv_obj_f) = COND string( WHEN object IS NOT INITIAL THEN object ELSE `` ).
-          DATA(lv_sub_f) = COND string( WHEN subobject IS NOT INITIAL THEN subobject ELSE `` ).
-          DATA(lv_id_f)  = COND string( WHEN id IS NOT INITIAL THEN id ELSE `` ).
+          
+          IF object IS NOT INITIAL.
+            temp482 = object.
+          ELSE.
+            temp482 = ``.
+          ENDIF.
+          
+          lv_obj_f = temp482.
+          
+          IF subobject IS NOT INITIAL.
+            temp483 = subobject.
+          ELSE.
+            temp483 = ``.
+          ENDIF.
+          
+          lv_sub_f = temp483.
+          
+          IF id IS NOT INITIAL.
+            temp484 = id.
+          ELSE.
+            temp484 = ``.
+          ENDIF.
+          
+          lv_id_f = temp484.
           CALL METHOD lo_filter->(`SET_DESCRIPTOR`)
             EXPORTING
               object      = lv_obj_f
@@ -8291,8 +9842,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               external_id = lv_id_f.
 
           IF date_from IS NOT INITIAL OR date_to IS NOT INITIAL.
-            DATA(lv_from) = COND d( WHEN date_from IS NOT INITIAL THEN date_from ELSE '19000101' ).
-            DATA(lv_to)   = COND d( WHEN date_to IS NOT INITIAL THEN date_to ELSE sy-datum ).
+            
+            IF date_from IS NOT INITIAL.
+              temp485 = date_from.
+            ELSE.
+              temp485 = '19000101'.
+            ENDIF.
+            
+            lv_from = temp485.
+            
+            IF date_to IS NOT INITIAL.
+              temp486 = date_to.
+            ELSE.
+              temp486 = sy-datum.
+            ENDIF.
+            
+            lv_to = temp486.
             CALL METHOD lo_filter->(`SET_CREATE_DATE`)
               EXPORTING
                 from_date = lv_from
@@ -8311,10 +9876,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               log_table        = lt_logs.
 
-          LOOP AT lt_logs INTO DATA(lo_log).
-            DATA(ls_hdr_c) = VALUE ty_s_bal_header( ).
+          
+          LOOP AT lt_logs INTO lo_log.
+            
+            CLEAR temp487.
+            
+            ls_hdr_c = temp487.
             TRY.
-                DATA lo_header TYPE REF TO object.
+                
                 CALL METHOD lo_log->(`GET_HEADER`)
                   RECEIVING
                     header = lo_header.
@@ -8338,16 +9907,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use BAL_DB_SEARCH
-    DATA lv_fm      TYPE string.
-    DATA lr_filter  TYPE REF TO data.
-    DATA lr_headers TYPE REF TO data.
-    FIELD-SYMBOLS <filter>  TYPE any.
-    FIELD-SYMBOLS <headers> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <header>  TYPE any.
-    FIELD-SYMBOLS <comp>    TYPE any.
-    FIELD-SYMBOLS <range>   TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <rline>   TYPE any.
-    DATA lr_rline TYPE REF TO data.
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     TRY.
         CREATE DATA lr_filter TYPE ('BAL_S_LFIL').
@@ -8390,9 +9959,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           ASSIGN COMPONENT `SIGN` OF STRUCTURE <rline> TO <comp>. <comp> = `I`.
           ASSIGN COMPONENT `OPTION` OF STRUCTURE <rline> TO <comp>. <comp> = `BT`.
           ASSIGN COMPONENT `LOW` OF STRUCTURE <rline> TO <comp>.
-          <comp> = COND d( WHEN date_from IS NOT INITIAL THEN date_from ELSE '19000101' ).
+          
+          IF date_from IS NOT INITIAL.
+            temp488 = date_from.
+          ELSE.
+            temp488 = '19000101'.
+          ENDIF.
+          <comp> = temp488.
           ASSIGN COMPONENT `HIGH` OF STRUCTURE <rline> TO <comp>.
-          <comp> = COND d( WHEN date_to IS NOT INITIAL THEN date_to ELSE sy-datum ).
+          
+          IF date_to IS NOT INITIAL.
+            temp489 = date_to.
+          ELSE.
+            temp489 = sy-datum.
+          ENDIF.
+          <comp> = temp489.
           INSERT <rline> INTO TABLE <range>.
         ENDIF.
 
@@ -8422,7 +10003,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ENDIF.
 
         LOOP AT <headers> ASSIGNING <header>.
-          DATA(ls_hdr) = VALUE ty_s_bal_header( ).
+          
+          CLEAR temp490.
+          
+          ls_hdr = temp490.
           ASSIGN COMPONENT `LOG_HANDLE` OF STRUCTURE <header> TO <comp>.
           IF sy-subrc = 0. ls_hdr-log_handle = <comp>. ENDIF.
           ASSIGN COMPONENT `OBJECT` OF STRUCTURE <header> TO <comp>.
@@ -8447,25 +10031,57 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_read_latest.
 
-    DATA(lt_msgs) = bal_read( object    = object
+    DATA lt_msgs TYPE zabaputil_cl_util_context=>ty_t_msg.
+      DATA temp491 LIKE LINE OF lt_msgs.
+      DATA temp492 LIKE sy-tabix.
+    lt_msgs = bal_read( object    = object
                               subobject = subobject
                               id        = id ).
     IF lt_msgs IS NOT INITIAL.
-      result = lt_msgs[ lines( lt_msgs ) ].
+      
+      
+      temp492 = sy-tabix.
+      READ TABLE lt_msgs INDEX lines( lt_msgs ) INTO temp491.
+      sy-tabix = temp492.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      result = temp491.
     ENDIF.
 
   ENDMETHOD.
 
   METHOD bal_delete_before.
 
-    DATA(lv_cutoff) = CONV d( sy-datum - days ).
-
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
-      " Cloud: use CL_BALI_LOG_DB to delete via filter
+    DATA temp493 TYPE d.
+    DATA lv_cutoff LIKE temp493.
       DATA lo_filter_c TYPE REF TO object.
-      DATA lo_db_c     TYPE REF TO object.
-      DATA lt_logs_c   TYPE STANDARD TABLE OF REF TO object.
-      DATA lv_cls      TYPE string.
+      DATA lo_db_c TYPE REF TO object.
+      TYPES temp11 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_logs_c TYPE temp11.
+      DATA lv_cls TYPE string.
+          DATA temp494 TYPE string.
+          DATA lv_sub_c LIKE temp494.
+          DATA temp495 TYPE d.
+          DATA lo_log_c LIKE LINE OF lt_logs_c.
+    DATA lv_fm TYPE string.
+    DATA lr_filter TYPE REF TO data.
+    FIELD-SYMBOLS <filter> TYPE any.
+    FIELD-SYMBOLS <range> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <rline> TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+    DATA lr_rline TYPE REF TO data.
+    temp493 = sy-datum - days.
+    
+    lv_cutoff = temp493.
+
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
+      " Cloud: use CL_BALI_LOG_DB to delete via filter
+      
+      
+      
+
+      
 
       TRY.
           lv_cls = `CL_BALI_LOG_FILTER`.
@@ -8473,16 +10089,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               filter = lo_filter_c.
 
-          DATA(lv_sub_c) = COND string( WHEN subobject IS NOT INITIAL THEN subobject ELSE `` ).
+          
+          IF subobject IS NOT INITIAL.
+            temp494 = subobject.
+          ELSE.
+            temp494 = ``.
+          ENDIF.
+          
+          lv_sub_c = temp494.
           CALL METHOD lo_filter_c->(`SET_DESCRIPTOR`)
             EXPORTING
               object      = object
               subobject   = lv_sub_c
               external_id = ``.
 
+          
+          temp495 = '19000101'.
           CALL METHOD lo_filter_c->(`SET_CREATE_DATE`)
             EXPORTING
-              from_date = CONV d( '19000101' )
+              from_date = temp495
               to_date   = lv_cutoff.
 
           lv_cls = `CL_BALI_LOG_DB`.
@@ -8496,7 +10121,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               log_table = lt_logs_c.
 
-          LOOP AT lt_logs_c INTO DATA(lo_log_c).
+          
+          LOOP AT lt_logs_c INTO lo_log_c.
             CALL METHOD lo_db_c->(`DELETE_LOG`)
               EXPORTING
                 log = lo_log_c.
@@ -8510,13 +10136,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use BAL_DB_DELETE
-    DATA lv_fm     TYPE string.
-    DATA lr_filter TYPE REF TO data.
-    FIELD-SYMBOLS <filter> TYPE any.
-    FIELD-SYMBOLS <range>  TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <rline>  TYPE any.
-    FIELD-SYMBOLS <comp>   TYPE any.
-    DATA lr_rline TYPE REF TO data.
+    
+    
+    
+    
+    
+    
+    
 
     TRY.
         CREATE DATA lr_filter TYPE ('BAL_S_LFIL').
@@ -8566,11 +10192,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_read_by_type.
 
-    DATA(lt_all) = bal_read( object    = object
+    DATA lt_all TYPE zabaputil_cl_util_context=>ty_t_msg.
+    DATA ls_msg LIKE LINE OF lt_all.
+    lt_all = bal_read( object    = object
                              subobject = subobject
                              id        = id ).
 
-    LOOP AT lt_all INTO DATA(ls_msg)
+    
+    LOOP AT lt_all INTO ls_msg
          WHERE type = msg_type.
       INSERT ls_msg INTO TABLE result.
     ENDLOOP.
@@ -8579,7 +10208,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD bal_count.
 
-    DATA(lt_msgs) = bal_read( object    = object
+    DATA lt_msgs TYPE zabaputil_cl_util_context=>ty_t_msg.
+    lt_msgs = bal_read( object    = object
                               subobject = subobject
                               id        = id ).
     result = lines( lt_msgs ).
@@ -8587,29 +10217,63 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bal_read.
+TYPES BEGIN OF ty_item.
+TYPES log_item_number TYPE i.
+TYPES item TYPE REF TO object.
+TYPES END OF ty_item.
+      TYPES temp12 TYPE STANDARD TABLE OF ty_item.
+DATA lt_items TYPE temp12.
+      DATA lo_filter TYPE REF TO object.
+      DATA lo_db TYPE REF TO object.
+      TYPES temp13 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_logs TYPE temp13.
+      DATA lv_text TYPE string.
+      DATA lv_class TYPE string.
+      DATA lv_severity TYPE c LENGTH 1.
+      DATA lv_msgid TYPE string.
+      DATA lv_msgno TYPE string.
+      DATA lv_msgv1 TYPE string.
+      DATA lv_msgv2 TYPE string.
+      DATA lv_msgv3 TYPE string.
+      DATA lv_msgv4 TYPE string.
+          DATA lo_log LIKE LINE OF lt_logs.
+            DATA temp496 LIKE lt_items.
+            DATA ls_item LIKE LINE OF lt_items.
+              DATA temp497 TYPE zabaputil_cl_util_context=>ty_s_msg.
+              DATA ls_msg LIKE temp497.
+      DATA lv_fm TYPE string.
+      DATA lr_handles TYPE REF TO data.
+      DATA lr_single TYPE REF TO data.
+      DATA lr_msgh TYPE REF TO data.
+      DATA lr_msg TYPE REF TO data.
+      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <handle> TYPE any.
+      FIELD-SYMBOLS <single> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <msgh> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <mh> TYPE any.
+      FIELD-SYMBOLS <msg> TYPE any.
+          DATA lx_read TYPE REF TO cx_root.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
       " Load the persisted logs (incl. items) via the released filter API and map
       " each item back to the framework's z2ui5_cl_util=>ty_s_msg structure with full metadata.
-      TYPES:
-        BEGIN OF ty_item,
-          log_item_number TYPE i,
-          item            TYPE REF TO object,
-        END OF ty_item.
-      DATA lt_items    TYPE STANDARD TABLE OF ty_item.
-      DATA lo_filter   TYPE REF TO object.
-      DATA lo_db       TYPE REF TO object.
-      DATA lt_logs     TYPE STANDARD TABLE OF REF TO object.
-      DATA lv_text     TYPE string.
-      DATA lv_class    TYPE string.
-      DATA lv_severity TYPE c LENGTH 1.
-      DATA lv_msgid    TYPE string.
-      DATA lv_msgno    TYPE string.
-      DATA lv_msgv1    TYPE string.
-      DATA lv_msgv2    TYPE string.
-      DATA lv_msgv3    TYPE string.
-      DATA lv_msgv4    TYPE string.
+      
+      
+
+      
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
       TRY.
           lo_filter = bal_cloud_build_filter( object    = object
@@ -8627,19 +10291,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               log_table = lt_logs.
 
-          LOOP AT lt_logs INTO DATA(lo_log).
+          
+          LOOP AT lt_logs INTO lo_log.
 
-            lt_items = VALUE #( ).
+            
+            CLEAR temp496.
+            lt_items = temp496.
             CALL METHOD lo_log->(`GET_ALL_ITEMS`)
               RECEIVING
                 item_table = lt_items.
 
-            LOOP AT lt_items INTO DATA(ls_item).
+            
+            LOOP AT lt_items INTO ls_item.
               IF ls_item-item IS NOT BOUND.
                 CONTINUE.
               ENDIF.
 
-              DATA(ls_msg) = VALUE zabaputil_cl_util_context=>ty_s_msg( ).
+              
+              CLEAR temp497.
+              
+              ls_msg = temp497.
 
               lv_text = ``.
               CALL METHOD ls_item-item->(`GET_MESSAGE_TEXT`)
@@ -8702,17 +10373,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     ELSE.
 
-      DATA lv_fm      TYPE string.
-      DATA lr_handles TYPE REF TO data.
-      DATA lr_single  TYPE REF TO data.
-      DATA lr_msgh    TYPE REF TO data.
-      DATA lr_msg     TYPE REF TO data.
-      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <handle>  TYPE any.
-      FIELD-SYMBOLS <single>  TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <msgh>    TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <mh>      TYPE any.
-      FIELD-SYMBOLS <msg>     TYPE any.
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
       TRY.
           lr_handles = bal_std_load_handles( object    = object
@@ -8765,7 +10436,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
           ENDLOOP.
 
-        CATCH cx_root INTO DATA(lx_read).
+          
+        CATCH cx_root INTO lx_read.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
               val = lx_read.
@@ -8776,18 +10448,31 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bal_create.
+      DATA lo_header TYPE REF TO object.
+      DATA lo_log TYPE REF TO object.
+      DATA lo_db TYPE REF TO object.
+      DATA lv_class TYPE string.
+      DATA lv_fm TYPE string.
+      DATA lr_log TYPE REF TO data.
+      DATA lr_handle TYPE REF TO data.
+      DATA lr_handles TYPE REF TO data.
+      FIELD-SYMBOLS <log> TYPE any.
+      FIELD-SYMBOLS <handle> TYPE any.
+      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <comp> TYPE any.
+          DATA lx_create TYPE REF TO cx_root.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
       " ABAP Cloud: released Business Application Log API (cl_bali_*).
       " All access is dynamic so this class still compiles on lower releases.
       " The class names are kept in variables - a string literal inside the
       " dynamic component selector ( '...' )=>( '...' ) is not valid ABAP.
       " Returning parameter names follow the released API (header/log/db_handler).
-      DATA lo_header TYPE REF TO object.
-      DATA lo_log    TYPE REF TO object.
-      DATA lo_db     TYPE REF TO object.
-      DATA lv_class  TYPE string.
+      
+      
+      
+      
 
       TRY.
           lv_class = `CL_BALI_HEADER_SETTER`.
@@ -8829,14 +10514,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ELSE.
 
       " Standard ABAP / on-premise: classic Business Application Log function modules.
-      DATA lv_fm      TYPE string.
-      DATA lr_log     TYPE REF TO data.
-      DATA lr_handle  TYPE REF TO data.
-      DATA lr_handles TYPE REF TO data.
-      FIELD-SYMBOLS <log>     TYPE any.
-      FIELD-SYMBOLS <handle>  TYPE any.
-      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <comp>    TYPE any.
+      
+      
+      
+      
+      
+      
+      
+      
 
       TRY.
           CREATE DATA lr_log TYPE ('BAL_S_LOG').
@@ -8880,7 +10565,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             COMMIT WORK AND WAIT.
           ENDIF.
 
-        CATCH cx_root INTO DATA(lx_create).
+          
+        CATCH cx_root INTO lx_create.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
               val = lx_create.
@@ -8891,14 +10577,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bal_update.
+      DATA lo_filter TYPE REF TO object.
+      DATA lo_db TYPE REF TO object.
+      TYPES temp14 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_logs TYPE temp14.
+      DATA lv_class TYPE string.
+          DATA lo_log LIKE LINE OF lt_logs.
+          DATA temp74 LIKE LINE OF lt_logs.
+          DATA temp75 LIKE sy-tabix.
+      DATA lv_fm TYPE string.
+      DATA lr_handles TYPE REF TO data.
+      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
+      FIELD-SYMBOLS <handle> TYPE any.
+          DATA lx_update TYPE REF TO cx_root.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
 
       " Load the existing log and append items. If no log exists, create a new one.
-      DATA lo_filter TYPE REF TO object.
-      DATA lo_db     TYPE REF TO object.
-      DATA lt_logs   TYPE STANDARD TABLE OF REF TO object.
-      DATA lv_class  TYPE string.
+      
+      
+      
+
+      
 
       TRY.
           lo_filter = bal_cloud_build_filter( object    = object
@@ -8925,7 +10625,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           ENDIF.
 
           " Append to the first (most recent) log
-          DATA(lo_log) = lt_logs[ 1 ].
+          
+          
+          
+          temp75 = sy-tabix.
+          READ TABLE lt_logs INDEX 1 INTO temp74.
+          sy-tabix = temp75.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          lo_log = temp74.
           bal_cloud_add_items( log   = lo_log
                                t_log = t_log ).
 
@@ -8946,10 +10655,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ELSE.
 
       " Append the given messages to an already persisted log; create a new one if none exists.
-      DATA lv_fm      TYPE string.
-      DATA lr_handles TYPE REF TO data.
-      FIELD-SYMBOLS <handles> TYPE STANDARD TABLE.
-      FIELD-SYMBOLS <handle>  TYPE any.
+      
+      
+      
+      
 
       TRY.
           lr_handles = bal_std_load_handles( object    = object
@@ -8972,7 +10681,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RETURN.
           ENDIF.
 
-          ASSIGN <handles>[ 1 ] TO <handle>.
+          READ TABLE <handles> INDEX 1 ASSIGNING <handle>.
           bal_std_msg_add( handle = <handle>
                            t_log  = t_log ).
 
@@ -8986,7 +10695,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             COMMIT WORK AND WAIT.
           ENDIF.
 
-        CATCH cx_root INTO DATA(lx_update).
+          
+        CATCH cx_root INTO lx_update.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
               val = lx_update.
@@ -8997,13 +10707,24 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bal_delete.
-
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
-
       DATA lo_filter TYPE REF TO object.
-      DATA lo_db     TYPE REF TO object.
-      DATA lt_logs   TYPE STANDARD TABLE OF REF TO object.
-      DATA lv_class  TYPE string.
+      DATA lo_db TYPE REF TO object.
+      TYPES temp15 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_logs TYPE temp15.
+      DATA lv_class TYPE string.
+          DATA lo_log LIKE LINE OF lt_logs.
+      DATA lv_fm TYPE string.
+      DATA lr_filter TYPE REF TO data.
+      FIELD-SYMBOLS <filter> TYPE any.
+          DATA lx_delete TYPE REF TO cx_root.
+
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
+
+      
+      
+      
+
+      
 
       TRY.
           lo_filter = bal_cloud_build_filter( object    = object
@@ -9021,7 +10742,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               log_table = lt_logs.
 
-          LOOP AT lt_logs INTO DATA(lo_log).
+          
+          LOOP AT lt_logs INTO lo_log.
             CALL METHOD lo_db->(`DELETE_LOG`)
               EXPORTING
                 log = lo_log.
@@ -9035,9 +10757,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     ELSE.
 
-      DATA lv_fm     TYPE string.
-      DATA lr_filter TYPE REF TO data.
-      FIELD-SYMBOLS <filter> TYPE any.
+      
+      
+      
 
       TRY.
           lr_filter = bal_std_build_filter( object    = object
@@ -9055,7 +10777,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             COMMIT WORK AND WAIT.
           ENDIF.
 
-        CATCH cx_root INTO DATA(lx_delete).
+          
+        CATCH cx_root INTO lx_delete.
           RAISE EXCEPTION TYPE zabaputil_cx_util_error
             EXPORTING
               val = lx_delete.
@@ -9066,14 +10789,38 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_get_objects.
+          DATA lo_transport TYPE REF TO object.
+          TYPES temp16 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_objects_c TYPE temp16.
+          DATA lv_xco TYPE string.
+          DATA temp498 TYPE string.
+          DATA lv_trkorr_c LIKE temp498.
+          DATA lo_objects_api TYPE REF TO object.
+          DATA lo_all TYPE REF TO object.
+          DATA lo_obj LIKE LINE OF lt_objects_c.
+            DATA ls_obj_c TYPE ty_s_tr_object.
+    DATA lr_objects TYPE REF TO data.
+    DATA lr_header TYPE REF TO data.
+    FIELD-SYMBOLS <objects> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <object> TYPE any.
+    FIELD-SYMBOLS <header> TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+    DATA lv_fm TYPE string.
+          DATA temp499 TYPE ty_s_tr_object.
+          DATA ls_obj LIKE temp499.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: use XCO_CP_CTS
       TRY.
-          DATA lo_transport TYPE REF TO object.
-          DATA lt_objects_c TYPE STANDARD TABLE OF REF TO object.
-          DATA(lv_xco) = `XCO_CP_CTS`.
-          DATA(lv_trkorr_c) = CONV string( trkorr ).
+          
+          
+
+          
+          lv_xco = `XCO_CP_CTS`.
+          
+          temp498 = trkorr.
+          
+          lv_trkorr_c = temp498.
 
           CALL METHOD (lv_xco)=>(`TRANSPORT`)
             EXPORTING
@@ -9081,12 +10828,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               ro_transport = lo_transport.
 
-          DATA lo_objects_api TYPE REF TO object.
+          
           CALL METHOD lo_transport->(`OBJECTS`)
             RECEIVING
               ro_objects = lo_objects_api.
 
-          DATA lo_all TYPE REF TO object.
+          
           CALL METHOD lo_objects_api->(`ALL`)
             RECEIVING
               ro_all = lo_all.
@@ -9095,8 +10842,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               rt_objects = lt_objects_c.
 
-          LOOP AT lt_objects_c INTO DATA(lo_obj).
-            DATA ls_obj_c TYPE ty_s_tr_object.
+          
+          LOOP AT lt_objects_c INTO lo_obj.
+            
             CLEAR ls_obj_c.
             TRY.
                 CALL METHOD lo_obj->(`GET_PGMID`)
@@ -9119,13 +10867,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use TR_GET_OBJECTS_OF_REQ_AN_TASKS
-    DATA lr_objects TYPE REF TO data.
-    DATA lr_header  TYPE REF TO data.
-    FIELD-SYMBOLS <objects> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <object>  TYPE any.
-    FIELD-SYMBOLS <header>  TYPE any.
-    FIELD-SYMBOLS <comp>    TYPE any.
-    DATA lv_fm TYPE string.
+    
+    
+    
+    
+    
+    
+    
 
     TRY.
         CREATE DATA lr_objects TYPE STANDARD TABLE OF (`E071`).
@@ -9149,7 +10897,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ENDIF.
 
         LOOP AT <objects> ASSIGNING <object>.
-          DATA(ls_obj) = VALUE ty_s_tr_object( ).
+          
+          CLEAR temp499.
+          
+          ls_obj = temp499.
           ASSIGN COMPONENT `PGMID` OF STRUCTURE <object> TO <comp>.
           IF sy-subrc = 0. ls_obj-pgmid = <comp>. ENDIF.
           ASSIGN COMPONENT `OBJECT` OF STRUCTURE <object> TO <comp>.
@@ -9165,24 +10916,66 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_get_user_requests.
+          DATA lv_xco TYPE string.
+          DATA lo_filter_tr TYPE REF TO object.
+          DATA lo_status_f TYPE REF TO object.
+          DATA lo_owner_f TYPE REF TO object.
+          TYPES temp17 TYPE STANDARD TABLE OF REF TO object.
+DATA lt_transports TYPE temp17.
+          DATA temp500 TYPE string.
+          DATA temp76 TYPE string.
+          DATA lv_user_c LIKE temp500.
+          DATA lo_where TYPE REF TO object.
+          DATA lo_tr LIKE LINE OF lt_transports.
+            DATA ls_req_c TYPE ty_s_tr_request.
+                DATA lo_props TYPE REF TO object.
+                DATA ls_prop TYPE REF TO data.
+                FIELD-SYMBOLS <prop> TYPE any.
+                FIELD-SYMBOLS <pcomp> TYPE any.
+                DATA lv_tr_value TYPE string.
+    DATA lv_user TYPE c LENGTH 12.
+    DATA lv_type TYPE c LENGTH 1.
+    DATA lr_data TYPE REF TO data.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+        DATA lv_tab1 TYPE string.
+        DATA lv_tab2 TYPE string.
+        DATA lv_where TYPE string.
+        DATA lt_comp TYPE abap_component_tab.
+        DATA lo_struct TYPE REF TO cl_abap_structdescr.
+        DATA lo_table TYPE REF TO cl_abap_tabledescr.
+          DATA temp501 TYPE ty_s_tr_request.
+          DATA ls_req LIKE temp501.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: use XCO_CP_CTS transport filter
       TRY.
-          DATA(lv_xco) = `XCO_CP_CTS`.
-          DATA lo_filter_tr  TYPE REF TO object.
-          DATA lo_status_f   TYPE REF TO object.
-          DATA lo_owner_f    TYPE REF TO object.
-          DATA lt_transports TYPE STANDARD TABLE OF REF TO object.
+          
+          lv_xco = `XCO_CP_CTS`.
+          
+          
+          
+          
 
-          DATA(lv_user_c) = CONV string( COND #( WHEN user IS NOT INITIAL THEN user ELSE sy-uname ) ).
+
+          
+          
+          IF user IS NOT INITIAL.
+            temp76 = user.
+          ELSE.
+            temp76 = sy-uname.
+          ENDIF.
+          temp500 = temp76.
+          
+          lv_user_c = temp500.
 
           " Get modifiable transports for user
           CALL METHOD (lv_xco)=>(`TRANSPORTS`)
             RECEIVING
               ro_transports = lo_filter_tr.
 
-          DATA lo_where TYPE REF TO object.
+          
           CALL METHOD lo_filter_tr->(`ALL`)
             RECEIVING
               ro_all = lo_where.
@@ -9191,20 +10984,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             RECEIVING
               rt_transports = lt_transports.
 
-          LOOP AT lt_transports INTO DATA(lo_tr).
-            DATA ls_req_c TYPE ty_s_tr_request.
+          
+          LOOP AT lt_transports INTO lo_tr.
+            
             CLEAR ls_req_c.
             TRY.
-                DATA lo_props TYPE REF TO object.
+                
                 CALL METHOD lo_tr->(`PROPERTIES`)
                   RECEIVING
                     ro_properties = lo_props.
-                DATA ls_prop TYPE REF TO data.
+                
                 CALL METHOD lo_props->(`GET`)
                   RECEIVING
                     rs_properties = ls_prop.
-                FIELD-SYMBOLS <prop> TYPE any.
-                FIELD-SYMBOLS <pcomp> TYPE any.
+                
+                
                 ASSIGN ls_prop->* TO <prop>.
                 ASSIGN COMPONENT `OWNER` OF STRUCTURE <prop> TO <pcomp>.
                 IF sy-subrc = 0. ls_req_c-owner = <pcomp>. ENDIF.
@@ -9218,7 +11012,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
                 ASSIGN COMPONENT `TYPE` OF STRUCTURE <prop> TO <pcomp>.
                 IF sy-subrc = 0. ls_req_c-type = <pcomp>. ENDIF.
 
-                DATA lv_tr_value TYPE string.
+                
                 CALL METHOD lo_tr->(`GET_VALUE`)
                   RECEIVING
                     rv_value = lv_tr_value.
@@ -9237,35 +11031,44 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use dynamic SELECT from E070/E07T
-    DATA lv_user  TYPE c LENGTH 12.
-    DATA lv_type  TYPE c LENGTH 1.
-    DATA lr_data  TYPE REF TO data.
-    FIELD-SYMBOLS <tab>   TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <row>   TYPE any.
-    FIELD-SYMBOLS <comp>  TYPE any.
+    
+    
+    
+    
+    
+    
 
     TRY.
         lv_user = user.
         lv_type = request_type.
 
-        DATA(lv_tab1) = `E070`.
-        DATA(lv_tab2) = `E07T`.
-        DATA(lv_where) = |AS4USER = '{ lv_user }' AND TRSTATUS IN ('D','L')|.
+        
+        lv_tab1 = `E070`.
+        
+        lv_tab2 = `E07T`.
+        
+        lv_where = |AS4USER = '{ lv_user }' AND TRSTATUS IN ('D','L')|.
 
         " First read transports from E070
-        DATA(lt_comp) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( lv_tab1 ).
-        DATA(lo_struct) = cl_abap_structdescr=>create( lt_comp ).
-        DATA(lo_table) = cl_abap_tabledescr=>create( lo_struct ).
+        
+        lt_comp = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( lv_tab1 ).
+        
+        lo_struct = cl_abap_structdescr=>create( lt_comp ).
+        
+        lo_table = cl_abap_tabledescr=>create( lo_struct ).
         CREATE DATA lr_data TYPE HANDLE lo_table.
         ASSIGN lr_data->* TO <tab>.
 
-        SELECT trkorr, as4user, trstatus, trfunction
-          FROM (lv_tab1)
+        SELECT trkorr as4user trstatus trfunction
+          FROM (lv_tab1) INTO CORRESPONDING FIELDS OF TABLE <tab>
           WHERE (lv_where)
-          INTO CORRESPONDING FIELDS OF TABLE @<tab>.
+          .
 
         LOOP AT <tab> ASSIGNING <row>.
-          DATA(ls_req) = VALUE ty_s_tr_request( ).
+          
+          CLEAR temp501.
+          
+          ls_req = temp501.
           ASSIGN COMPONENT `TRKORR` OF STRUCTURE <row> TO <comp>.
           IF sy-subrc = 0. ls_req-trkorr = <comp>. ENDIF.
           ASSIGN COMPONENT `AS4USER` OF STRUCTURE <row> TO <comp>.
@@ -9290,18 +11093,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_get_description.
+          DATA lo_tr_d TYPE REF TO object.
+          DATA lv_xco_d TYPE string.
+          DATA temp502 TYPE string.
+          DATA lo_props_d TYPE REF TO object.
+    DATA lv_trkorr TYPE c LENGTH 20.
+        DATA lv_tab TYPE string.
+        DATA lv_where TYPE string.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: use XCO_CP_CTS
       TRY.
-          DATA lo_tr_d TYPE REF TO object.
-          DATA(lv_xco_d) = `XCO_CP_CTS`.
+          
+          
+          lv_xco_d = `XCO_CP_CTS`.
+          
+          temp502 = trkorr.
           CALL METHOD (lv_xco_d)=>(`TRANSPORT`)
             EXPORTING
-              iv_transport = CONV string( trkorr )
+              iv_transport = temp502
             RECEIVING
               ro_transport = lo_tr_d.
-          DATA lo_props_d TYPE REF TO object.
+          
           CALL METHOD lo_tr_d->(`PROPERTIES`)
             RECEIVING
               ro_properties = lo_props_d.
@@ -9314,43 +11127,61 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard: dynamic SELECT from E07T
-    DATA lv_trkorr TYPE c LENGTH 20.
+    
     lv_trkorr = trkorr.
 
     TRY.
-        DATA(lv_tab) = `E07T`.
-        DATA(lv_where) = |TRKORR = '{ lv_trkorr }' AND LANGU = '{ sy-langu }'|.
+        
+        lv_tab = `E07T`.
+        
+        lv_where = |TRKORR = '{ lv_trkorr }' AND LANGU = '{ sy-langu }'|.
 
         SELECT SINGLE as4text
-          FROM (lv_tab)
+          FROM (lv_tab) INTO result
           WHERE (lv_where)
-          INTO @result.
+          .
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
   ENDMETHOD.
 
   METHOD tr_is_released.
+          DATA lo_tr_r TYPE REF TO object.
+          DATA lv_xco_r TYPE string.
+          DATA temp503 TYPE string.
+          DATA lo_props_r TYPE REF TO object.
+          DATA lv_status_c TYPE string.
+          DATA temp16 TYPE xsdboolean.
+    DATA lv_trkorr TYPE c LENGTH 20.
+    DATA lv_status TYPE c LENGTH 1.
+        DATA lv_tab TYPE string.
+        DATA lv_where TYPE string.
+        DATA temp17 TYPE xsdboolean.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: use XCO_CP_CTS
       TRY.
-          DATA lo_tr_r TYPE REF TO object.
-          DATA(lv_xco_r) = `XCO_CP_CTS`.
+          
+          
+          lv_xco_r = `XCO_CP_CTS`.
+          
+          temp503 = trkorr.
           CALL METHOD (lv_xco_r)=>(`TRANSPORT`)
             EXPORTING
-              iv_transport = CONV string( trkorr )
+              iv_transport = temp503
             RECEIVING
               ro_transport = lo_tr_r.
-          DATA lo_props_r TYPE REF TO object.
+          
           CALL METHOD lo_tr_r->(`PROPERTIES`)
             RECEIVING
               ro_properties = lo_props_r.
-          DATA lv_status_c TYPE string.
+          
           CALL METHOD lo_props_r->(`GET_STATUS`)
             RECEIVING
               rv_status = lv_status_c.
-          result = xsdbool( lv_status_c = `RELEASED` OR lv_status_c = `R` ).
+          
+          temp16 = boolc( lv_status_c = `RELEASED` OR lv_status_c = `R` ).
+          result = temp16.
         CATCH cx_root.
           result = abap_false.
       ENDTRY.
@@ -9358,19 +11189,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard: dynamic SELECT from E070
-    DATA lv_trkorr TYPE c LENGTH 20.
-    DATA lv_status TYPE c LENGTH 1.
+    
+    
     lv_trkorr = trkorr.
 
     TRY.
-        DATA(lv_tab) = `E070`.
-        DATA(lv_where) = |TRKORR = '{ lv_trkorr }'|.
+        
+        lv_tab = `E070`.
+        
+        lv_where = |TRKORR = '{ lv_trkorr }'|.
 
         SELECT SINGLE trstatus
-          FROM (lv_tab)
+          FROM (lv_tab) INTO lv_status
           WHERE (lv_where)
-          INTO @lv_status.
-        result = xsdbool( lv_status = `R` ).
+          .
+        
+        temp17 = boolc( lv_status = `R` ).
+        result = temp17.
       CATCH cx_root.
         result = abap_false.
     ENDTRY.
@@ -9384,6 +11219,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_pgmid    TYPE c LENGTH 4.
     DATA lv_object   TYPE c LENGTH 4.
     DATA lv_obj_name TYPE c LENGTH 120.
+        DATA lx TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
     lv_trkorr   = trkorr.
     lv_pgmid    = pgmid.
@@ -9406,9 +11243,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               val = `TR_ADD_OBJECT failed`.
         ENDIF.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx).
+        
+      CATCH zabaputil_cx_util_error INTO lx.
         RAISE EXCEPTION lx.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = x.
@@ -9417,6 +11256,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_create.
+        DATA lr_header TYPE REF TO data.
+        FIELD-SYMBOLS <header> TYPE any.
+        FIELD-SYMBOLS <trkorr> TYPE any.
+        DATA lv_class TYPE string.
+        DATA x TYPE REF TO cx_root.
 
     " Create an empty transport request (default type `T` = transport of copies).
     " Uses the released class CL_ADT_CTS_MANAGEMENT, available on standard ABAP
@@ -9425,10 +11269,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " z2ui5_cx_util_error is raised instead of a short dump.
     TRY.
 
-        DATA lr_header TYPE REF TO data.
-        FIELD-SYMBOLS <header> TYPE any.
-        FIELD-SYMBOLS <trkorr> TYPE any.
-        DATA lv_class TYPE string.
+        
+        
+        
+        
 
         CREATE DATA lr_header TYPE (`TRWBO_REQUEST_HEADER`).
         ASSIGN lr_header->* TO <header>.
@@ -9445,7 +11289,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ASSIGN COMPONENT `TRKORR` OF STRUCTURE <header> TO <trkorr>.
         result = <trkorr>.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -9454,13 +11299,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_release.
+        DATA lo_api TYPE REF TO object.
+        DATA lv_class TYPE string.
+        DATA x TYPE REF TO cx_root.
 
     " Release a transport request via the released CTS REST API
     " (CL_CTS_REST_API_FACTORY). Works on standard ABAP and ABAP Cloud.
     TRY.
 
-        DATA lo_api   TYPE REF TO object.
-        DATA lv_class TYPE string.
+        
+        
 
         lv_class = `CL_CTS_REST_API_FACTORY`.
         CALL METHOD (lv_class)=>(`CREATE_INSTANCE`)
@@ -9472,7 +11320,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             iv_trkorr       = trkorr
             iv_ignore_locks = ignore_locks.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -9481,10 +11330,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_copy_objects.
+        DATA lr_headers TYPE REF TO data.
+        FIELD-SYMBOLS <headers> TYPE ANY TABLE.
+        FIELD-SYMBOLS <header> TYPE any.
+        FIELD-SYMBOLS <trkorr> TYPE any.
+        FIELD-SYMBOLS <strkorr> TYPE any.
+        DATA lv_fm TYPE string.
+        DATA lx_known TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
     " Copying objects between requests relies on the classic transport
     " functions (TR_COPY_COMM) which are not released on ABAP Cloud.
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_copy_objects is not supported on ABAP Cloud`.
@@ -9496,12 +11353,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " function modules only exist on-premise.
     TRY.
 
-        DATA lr_headers TYPE REF TO data.
-        FIELD-SYMBOLS <headers> TYPE ANY TABLE.
-        FIELD-SYMBOLS <header>  TYPE any.
-        FIELD-SYMBOLS <trkorr>  TYPE any.
-        FIELD-SYMBOLS <strkorr> TYPE any.
-        DATA lv_fm TYPE string.
+        
+        
+        
+        
+        
+        
 
         CREATE DATA lr_headers TYPE (`TRWBO_REQUEST_HEADERS`).
         ASSIGN lr_headers->* TO <headers>.
@@ -9546,9 +11403,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         ENDLOOP.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx_known).
+        
+      CATCH zabaputil_cx_util_error INTO lx_known.
         RAISE EXCEPTION lx_known.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -9557,9 +11416,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_import.
+        DATA lv_system TYPE c LENGTH 8.
+        DATA lv_client TYPE c LENGTH 3.
+        DATA lv_retcode TYPE c LENGTH 4.
+        DATA lr_exc TYPE REF TO data.
+        FIELD-SYMBOLS <exc> TYPE any.
+        DATA lv_fm TYPE string.
+        DATA lx_known TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
     " Importing transports via TMS (TMS_MGR_*) is not available on ABAP Cloud.
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_import is not supported on ABAP Cloud`.
@@ -9570,12 +11437,12 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " parameter takes precedence, otherwise the current client is used.
     TRY.
 
-        DATA lv_system  TYPE c LENGTH 8.
-        DATA lv_client  TYPE c LENGTH 3.
-        DATA lv_retcode TYPE c LENGTH 4.
-        DATA lr_exc     TYPE REF TO data.
-        FIELD-SYMBOLS <exc> TYPE any.
-        DATA lv_fm TYPE string.
+        
+        
+        
+        
+        
+        
 
         SPLIT target_system AT `.` INTO lv_system lv_client.
         IF lv_client IS INITIAL.
@@ -9626,9 +11493,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_retcode.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx_known).
+        
+      CATCH zabaputil_cx_util_error INTO lx_known.
         RAISE EXCEPTION lx_known.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -9637,10 +11506,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tr_check_status.
+        DATA lr_settings TYPE REF TO data.
+        DATA lr_cofile TYPE REF TO data.
+        DATA lr_sysline TYPE REF TO data.
+        FIELD-SYMBOLS <settings> TYPE any.
+        FIELD-SYMBOLS <systems> TYPE ANY TABLE.
+        FIELD-SYMBOLS <sysline> TYPE any.
+        FIELD-SYMBOLS <cofile> TYPE any.
+        FIELD-SYMBOLS <comp> TYPE any.
+        DATA lv_fm TYPE string.
+        DATA lx_known TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
     " Reading the transport log (TR_READ_GLOBAL_INFO_OF_REQUEST) is not
     " available on ABAP Cloud.
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
         EXPORTING
           val = `tr_check_status is not supported on ABAP Cloud`.
@@ -9650,15 +11530,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " given system via the classic transport log API.
     TRY.
 
-        DATA lr_settings TYPE REF TO data.
-        DATA lr_cofile   TYPE REF TO data.
-        DATA lr_sysline  TYPE REF TO data.
-        FIELD-SYMBOLS <settings> TYPE any.
-        FIELD-SYMBOLS <systems>  TYPE ANY TABLE.
-        FIELD-SYMBOLS <sysline>  TYPE any.
-        FIELD-SYMBOLS <cofile>   TYPE any.
-        FIELD-SYMBOLS <comp>     TYPE any.
-        DATA lv_fm TYPE string.
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         CREATE DATA lr_settings TYPE (`CTSLG_SETTINGS`).
         ASSIGN lr_settings->* TO <settings>.
@@ -9692,9 +11572,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         ASSIGN COMPONENT `RC` OF STRUCTURE <cofile> TO <comp>.
         rc = <comp>.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx_known).
+        
+      CATCH zabaputil_cx_util_error INTO lx_known.
         RAISE EXCEPTION lx_known.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             previous = x.
@@ -9708,7 +11590,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_msgty TYPE c LENGTH 1.
     DATA lv_class TYPE string.
 
-    LOOP AT t_log INTO DATA(ls_log).
+    DATA ls_log LIKE LINE OF t_log.
+    LOOP AT t_log INTO ls_log.
 
       lv_msgty = ls_log-type.
 
@@ -9772,7 +11655,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <msg>  TYPE any.
     FIELD-SYMBOLS <comp> TYPE any.
 
-    LOOP AT t_log INTO DATA(ls_log).
+    DATA ls_log LIKE LINE OF t_log.
+    LOOP AT t_log INTO ls_log.
 
       IF ls_log-id IS NOT INITIAL AND ls_log-no IS NOT INITIAL.
 
@@ -9977,7 +11861,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD lock_set_wait.
 
-    DATA(lv_remaining) = retries.
+    DATA lv_remaining LIKE retries.
+    lv_remaining = retries.
 
     WHILE lv_remaining > 0.
       result = lock_set( val     = val
@@ -9996,7 +11881,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD lock_is_locked.
 
     " Try to set the lock — if it fails, the object is locked.
-    DATA(lv_locked) = lock_set( val     = val
+    DATA lv_locked TYPE abap_bool.
+    lv_locked = lock_set( val     = val
                                  t_param = t_param ).
     IF lv_locked = abap_true.
       " We got it — release immediately
@@ -10010,20 +11896,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD lock_get_owner.
+        DATA lt_locks TYPE zabaputil_cl_util_context=>ty_t_lock.
+        DATA lv_arg TYPE string.
+        DATA ls_param LIKE LINE OF t_param.
+        DATA lv_name TYPE string.
+        DATA ls_lock LIKE LINE OF lt_locks.
 
     TRY.
-        DATA(lt_locks) = lock_read( ).
+        
+        lt_locks = lock_read( ).
 
         " Build the lock argument from params for matching
-        DATA(lv_arg) = ``.
-        LOOP AT t_param INTO DATA(ls_param).
+        
+        lv_arg = ``.
+        
+        LOOP AT t_param INTO ls_param.
           lv_arg = lv_arg && ls_param-value.
         ENDLOOP.
 
-        DATA(lv_name) = zabaputil_cl_util_context=>c_trim_upper( val ).
+        
+        lv_name = zabaputil_cl_util_context=>c_trim_upper( val ).
         REPLACE `ENQUEUE_` IN lv_name WITH ``.
 
-        LOOP AT lt_locks INTO DATA(ls_lock)
+        
+        LOOP AT lt_locks INTO ls_lock
              WHERE lock_object CS lv_name.
           IF lv_arg IS INITIAL OR ls_lock-argument CS lv_arg.
             result = ls_lock-user.
@@ -10059,6 +11955,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA ls_exception  TYPE abap_func_excpbind.
     DATA lv_function   TYPE string.
     DATA ls_lock       TYPE ty_s_lock.
+        DATA lx_error TYPE REF TO zabaputil_cx_util_error.
+        DATA lx_root TYPE REF TO cx_root.
 
     TRY.
         CREATE DATA lr_enq TYPE STANDARD TABLE OF (`SEQG3`).
@@ -10143,9 +12041,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           INSERT ls_lock INTO TABLE result.
         ENDLOOP.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx_error).
+        
+      CATCH zabaputil_cx_util_error INTO lx_error.
         RAISE EXCEPTION lx_error.
-      CATCH cx_root INTO DATA(lx_root).
+        
+      CATCH cx_root INTO lx_root.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error EXPORTING val = lx_root.
     ENDTRY.
 
@@ -10173,6 +12073,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lt_exception  TYPE abap_func_excpbind_tab.
     DATA ls_exception  TYPE abap_func_excpbind.
     DATA lv_function   TYPE string.
+        DATA temp18 TYPE xsdboolean.
 
     TRY.
         CREATE DATA lr_enq TYPE STANDARD TABLE OF (`SEQG3`).
@@ -10242,7 +12143,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           PARAMETER-TABLE lt_param
           EXCEPTION-TABLE lt_exception.
 
-        result = xsdbool( sy-subrc = 0 AND lv_subrc = 0 ).
+        
+        temp18 = boolc( sy-subrc = 0 AND lv_subrc = 0 ).
+        result = temp18.
 
       CATCH cx_root.
         result = abap_false.
@@ -10256,6 +12159,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_field    TYPE c LENGTH 10.
     DATA lv_value    TYPE c LENGTH 40.
     DATA lv_activity TYPE c LENGTH 2.
+    DATA temp19 TYPE xsdboolean.
 
     lv_object   = object.
     lv_field    = field.
@@ -10266,7 +12170,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ID lv_field FIELD lv_value
       ID 'ACTVT' FIELD lv_activity.
 
-    result = xsdbool( sy-subrc = 0 ).
+    
+    temp19 = boolc( sy-subrc = 0 ).
+    result = temp19.
 
   ENDMETHOD.
 
@@ -10279,6 +12185,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_msgv3 TYPE c LENGTH 50.
     DATA lv_msgv4 TYPE c LENGTH 50.
     DATA lv_text  TYPE c LENGTH 200.
+        DATA lv_fm TYPE string.
 
     lv_msgid = msgid.
     lv_msgno = msgno.
@@ -10288,7 +12195,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     lv_msgv4 = v4.
 
     TRY.
-        DATA(lv_fm) = `MESSAGE_TEXT_BUILD`.
+        
+        lv_fm = `MESSAGE_TEXT_BUILD`.
         CALL FUNCTION lv_fm
           EXPORTING
             msgid               = lv_msgid
@@ -10307,11 +12215,29 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD mail_send.
-
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
-      " Cloud: use CL_BCS_MAIL_MESSAGE (released cloud mail API)
       DATA lo_mail_c TYPE REF TO object.
-      DATA lv_cls_c  TYPE string.
+      DATA lv_cls_c TYPE string.
+    DATA lo_mail TYPE REF TO object.
+    DATA lo_sender TYPE REF TO object.
+    DATA lo_recipient TYPE REF TO object.
+    DATA lo_doc TYPE REF TO object.
+    DATA lr_body TYPE REF TO data.
+    DATA lr_line TYPE REF TO data.
+    DATA lv_class TYPE string.
+    DATA lv_subject TYPE c LENGTH 50.
+    DATA lv_type TYPE c LENGTH 3.
+    DATA lv_address TYPE c LENGTH 241.
+    FIELD-SYMBOLS <body> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <line> TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+    DATA temp504 LIKE lv_type.
+        DATA lt_lines TYPE string_table.
+        DATA lv_body_line LIKE LINE OF lt_lines.
+
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
+      " Cloud: use CL_BCS_MAIL_MESSAGE (released cloud mail API)
+      
+      
 
       TRY.
           lv_cls_c = `CL_BCS_MAIL_MESSAGE`.
@@ -10354,23 +12280,29 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use CL_BCS
-    DATA lo_mail      TYPE REF TO object.
-    DATA lo_sender    TYPE REF TO object.
-    DATA lo_recipient TYPE REF TO object.
-    DATA lo_doc       TYPE REF TO object.
-    DATA lr_body      TYPE REF TO data.
-    DATA lr_line      TYPE REF TO data.
-    DATA lv_class     TYPE string.
-    DATA lv_subject   TYPE c LENGTH 50.
-    DATA lv_type      TYPE c LENGTH 3.
-    DATA lv_address   TYPE c LENGTH 241.
-    FIELD-SYMBOLS <body>  TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <line>  TYPE any.
-    FIELD-SYMBOLS <field> TYPE any.
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     lv_subject = subject.
     lv_address = to.
-    lv_type    = COND #( WHEN html = abap_true THEN `HTM` ELSE `RAW` ).
+    
+    IF html = abap_true.
+      temp504 = `HTM`.
+    ELSE.
+      temp504 = `RAW`.
+    ENDIF.
+    lv_type    = temp504.
 
     TRY.
         " Create BCS instance
@@ -10407,8 +12339,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         CREATE DATA lr_line TYPE (`SOLI`).
         ASSIGN lr_line->* TO <line>.
 
-        DATA(lt_lines) = zabaputil_cl_util_context=>c_split( val = body sep = zabaputil_cl_util_context=>cv_char_util_newline ).
-        LOOP AT lt_lines INTO DATA(lv_body_line).
+        
+        lt_lines = zabaputil_cl_util_context=>c_split( val = body sep = zabaputil_cl_util_context=>cv_char_util_newline ).
+        
+        LOOP AT lt_lines INTO lv_body_line.
           ASSIGN COMPONENT `LINE` OF STRUCTURE <line> TO <field>.
           <field> = lv_body_line.
           INSERT <line> INTO TABLE <body>.
@@ -10443,8 +12377,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD job_submit_report.
+    DATA lv_fm TYPE string.
+    DATA lv_jobname TYPE c LENGTH 32.
+    DATA lv_jobcount TYPE c LENGTH 8.
+    DATA lv_report TYPE c LENGTH 40.
+    DATA lv_variant TYPE c LENGTH 14.
+    DATA temp505 LIKE lv_jobname.
+        DATA lx TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: Application Jobs have a different architecture (job catalog + templates).
       " Direct report submission is not available. Raise informative exception.
       RAISE EXCEPTION TYPE zabaputil_cx_util_error
@@ -10453,16 +12395,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: JOB_OPEN / JOB_SUBMIT / JOB_CLOSE
-    DATA lv_fm       TYPE string.
-    DATA lv_jobname  TYPE c LENGTH 32.
-    DATA lv_jobcount TYPE c LENGTH 8.
-    DATA lv_report   TYPE c LENGTH 40.
-    DATA lv_variant  TYPE c LENGTH 14.
+    
+    
+    
+    
+    
 
     lv_report = report.
     lv_variant = variant.
-    lv_jobname = COND #( WHEN job_name IS NOT INITIAL THEN job_name
-                         ELSE |Z2UI5_{ sy-datum }{ sy-uzeit }| ).
+    
+    IF job_name IS NOT INITIAL.
+      temp505 = job_name.
+    ELSE.
+      temp505 = |Z2UI5_{ sy-datum }{ sy-uzeit }|.
+    ENDIF.
+    lv_jobname = temp505.
 
     TRY.
         lv_fm = `JOB_OPEN`.
@@ -10520,9 +12467,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_jobname.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx).
+        
+      CATCH zabaputil_cx_util_error INTO lx.
         RAISE EXCEPTION lx.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = x.
@@ -10535,14 +12484,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_object  TYPE c LENGTH 10.
     DATA lv_nr_sub  TYPE c LENGTH 2.
     DATA lv_number  TYPE c LENGTH 20.
+          DATA lv_cls TYPE string.
+          DATA lv_fm TYPE string.
+        DATA lx TYPE REF TO zabaputil_cx_util_error.
+        DATA x TYPE REF TO cx_root.
 
     lv_object = object.
     lv_nr_sub = subobject.
 
     TRY.
-        IF zabaputil_cl_util_context=>check_abap_cloud( ).
+        IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
           " Cloud: use CL_NUMBERRANGE_RUNTIME
-          DATA(lv_cls) = `CL_NUMBERRANGE_RUNTIME`.
+          
+          lv_cls = `CL_NUMBERRANGE_RUNTIME`.
           CALL METHOD (lv_cls)=>(`NUMBER_GET`)
             EXPORTING
               nr_range_nr = lv_nr_sub
@@ -10551,7 +12505,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
               number      = lv_number.
         ELSE.
           " Standard: use NUMBER_GET_NEXT FM
-          DATA(lv_fm) = `NUMBER_GET_NEXT`.
+          
+          lv_fm = `NUMBER_GET_NEXT`.
           CALL FUNCTION lv_fm
             EXPORTING
               nr_range_nr = lv_nr_sub
@@ -10569,9 +12524,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         result = lv_number.
 
-      CATCH zabaputil_cx_util_error INTO DATA(lx).
+        
+      CATCH zabaputil_cx_util_error INTO lx.
         RAISE EXCEPTION lx.
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = x.
@@ -10580,12 +12537,38 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD changdoc_read.
+          DATA lv_cds TYPE string.
+          DATA lv_where_c TYPE string.
+          FIELD-SYMBOLS <cds_tab> TYPE STANDARD TABLE.
+          FIELD-SYMBOLS <cds_row> TYPE any.
+          FIELD-SYMBOLS <cds_fld> TYPE any.
+          DATA lr_cds_tab TYPE REF TO data.
+          DATA lt_comp_c TYPE abap_component_tab.
+          DATA lo_struct_c TYPE REF TO cl_abap_structdescr.
+          DATA lo_table_c TYPE REF TO cl_abap_tabledescr.
+            DATA temp506 TYPE ty_s_changdoc.
+            DATA ls_doc_c LIKE temp506.
+    DATA lv_fm TYPE string.
+    DATA lv_objectclas TYPE c LENGTH 15.
+    DATA lv_objectid TYPE c LENGTH 90.
+    DATA lr_headers TYPE REF TO data.
+    DATA lr_positions TYPE REF TO data.
+    FIELD-SYMBOLS <headers> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <positions> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <hdr> TYPE any.
+    FIELD-SYMBOLS <pos> TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+          DATA temp507 TYPE ty_s_changdoc.
+          DATA ls_doc LIKE temp507.
+              DATA ls_pos LIKE ls_doc.
 
-    IF zabaputil_cl_util_context=>check_abap_cloud( ).
+    IF zabaputil_cl_util_context=>check_abap_cloud( ) IS NOT INITIAL.
       " Cloud: use released CDS view I_ChangeDocument
       TRY.
-          DATA(lv_cds) = `I_CHANGEDOCUMENTITEM`.
-          DATA(lv_where_c) = |OBJECTCLASS = '{ objectclass }' AND OBJECTID = '{ objectid }'|.
+          
+          lv_cds = `I_CHANGEDOCUMENTITEM`.
+          
+          lv_where_c = |OBJECTCLASS = '{ objectclass }' AND OBJECTID = '{ objectid }'|.
           IF date_from IS NOT INITIAL.
             lv_where_c = |{ lv_where_c } AND CREATIONDATE >= '{ date_from }'|.
           ENDIF.
@@ -10593,24 +12576,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             lv_where_c = |{ lv_where_c } AND CREATIONDATE <= '{ date_to }'|.
           ENDIF.
 
-          FIELD-SYMBOLS <cds_tab> TYPE STANDARD TABLE.
-          FIELD-SYMBOLS <cds_row> TYPE any.
-          FIELD-SYMBOLS <cds_fld> TYPE any.
-          DATA lr_cds_tab TYPE REF TO data.
+          
+          
+          
+          
 
-          DATA(lt_comp_c) = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( lv_cds ).
-          DATA(lo_struct_c) = cl_abap_structdescr=>create( lt_comp_c ).
-          DATA(lo_table_c) = cl_abap_tabledescr=>create( lo_struct_c ).
+          
+          lt_comp_c = zabaputil_cl_util_context=>rtti_get_t_attri_by_table_name( lv_cds ).
+          
+          lo_struct_c = cl_abap_structdescr=>create( lt_comp_c ).
+          
+          lo_table_c = cl_abap_tabledescr=>create( lo_struct_c ).
           CREATE DATA lr_cds_tab TYPE HANDLE lo_table_c.
           ASSIGN lr_cds_tab->* TO <cds_tab>.
 
           SELECT *
-            FROM (lv_cds)
+            FROM (lv_cds) INTO CORRESPONDING FIELDS OF TABLE <cds_tab>
             WHERE (lv_where_c)
-            INTO CORRESPONDING FIELDS OF TABLE @<cds_tab>.
+            .
 
           LOOP AT <cds_tab> ASSIGNING <cds_row>.
-            DATA(ls_doc_c) = VALUE ty_s_changdoc( ).
+            
+            CLEAR temp506.
+            
+            ls_doc_c = temp506.
             ASSIGN COMPONENT `CHANGEDOCOBJECTCLASS` OF STRUCTURE <cds_row> TO <cds_fld>.
             IF sy-subrc <> 0.
               ASSIGN COMPONENT `OBJECTCLASS` OF STRUCTURE <cds_row> TO <cds_fld>.
@@ -10644,16 +12633,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
 
     " Standard ABAP: use CHANGEDOCUMENT_READ_HEADERS/POSITIONS FMs
-    DATA lv_fm         TYPE string.
-    DATA lv_objectclas TYPE c LENGTH 15.
-    DATA lv_objectid   TYPE c LENGTH 90.
-    DATA lr_headers    TYPE REF TO data.
-    DATA lr_positions  TYPE REF TO data.
-    FIELD-SYMBOLS <headers>   TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <positions> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <hdr>       TYPE any.
-    FIELD-SYMBOLS <pos>       TYPE any.
-    FIELD-SYMBOLS <comp>      TYPE any.
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     lv_objectclas = objectclass.
     lv_objectid   = objectid.
@@ -10680,7 +12669,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
         LOOP AT <headers> ASSIGNING <hdr>.
 
-          DATA(ls_doc) = VALUE ty_s_changdoc( ).
+          
+          CLEAR temp507.
+          
+          ls_doc = temp507.
           ASSIGN COMPONENT `CHANGENR` OF STRUCTURE <hdr> TO <comp>.
           IF sy-subrc = 0. ls_doc-changenr = <comp>. ENDIF.
           ASSIGN COMPONENT `USERNAME` OF STRUCTURE <hdr> TO <comp>.
@@ -10707,7 +12699,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
             INSERT ls_doc INTO TABLE result.
           ELSE.
             LOOP AT <positions> ASSIGNING <pos>.
-              DATA(ls_pos) = ls_doc.
+              
+              ls_pos = ls_doc.
               ASSIGN COMPONENT `FNAME` OF STRUCTURE <pos> TO <comp>.
               IF sy-subrc = 0. ls_pos-fieldname = <comp>. ENDIF.
               ASSIGN COMPONENT `VALUE_OLD` OF STRUCTURE <pos> TO <comp>.
@@ -10819,7 +12812,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD source_get_method2.
 
-    DATA(lt_source) = source_get_method( iv_classname  = iv_classname
+    DATA lt_source TYPE string_table.
+    lt_source = source_get_method( iv_classname  = iv_classname
                                          iv_methodname = iv_methodname ).
 
     result = source_method_to_file( lt_source ).
@@ -10828,7 +12822,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD source_get_file_types.
 
-    DATA(lv_types) = |abap, abc, actionscript, ada, apache_conf, applescript, asciidoc, assembly_x86, autohotkey, batchfile, bro, c9search, c_cpp, cirru, clojure, cobol, coffee, coldfusion, csharp, css, curly, d, dart, diff, django, dockerfile, | &&
+    DATA lv_types TYPE string.
+    lv_types = |abap, abc, actionscript, ada, apache_conf, applescript, asciidoc, assembly_x86, autohotkey, batchfile, bro, c9search, c_cpp, cirru, clojure, cobol, coffee, coldfusion, csharp, css, curly, d, dart, diff, django, dockerfile, | &&
 |dot, drools, eiffel, yaml, ejs, elixir, elm, erlang, forth, fortran, ftl, gcode, gherkin, gitignore, glsl, gobstones, golang, groovy, haml, handlebars, haskell, haskell_cabal, haxe, hjson, html, html_elixir, html_ruby, ini, io, jack, jade, java, ja| &&
       |vascri| &&
 |pt, json, jsoniq, jsp, jsx, julia, kotlin, latex, lean, less, liquid, lisp, live_script, livescript, logiql, lsl, lua, luapage, lucene, makefile, markdown, mask, matlab, mavens_mate_log, maze, mel, mips_assembler, mipsassembler, mushcode, mysql, ni| &&
@@ -10841,7 +12836,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD source_method_to_file.
 
-    LOOP AT it_source INTO DATA(lv_source).
+    DATA lv_source LIKE LINE OF it_source.
+    LOOP AT it_source INTO lv_source.
       IF strlen( lv_source ) > 1.
         result = result && lv_source+1 && zabaputil_cl_util_context=>cv_char_util_newline.
       ELSE.
@@ -10860,6 +12856,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lt_exception  TYPE abap_func_excpbind_tab.
     DATA ls_exception  TYPE abap_func_excpbind.
     DATA lv_function   TYPE string.
+        DATA temp20 TYPE xsdboolean.
 
     TRY.
         LOOP AT t_param INTO ls_lock_param.
@@ -10880,7 +12877,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           PARAMETER-TABLE lt_param
           EXCEPTION-TABLE lt_exception.
 
-        result = xsdbool( sy-subrc = 0 ).
+        
+        temp20 = boolc( sy-subrc = 0 ).
+        result = temp20.
 
       CATCH cx_root.
         result = abap_false.
@@ -10891,31 +12890,50 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD cal_get_weekday.
 
     " 1900-01-01 was a Monday, so the day distance modulo 7 yields the weekday
-    DATA(lv_days) = date - CONV d( `19000101` ).
+    DATA temp508 TYPE d.
+    DATA lv_days TYPE d.
+    temp508 = `19000101`.
+    
+    lv_days = date - temp508.
     result = lv_days MOD 7 + 1.
 
   ENDMETHOD.
 
   METHOD cal_is_weekend.
 
-    result = xsdbool( cal_get_weekday( date ) >= 6 ).
+    DATA temp21 TYPE xsdboolean.
+    temp21 = boolc( cal_get_weekday( date ) >= 6 ).
+    result = temp21.
 
   ENDMETHOD.
 
   METHOD cal_is_workday.
+    DATA temp22 TYPE xsdboolean.
 
     IF calendar_id IS NOT INITIAL.
       zabaputil_cl_util_context=>x_raise( `cal_is_workday: factory calendar support is not yet implemented` ).
     ENDIF.
 
-    result = xsdbool( cal_is_weekend( date ) = abap_false ).
+    
+    temp22 = boolc( cal_is_weekend( date ) = abap_false ).
+    result = temp22.
 
   ENDMETHOD.
 
   METHOD cal_add_workdays.
 
-    DATA(lv_remaining) = abs( days ).
-    DATA(lv_step) = COND i( WHEN days < 0 THEN -1 ELSE 1 ).
+    DATA lv_remaining TYPE i.
+    DATA temp509 TYPE i.
+    DATA lv_step LIKE temp509.
+    lv_remaining = abs( days ).
+    
+    IF days < 0.
+      temp509 = -1.
+    ELSE.
+      temp509 = 1.
+    ENDIF.
+    
+    lv_step = temp509.
 
     result = date.
     WHILE lv_remaining > 0.
@@ -10929,8 +12947,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD cal_count_workdays.
 
-    DATA(lv_date) = date_from.
-    DATA(lv_step) = COND i( WHEN date_to < date_from THEN -1 ELSE 1 ).
+    DATA lv_date LIKE date_from.
+    DATA temp510 TYPE i.
+    DATA lv_step LIKE temp510.
+    lv_date = date_from.
+    
+    IF date_to < date_from.
+      temp510 = -1.
+    ELSE.
+      temp510 = 1.
+    ENDIF.
+    
+    lv_step = temp510.
 
     WHILE lv_date <> date_to.
       lv_date = lv_date + lv_step.
@@ -10971,11 +12999,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD zip_pack.
 
     DATA lo_zip TYPE REF TO object.
+        DATA ls_file LIKE LINE OF files.
+        DATA x TYPE REF TO cx_root.
 
     TRY.
 
         CREATE OBJECT lo_zip TYPE ('CL_ABAP_ZIP').
-        LOOP AT files INTO DATA(ls_file).
+        
+        LOOP AT files INTO ls_file.
           CALL METHOD lo_zip->('ADD')
             EXPORTING
               name    = ls_file-name
@@ -10985,7 +13016,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           RECEIVING
             zip = result.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error EXPORTING val = x.
     ENDTRY.
 
@@ -11000,6 +13032,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     FIELD-SYMBOLS <files> TYPE ANY TABLE.
     FIELD-SYMBOLS <file>  TYPE any.
     FIELD-SYMBOLS <name>  TYPE any.
+        DATA x TYPE REF TO cx_root.
 
     TRY.
 
@@ -11013,7 +13046,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           ASSIGN COMPONENT `NAME` OF STRUCTURE <file> TO <name>.
           lv_name = <name>.
 
-          ls_result = VALUE #( name = lv_name ).
+          CLEAR ls_result.
+          ls_result-name = lv_name.
           CALL METHOD lo_zip->('GET')
             EXPORTING
               name    = lv_name
@@ -11022,7 +13056,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           INSERT ls_result INTO TABLE result.
         ENDLOOP.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error EXPORTING val = x.
     ENDTRY.
 
@@ -11041,7 +13076,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_escape_json.
 
-    DATA(lv_cr) = cv_char_util_cr_lf(1).
+    DATA lv_cr TYPE c LENGTH 1.
+    lv_cr = cv_char_util_cr_lf(1).
 
     result = val.
     REPLACE ALL OCCURRENCES OF `\` IN result WITH `\\`.
@@ -11054,12 +13090,43 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD c_levenshtein.
 
-    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
-    DATA(lv_a) = CONV string( val1 ).
-    DATA(lv_b) = CONV string( val2 ).
-    DATA(lv_la) = strlen( lv_a ).
-    DATA(lv_lb) = strlen( lv_b ).
+    DATA temp511 TYPE string.
+    DATA lv_a LIKE temp511.
+    DATA temp512 TYPE string.
+    DATA lv_b LIKE temp512.
+    DATA lv_la TYPE i.
+    DATA lv_lb TYPE i.
+    DATA lt_prev TYPE ty_t_int.
+    DATA lt_curr TYPE ty_t_int.
+    DATA lv_j TYPE i.
+    DATA lv_i TYPE i.
+      DATA temp513 LIKE LINE OF lt_curr.
+        DATA temp514 TYPE i.
+        DATA lv_cost LIKE temp514.
+        DATA lv_min TYPE i.
+        DATA temp77 LIKE LINE OF lt_curr.
+        DATA temp78 LIKE sy-tabix.
+        DATA lv_del TYPE i.
+        DATA temp79 LIKE LINE OF lt_prev.
+        DATA temp80 LIKE sy-tabix.
+        DATA lv_sub TYPE i.
+        DATA temp81 LIKE LINE OF lt_prev.
+        DATA temp82 LIKE sy-tabix.
+    DATA temp515 LIKE LINE OF lt_prev.
+    DATA temp516 LIKE sy-tabix.
+    temp511 = val1.
+    
+    lv_a = temp511.
+    
+    temp512 = val2.
+    
+    lv_b = temp512.
+    
+    lv_la = strlen( lv_a ).
+    
+    lv_lb = strlen( lv_b ).
 
     IF lv_la = 0.
       result = lv_lb.
@@ -11070,31 +13137,67 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA lt_prev TYPE ty_t_int.
-    DATA lt_curr TYPE ty_t_int.
-    DATA lv_j TYPE i.
+    
+    
+    
 
     WHILE lv_j <= lv_lb.
       APPEND lv_j TO lt_prev.
       lv_j = lv_j + 1.
     ENDWHILE.
 
-    DATA lv_i TYPE i.
+    
     WHILE lv_i < lv_la.
 
       CLEAR lt_curr.
-      APPEND lv_i + 1 TO lt_curr.
+      
+      temp513 = lv_i + 1.
+      APPEND temp513 TO lt_curr.
 
       lv_j = 0.
       WHILE lv_j < lv_lb.
 
-        DATA(lv_cost) = COND i( WHEN lv_a+lv_i(1) = lv_b+lv_j(1) THEN 0 ELSE 1 ).
-        DATA(lv_min) = lt_curr[ lv_j + 1 ] + 1.
-        DATA(lv_del) = lt_prev[ lv_j + 2 ] + 1.
+        
+        IF lv_a+lv_i(1) = lv_b+lv_j(1).
+          temp514 = 0.
+        ELSE.
+          temp514 = 1.
+        ENDIF.
+        
+        lv_cost = temp514.
+        
+        
+        
+        temp78 = sy-tabix.
+        READ TABLE lt_curr INDEX lv_j + 1 INTO temp77.
+        sy-tabix = temp78.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_min = temp77 + 1.
+        
+        
+        
+        temp80 = sy-tabix.
+        READ TABLE lt_prev INDEX lv_j + 2 INTO temp79.
+        sy-tabix = temp80.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_del = temp79 + 1.
         IF lv_del < lv_min.
           lv_min = lv_del.
         ENDIF.
-        DATA(lv_sub) = lt_prev[ lv_j + 1 ] + lv_cost.
+        
+        
+        
+        temp82 = sy-tabix.
+        READ TABLE lt_prev INDEX lv_j + 1 INTO temp81.
+        sy-tabix = temp82.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_sub = temp81 + lv_cost.
         IF lv_sub < lv_min.
           lv_min = lv_sub.
         ENDIF.
@@ -11107,7 +13210,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       lv_i = lv_i + 1.
     ENDWHILE.
 
-    result = lt_prev[ lv_lb + 1 ].
+    
+    
+    temp516 = sy-tabix.
+    READ TABLE lt_prev INDEX lv_lb + 1 INTO temp515.
+    sy-tabix = temp516.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = temp515.
 
   ENDMETHOD.
 
@@ -11115,24 +13226,37 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CONSTANTS lc_unreserved TYPE string VALUE `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~`.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_len) = strlen( lv_val ).
+    DATA temp517 TYPE string.
+    DATA lv_val LIKE temp517.
+    DATA lv_len TYPE i.
     DATA lv_i TYPE i.
+      DATA lv_char TYPE string.
+        DATA lv_x TYPE xstring.
+        DATA lv_j TYPE i.
+          DATA lv_hex TYPE c LENGTH 2.
+    temp517 = val.
+    
+    lv_val = temp517.
+    
+    lv_len = strlen( lv_val ).
+    
 
     WHILE lv_i < lv_len.
 
-      DATA(lv_char) = substring( val = lv_val
+      
+      lv_char = substring( val = lv_val
                                  off = lv_i
                                  len = 1 ).
 
       IF lv_char <> ` ` AND lv_char CO lc_unreserved.
         result = result && lv_char.
       ELSE.
-        DATA(lv_x) = conv_get_xstring_by_string( lv_char ).
-        DATA lv_j TYPE i.
+        
+        lv_x = conv_get_xstring_by_string( lv_char ).
+        
         lv_j = 0.
         WHILE lv_j < xstrlen( lv_x ).
-          DATA lv_hex TYPE c LENGTH 2.
+          
           lv_hex = lv_x+lv_j(1).
           result = result && `%` && lv_hex.
           lv_j = lv_j + 1.
@@ -11146,19 +13270,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD url_decode.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lv_len) = strlen( lv_val ).
+    DATA temp518 TYPE string.
+    DATA lv_val LIKE temp518.
+    DATA lv_len TYPE i.
     DATA lv_i TYPE i.
     DATA lv_xbuf TYPE xstring.
+      DATA lv_char TYPE string.
+        DATA lv_x TYPE x LENGTH 1.
+    temp518 = val.
+    
+    lv_val = temp518.
+    
+    lv_len = strlen( lv_val ).
+    
+    
 
     WHILE lv_i < lv_len.
 
-      DATA(lv_char) = substring( val = lv_val
+      
+      lv_char = substring( val = lv_val
                                  off = lv_i
                                  len = 1 ).
 
       IF lv_char = `%` AND lv_i + 2 < lv_len.
-        DATA lv_x TYPE x LENGTH 1.
+        
         lv_x = to_upper( substring( val = lv_val
                                     off = lv_i + 1
                                     len = 2 ) ).
@@ -11223,7 +13358,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD regex_match.
 
-    DATA(lo_matcher) = regex_create_matcher( val   = val
+    DATA lo_matcher TYPE REF TO object.
+    lo_matcher = regex_create_matcher( val   = val
                                              regex = regex ).
 
     CALL METHOD lo_matcher->(`MATCH`)
@@ -11238,8 +13374,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_off     TYPE i.
     DATA lv_len     TYPE i.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lo_matcher) = regex_create_matcher( val   = lv_val
+    DATA temp519 TYPE string.
+    DATA lv_val LIKE temp519.
+    DATA lo_matcher TYPE REF TO object.
+    temp519 = val.
+    
+    lv_val = temp519.
+    
+    lo_matcher = regex_create_matcher( val   = lv_val
                                              regex = regex ).
 
     DO.
@@ -11275,8 +13417,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_len     TYPE i.
     DATA lv_pos     TYPE i.
 
-    DATA(lv_val) = CONV string( val ).
-    DATA(lo_matcher) = regex_create_matcher( val   = lv_val
+    DATA temp520 TYPE string.
+    DATA lv_val LIKE temp520.
+    DATA lo_matcher TYPE REF TO object.
+    temp520 = val.
+    
+    lv_val = temp520.
+    
+    lo_matcher = regex_create_matcher( val   = lv_val
                                              regex = regex ).
 
     DO.
@@ -11317,7 +13465,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD uuid_conv_c32_to_c36.
 
-    DATA(lv_c32) = to_upper( c_trim( val ) ).
+    DATA lv_c32 TYPE string.
+    lv_c32 = to_upper( c_trim( val ) ).
 
     IF strlen( lv_c32 ) <> 32.
       x_raise( `INVALID_UUID_C32` ).
@@ -11342,34 +13491,53 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CONSTANTS lc_b64 TYPE string VALUE `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_`.
 
-    DATA(lv_c32) = to_upper( c_trim( val ) ).
+    DATA lv_c32 TYPE string.
+    DATA lv_x TYPE xstring.
+    DATA lv_i TYPE i.
+    DATA lv_xlen TYPE i.
+      DATA temp521 TYPE i.
+      DATA lv_b1 LIKE temp521.
+      DATA lv_b2 TYPE i.
+      DATA lv_b3 TYPE i.
+        DATA lv_i2 TYPE i.
+        DATA temp522 TYPE i.
+      DATA lv_n TYPE i.
+    lv_c32 = to_upper( c_trim( val ) ).
 
     IF strlen( lv_c32 ) <> 32.
       x_raise( `INVALID_UUID_C32` ).
     ENDIF.
 
-    DATA lv_x TYPE xstring.
+    
     lv_x = lv_c32.
 
-    DATA lv_i TYPE i.
-    DATA(lv_xlen) = xstrlen( lv_x ).
+    
+    
+    lv_xlen = xstrlen( lv_x ).
 
     WHILE lv_i < lv_xlen.
 
-      DATA(lv_b1) = CONV i( lv_x+lv_i(1) ).
-      DATA lv_b2 TYPE i.
-      DATA lv_b3 TYPE i.
+      
+      temp521 = lv_x+lv_i(1).
+      
+      lv_b1 = temp521.
+      
+      
       lv_b2 = -1.
       lv_b3 = -1.
       IF lv_i + 1 < lv_xlen.
         lv_b2 = lv_x+lv_i(2) MOD 256.
       ENDIF.
       IF lv_i + 2 < lv_xlen.
-        DATA(lv_i2) = lv_i + 2.
-        lv_b3 = CONV i( lv_x+lv_i2(1) ).
+        
+        lv_i2 = lv_i + 2.
+        
+        temp522 = lv_x+lv_i2(1).
+        lv_b3 = temp522.
       ENDIF.
 
-      DATA(lv_n) = lv_b1 * 65536.
+      
+      lv_n = lv_b1 * 65536.
       IF lv_b2 >= 0.
         lv_n = lv_n + lv_b2 * 256.
       ENDIF.
@@ -11403,7 +13571,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CONSTANTS lc_b64 TYPE string VALUE `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_`.
 
-    DATA(lv_c22) = c_trim( val ).
+    DATA lv_c22 TYPE string.
+    DATA lv_x TYPE xstring.
+    DATA lv_xb TYPE x LENGTH 1.
+    DATA lv_i TYPE i.
+    DATA lv_len TYPE i.
+      DATA lv_take TYPE i.
+      DATA lv_n TYPE i.
+      DATA lv_k TYPE i.
+        DATA lv_pos TYPE i.
+        DATA lv_char TYPE string.
+        DATA lv_idx TYPE i.
+    DATA lv_c TYPE c LENGTH 32.
+    lv_c22 = c_trim( val ).
     REPLACE ALL OCCURRENCES OF `+` IN lv_c22 WITH `-`.
     REPLACE ALL OCCURRENCES OF `/` IN lv_c22 WITH `_`.
 
@@ -11411,28 +13591,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       x_raise( `INVALID_UUID_C22` ).
     ENDIF.
 
-    DATA lv_x TYPE xstring.
-    DATA lv_xb TYPE x LENGTH 1.
-    DATA lv_i TYPE i.
-    DATA(lv_len) = strlen( lv_c22 ).
+    
+    
+    
+    
+    lv_len = strlen( lv_c22 ).
 
     WHILE lv_i < lv_len.
 
-      DATA(lv_take) = lv_len - lv_i.
+      
+      lv_take = lv_len - lv_i.
       IF lv_take > 4.
         lv_take = 4.
       ENDIF.
 
-      DATA lv_n TYPE i.
-      DATA lv_k TYPE i.
+      
+      
       lv_n = 0.
       lv_k = 0.
       WHILE lv_k < lv_take.
-        DATA(lv_pos) = lv_i + lv_k.
-        DATA(lv_char) = substring( val = lv_c22
+        
+        lv_pos = lv_i + lv_k.
+        
+        lv_char = substring( val = lv_c22
                                    off = lv_pos
                                    len = 1 ).
-        FIND lv_char IN lc_b64 MATCH OFFSET DATA(lv_idx).
+        
+        FIND lv_char IN lc_b64 MATCH OFFSET lv_idx.
         IF sy-subrc <> 0.
           x_raise( `INVALID_UUID_C22` ).
         ENDIF.
@@ -11465,7 +13650,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       x_raise( `INVALID_UUID_C22` ).
     ENDIF.
 
-    DATA lv_c TYPE c LENGTH 32.
+    
     lv_c = lv_x.
     result = lv_c.
 
@@ -11474,10 +13659,13 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD itab_sum_by.
 
     FIELD-SYMBOLS <row> TYPE any.
-    DATA(lv_fieldname) = to_upper( fieldname ).
+    DATA lv_fieldname TYPE string.
+      FIELD-SYMBOLS <val> TYPE any.
+    lv_fieldname = to_upper( fieldname ).
 
     LOOP AT tab ASSIGNING <row>.
-      ASSIGN COMPONENT lv_fieldname OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
+      
+      ASSIGN COMPONENT lv_fieldname OF STRUCTURE <row> TO <val>.
       IF sy-subrc = 0.
         result = result + <val>.
       ENDIF.
@@ -11488,14 +13676,22 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD itab_distinct.
 
     FIELD-SYMBOLS <row> TYPE any.
-    DATA(lv_fieldname) = to_upper( fieldname ).
+    DATA lv_fieldname TYPE string.
+      FIELD-SYMBOLS <val> TYPE any.
+      DATA temp523 TYPE string.
+      DATA lv_str LIKE temp523.
+    lv_fieldname = to_upper( fieldname ).
 
     LOOP AT tab ASSIGNING <row>.
-      ASSIGN COMPONENT lv_fieldname OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
+      
+      ASSIGN COMPONENT lv_fieldname OF STRUCTURE <row> TO <val>.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
-      DATA(lv_str) = CONV string( <val> ).
+      
+      temp523 = <val>.
+      
+      lv_str = temp523.
       READ TABLE result WITH KEY table_line = lv_str TRANSPORTING NO FIELDS.
       IF sy-subrc <> 0.
         APPEND lv_str TO result.
@@ -11512,35 +13708,58 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
         sum TYPE decfloat34,
       END OF ty_s_sum.
 
-    DATA lt_sum TYPE STANDARD TABLE OF ty_s_sum WITH EMPTY KEY.
+    TYPES temp18 TYPE STANDARD TABLE OF ty_s_sum WITH DEFAULT KEY.
+DATA lt_sum TYPE temp18.
     FIELD-SYMBOLS <row> TYPE any.
 
-    DATA(lv_group_by) = to_upper( group_by ).
-    DATA(lv_sum_by) = to_upper( sum_by ).
+    DATA lv_group_by TYPE string.
+    DATA lv_sum_by TYPE string.
+      FIELD-SYMBOLS <group> TYPE any.
+      FIELD-SYMBOLS <val> TYPE any.
+      DATA temp524 TYPE string.
+      DATA lv_group LIKE temp524.
+      FIELD-SYMBOLS <sum> TYPE ty_s_sum.
+        DATA temp525 TYPE ty_s_sum.
+      DATA temp526 TYPE zabaputil_cl_util_context=>ty_s_name_value.
+    lv_group_by = to_upper( group_by ).
+    
+    lv_sum_by = to_upper( sum_by ).
 
     LOOP AT tab ASSIGNING <row>.
 
-      ASSIGN COMPONENT lv_group_by OF STRUCTURE <row> TO FIELD-SYMBOL(<group>).
+      
+      ASSIGN COMPONENT lv_group_by OF STRUCTURE <row> TO <group>.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
-      ASSIGN COMPONENT lv_sum_by OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
+      
+      ASSIGN COMPONENT lv_sum_by OF STRUCTURE <row> TO <val>.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
 
-      DATA(lv_group) = CONV string( <group> ).
-      READ TABLE lt_sum ASSIGNING FIELD-SYMBOL(<sum>) WITH KEY n = lv_group.
+      
+      temp524 = <group>.
+      
+      lv_group = temp524.
+      
+      READ TABLE lt_sum ASSIGNING <sum> WITH KEY n = lv_group.
       IF sy-subrc <> 0.
-        APPEND VALUE #( n = lv_group ) TO lt_sum ASSIGNING <sum>.
+        
+        CLEAR temp525.
+        temp525-n = lv_group.
+        APPEND temp525 TO lt_sum ASSIGNING <sum>.
       ENDIF.
       <sum>-sum = <sum>-sum + <val>.
 
     ENDLOOP.
 
     LOOP AT lt_sum ASSIGNING <sum>.
-      APPEND VALUE #( n = <sum>-n
-                      v = |{ <sum>-sum }| ) TO result.
+      
+      CLEAR temp526.
+      temp526-n = <sum>-n.
+      temp526-v = |{ <sum>-sum }|.
+      APPEND temp526 TO result.
     ENDLOOP.
 
   ENDMETHOD.
@@ -11548,20 +13767,30 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD num_round.
 
     DATA lv_factor TYPE decfloat34 VALUE 1.
+    DATA lv_sign TYPE decfloat34 VALUE 1.
+    DATA lv_abs TYPE decfloat34.
+    DATA lv_rounded TYPE decfloat34.
+    DATA lv_half TYPE decfloat34 VALUE '0.5'.
+    DATA temp527 TYPE string.
+    DATA lv_mode TYPE string.
 
     DO decimals TIMES.
       lv_factor = lv_factor * 10.
     ENDDO.
 
-    DATA lv_sign TYPE decfloat34 VALUE 1.
+    
     IF val < 0.
       lv_sign = -1.
     ENDIF.
 
-    DATA(lv_abs) = val * lv_sign * lv_factor.
-    DATA lv_rounded TYPE decfloat34.
-    DATA lv_half TYPE decfloat34 VALUE '0.5'.
-    DATA(lv_mode) = to_upper( CONV string( mode ) ).
+    
+    lv_abs = val * lv_sign * lv_factor.
+    
+    
+    
+    temp527 = mode.
+    
+    lv_mode = to_upper( temp527 ).
 
     lv_rounded = trunc( lv_abs ).
 
@@ -11584,9 +13813,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD file_get_mimetype.
 
-    DATA(lv_name) = to_lower( c_trim( val ) ).
-    SPLIT lv_name AT `.` INTO TABLE DATA(lt_parts).
-    DATA(lv_ext) = lt_parts[ lines( lt_parts ) ].
+    DATA lv_name TYPE string.
+    TYPES temp19 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_parts TYPE temp19.
+    DATA lv_ext LIKE LINE OF lt_parts.
+    DATA temp83 LIKE LINE OF lt_parts.
+    DATA temp84 LIKE sy-tabix.
+    lv_name = to_lower( c_trim( val ) ).
+    
+
+    SPLIT lv_name AT `.` INTO TABLE lt_parts.
+    
+    
+    
+    temp84 = sy-tabix.
+    READ TABLE lt_parts INDEX lines( lt_parts ) INTO temp83.
+    sy-tabix = temp84.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lv_ext = temp83.
 
     CASE lv_ext.
       WHEN `txt` OR `text` OR `log` OR `md`.
@@ -11653,11 +13899,23 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CONSTANTS lc_map TYPE string VALUE `A:af;B:he;C:zh;D:de;E:en;F:fr;G:el;H:hu;I:it;J:ja;K:da;L:pl;M:zf;N:nl;O:no;P:pt;Q:sk;R:ru;S:es;T:tr;U:fi;V:sv;W:bg;X:lt;Y:lv`.
 
-    DATA(lv_sap) = to_upper( c_trim( val ) ).
+    DATA lv_sap TYPE string.
+    TYPES temp20 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_pairs TYPE temp20.
+    DATA lv_pair LIKE LINE OF lt_pairs.
+      DATA lv_key TYPE string.
+      DATA lv_iso TYPE string.
+        DATA lv_tab TYPE string.
+    lv_sap = to_upper( c_trim( val ) ).
 
-    SPLIT lc_map AT `;` INTO TABLE DATA(lt_pairs).
-    LOOP AT lt_pairs INTO DATA(lv_pair).
-      SPLIT lv_pair AT `:` INTO DATA(lv_key) DATA(lv_iso).
+    
+
+    SPLIT lc_map AT `;` INTO TABLE lt_pairs.
+    
+    LOOP AT lt_pairs INTO lv_pair.
+      
+      
+      SPLIT lv_pair AT `:` INTO lv_key lv_iso.
       IF lv_key = lv_sap.
         result = lv_iso.
         RETURN.
@@ -11665,8 +13923,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDLOOP.
 
     TRY.
-        DATA(lv_tab) = `T002`.
-        SELECT SINGLE laiso FROM (lv_tab) WHERE spras = @lv_sap INTO @result.
+        
+        lv_tab = `T002`.
+        SELECT SINGLE laiso FROM (lv_tab) INTO result WHERE spras = lv_sap .
         IF sy-subrc = 0.
           result = to_lower( result ).
         ELSE.
@@ -11682,11 +13941,24 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     CONSTANTS lc_map TYPE string VALUE `A:af;B:he;C:zh;D:de;E:en;F:fr;G:el;H:hu;I:it;J:ja;K:da;L:pl;M:zf;N:nl;O:no;P:pt;Q:sk;R:ru;S:es;T:tr;U:fi;V:sv;W:bg;X:lt;Y:lv`.
 
-    DATA(lv_iso) = to_lower( c_trim( val ) ).
+    DATA lv_iso TYPE string.
+    TYPES temp21 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_pairs TYPE temp21.
+    DATA lv_pair LIKE LINE OF lt_pairs.
+      DATA lv_key TYPE string.
+      DATA lv_map_iso TYPE string.
+        DATA lv_tab TYPE string.
+        DATA lv_laiso TYPE string.
+    lv_iso = to_lower( c_trim( val ) ).
 
-    SPLIT lc_map AT `;` INTO TABLE DATA(lt_pairs).
-    LOOP AT lt_pairs INTO DATA(lv_pair).
-      SPLIT lv_pair AT `:` INTO DATA(lv_key) DATA(lv_map_iso).
+    
+
+    SPLIT lc_map AT `;` INTO TABLE lt_pairs.
+    
+    LOOP AT lt_pairs INTO lv_pair.
+      
+      
+      SPLIT lv_pair AT `:` INTO lv_key lv_map_iso.
       IF lv_map_iso = lv_iso.
         result = lv_key.
         RETURN.
@@ -11694,9 +13966,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDLOOP.
 
     TRY.
-        DATA(lv_tab) = `T002`.
-        DATA(lv_laiso) = to_upper( lv_iso ).
-        SELECT SINGLE spras FROM (lv_tab) WHERE laiso = @lv_laiso INTO @result.
+        
+        lv_tab = `T002`.
+        
+        lv_laiso = to_upper( lv_iso ).
+        SELECT SINGLE spras FROM (lv_tab) INTO result WHERE laiso = lv_laiso .
         IF sy-subrc <> 0.
           CLEAR result.
         ENDIF.
@@ -11748,9 +14022,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_class TYPE string.
     DATA lv_tab   TYPE string.
 
-    DATA(lv_uname) = COND string( WHEN uname IS NOT INITIAL
-                                  THEN to_upper( c_trim( uname ) )
-                                  ELSE CONV string( sy-uname ) ).
+    DATA temp528 TYPE string.
+    DATA temp85 TYPE string.
+    DATA lv_uname LIKE temp85.
+          DATA lv_persnumber TYPE c LENGTH 10.
+          DATA lv_addrnumber TYPE c LENGTH 10.
+    temp528 = sy-uname.
+    
+    IF uname IS NOT INITIAL.
+      temp85 = to_upper( c_trim( uname ) ).
+    ELSE.
+      temp85 = temp528.
+    ENDIF.
+    
+    lv_uname = temp85.
 
     result-uname    = lv_uname.
     result-langu    = sy-langu.
@@ -11782,26 +14067,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       TRY.
           lv_tab = `USER_ADDR`.
-          SELECT SINGLE name_textc FROM (lv_tab) WHERE bname = @lv_uname INTO @result-name_formatted.
+          SELECT SINGLE name_textc FROM (lv_tab) INTO result-name_formatted WHERE bname = lv_uname .
         CATCH cx_root ##NO_HANDLER.
       ENDTRY.
 
       TRY.
           lv_tab = `USR01`.
-          SELECT SINGLE datfm FROM (lv_tab) WHERE bname = @lv_uname INTO @result-date_format.
-          SELECT SINGLE dcpfm FROM (lv_tab) WHERE bname = @lv_uname INTO @result-decimal_format.
+          SELECT SINGLE datfm FROM (lv_tab) INTO result-date_format WHERE bname = lv_uname .
+          SELECT SINGLE dcpfm FROM (lv_tab) INTO result-decimal_format WHERE bname = lv_uname .
         CATCH cx_root ##NO_HANDLER.
       ENDTRY.
 
       TRY.
-          DATA lv_persnumber TYPE c LENGTH 10.
-          DATA lv_addrnumber TYPE c LENGTH 10.
+          
+          
           lv_tab = `USR21`.
-          SELECT SINGLE persnumber FROM (lv_tab) WHERE bname = @lv_uname INTO @lv_persnumber.
-          SELECT SINGLE addrnumber FROM (lv_tab) WHERE bname = @lv_uname INTO @lv_addrnumber.
+          SELECT SINGLE persnumber FROM (lv_tab) INTO lv_persnumber WHERE bname = lv_uname .
+          SELECT SINGLE addrnumber FROM (lv_tab) INTO lv_addrnumber WHERE bname = lv_uname .
           IF sy-subrc = 0.
             lv_tab = `ADR6`.
-            SELECT SINGLE smtp_addr FROM (lv_tab) WHERE persnumber = @lv_persnumber AND addrnumber = @lv_addrnumber INTO @result-email.
+            SELECT SINGLE smtp_addr FROM (lv_tab) INTO result-email WHERE persnumber = lv_persnumber AND addrnumber = lv_addrnumber .
           ENDIF.
         CATCH cx_root ##NO_HANDLER.
       ENDTRY.
@@ -11814,19 +14099,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lv_tab TYPE string.
 
-    DATA(lv_curr) = to_upper( c_trim( val ) ).
+    DATA lv_curr TYPE string.
+    lv_curr = to_upper( c_trim( val ) ).
     result = 2.
 
     TRY.
         lv_tab = `TCURX`.
-        SELECT SINGLE currdec FROM (lv_tab) WHERE currkey = @lv_curr INTO @result.
+        SELECT SINGLE currdec FROM (lv_tab) INTO result WHERE currkey = lv_curr .
         IF sy-subrc <> 0.
           result = 2.
         ENDIF.
       CATCH cx_root.
         TRY.
             lv_tab = `I_CURRENCY`.
-            SELECT SINGLE decimals FROM (lv_tab) WHERE currency = @lv_curr INTO @result.
+            SELECT SINGLE decimals FROM (lv_tab) INTO result WHERE currency = lv_curr .
             IF sy-subrc <> 0.
               result = 2.
             ENDIF.
@@ -11839,12 +14125,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD cur_amount_to_external.
 
-    DATA(lv_dec) = decimals.
+    DATA lv_dec LIKE decimals.
+    DATA lv_factor TYPE decfloat34 VALUE 1.
+    lv_dec = decimals.
     IF lv_dec < 0.
       lv_dec = cur_get_decimals( currency ).
     ENDIF.
 
-    DATA lv_factor TYPE decfloat34 VALUE 1.
+    
 
     IF lv_dec < 2.
       DO 2 - lv_dec TIMES.
@@ -11864,12 +14152,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD cur_amount_to_internal.
 
-    DATA(lv_dec) = decimals.
+    DATA lv_dec LIKE decimals.
+    DATA lv_factor TYPE decfloat34 VALUE 1.
+    lv_dec = decimals.
     IF lv_dec < 0.
       lv_dec = cur_get_decimals( currency ).
     ENDIF.
 
-    DATA lv_factor TYPE decfloat34 VALUE 1.
+    
 
     IF lv_dec < 2.
       DO 2 - lv_dec TIMES.
@@ -11891,6 +14181,28 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lv_fm  TYPE string.
     DATA lv_tab TYPE string.
+      DATA lv_in TYPE f.
+      DATA lv_out TYPE f.
+      DATA lv_ui TYPE c LENGTH 3.
+      DATA lv_uo TYPE c LENGTH 3.
+TYPES BEGIN OF ty_s_uom.
+TYPES unitofmeasuresinumerator TYPE decfloat34.
+TYPES unitofmeasuresidenominator TYPE decfloat34.
+TYPES unitofmeasuresiexponent TYPE i.
+TYPES END OF ty_s_uom.
+          DATA ls_uom_from TYPE ty_s_uom.
+          DATA ls_uom_to TYPE ty_s_uom.
+          DATA lv_num_from TYPE decfloat34.
+          DATA lv_den_from TYPE decfloat34.
+          DATA lv_exp_from TYPE i.
+          DATA lv_num_to TYPE decfloat34.
+          DATA lv_den_to TYPE decfloat34.
+          DATA lv_exp_to TYPE i.
+          DATA lv_from TYPE string.
+          DATA lv_to TYPE string.
+          DATA lv_factor_from TYPE decfloat34.
+          DATA lv_factor_to TYPE decfloat34.
+          DATA lv_ten TYPE decfloat34 VALUE 10.
 
     IF unit_from = unit_to.
       result = val.
@@ -11899,10 +14211,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     IF check_abap_cloud( ) = abap_false.
 
-      DATA lv_in  TYPE f.
-      DATA lv_out TYPE f.
-      DATA lv_ui  TYPE c LENGTH 3.
-      DATA lv_uo  TYPE c LENGTH 3.
+      
+      
+      
+      
 
       lv_in = val.
       lv_ui = to_upper( c_trim( unit_from ) ).
@@ -11928,36 +14240,33 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ELSE.
 
       TRY.
-          TYPES:
-            BEGIN OF ty_s_uom,
-              unitofmeasuresinumerator   TYPE decfloat34,
-              unitofmeasuresidenominator TYPE decfloat34,
-              unitofmeasuresiexponent    TYPE i,
-            END OF ty_s_uom.
-          DATA ls_uom_from TYPE ty_s_uom.
-          DATA ls_uom_to   TYPE ty_s_uom.
-          DATA lv_num_from TYPE decfloat34.
-          DATA lv_den_from TYPE decfloat34.
-          DATA lv_exp_from TYPE i.
-          DATA lv_num_to   TYPE decfloat34.
-          DATA lv_den_to   TYPE decfloat34.
-          DATA lv_exp_to   TYPE i.
+          
+          
+          
+          
+          
+          
+          
+          
+          
 
-          DATA(lv_from) = to_upper( c_trim( unit_from ) ).
-          DATA(lv_to) = to_upper( c_trim( unit_to ) ).
+          
+          lv_from = to_upper( c_trim( unit_from ) ).
+          
+          lv_to = to_upper( c_trim( unit_to ) ).
 
           lv_tab = `I_UNITOFMEASURE`.
-          SELECT SINGLE unitofmeasuresinumerator, unitofmeasuresidenominator, unitofmeasuresiexponent
-            FROM (lv_tab)
-            WHERE unitofmeasure = @lv_from
-            INTO CORRESPONDING FIELDS OF @ls_uom_from.
+          SELECT SINGLE unitofmeasuresinumerator unitofmeasuresidenominator unitofmeasuresiexponent
+            FROM (lv_tab) INTO CORRESPONDING FIELDS OF ls_uom_from
+            WHERE unitofmeasure = lv_from
+            .
           IF sy-subrc <> 0.
             x_raise( `UNIT_CONVERSION_FAILED` ).
           ENDIF.
-          SELECT SINGLE unitofmeasuresinumerator, unitofmeasuresidenominator, unitofmeasuresiexponent
-            FROM (lv_tab)
-            WHERE unitofmeasure = @lv_to
-            INTO CORRESPONDING FIELDS OF @ls_uom_to.
+          SELECT SINGLE unitofmeasuresinumerator unitofmeasuresidenominator unitofmeasuresiexponent
+            FROM (lv_tab) INTO CORRESPONDING FIELDS OF ls_uom_to
+            WHERE unitofmeasure = lv_to
+            .
           IF sy-subrc <> 0.
             x_raise( `UNIT_CONVERSION_FAILED` ).
           ENDIF.
@@ -11969,9 +14278,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           lv_den_to   = ls_uom_to-unitofmeasuresidenominator.
           lv_exp_to   = ls_uom_to-unitofmeasuresiexponent.
 
-          DATA lv_factor_from TYPE decfloat34.
-          DATA lv_factor_to   TYPE decfloat34.
-          DATA lv_ten         TYPE decfloat34 VALUE 10.
+          
+          
+          
 
           lv_factor_from = lv_num_from / lv_den_from.
           DO lv_exp_from TIMES.
@@ -12027,10 +14336,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lv_class TYPE string.
     DATA lv_alg   TYPE c LENGTH 10.
     DATA lv_data  TYPE string.
+    DATA temp529 TYPE string.
+    DATA lv_key TYPE xstring.
 
     lv_alg = to_upper( c_trim( algorithm ) ).
     lv_data = val.
-    DATA(lv_key) = conv_get_xstring_by_string( CONV string( key ) ).
+    
+    temp529 = key.
+    
+    lv_key = conv_get_xstring_by_string( temp529 ).
 
     TRY.
         lv_class = `CL_ABAP_HMAC`.
@@ -12049,8 +14363,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD http_get.
 
+    DATA temp530 TYPE string.
+    temp530 = url.
     result = http_execute( method       = `GET`
-                           url          = CONV string( url )
+                           url          = temp530
                            body         = ``
                            content_type = ``
                            t_header     = t_header ).
@@ -12059,10 +14375,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD http_post.
 
+    DATA temp531 TYPE string.
+    DATA temp86 TYPE string.
+    DATA temp1 TYPE string.
+    temp531 = url.
+    
+    temp86 = body.
+    
+    temp1 = content_type.
     result = http_execute( method       = `POST`
-                           url          = CONV string( url )
-                           body         = CONV string( body )
-                           content_type = CONV string( content_type )
+                           url          = temp531
+                           body         = temp86
+                           content_type = temp1
                            t_header     = t_header ).
 
   ENDMETHOD.
@@ -12094,6 +14418,10 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lr_status TYPE REF TO data.
     DATA lv_class  TYPE string.
     FIELD-SYMBOLS <status> TYPE any.
+        DATA ls_header LIKE LINE OF t_header.
+        FIELD-SYMBOLS <code> TYPE any.
+        FIELD-SYMBOLS <reason> TYPE any.
+        DATA lx_error TYPE REF TO cx_root.
 
     TRY.
 
@@ -12115,7 +14443,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           RECEIVING
             r_value = lo_req.
 
-        LOOP AT t_header INTO DATA(ls_header).
+        
+        LOOP AT t_header INTO ls_header.
           CALL METHOD lo_req->(`IF_WEB_HTTP_REQUEST~SET_HEADER_FIELD`)
             EXPORTING
               i_name  = ls_header-n
@@ -12151,18 +14480,21 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           RECEIVING
             r_value = <status>.
 
-        ASSIGN COMPONENT `CODE` OF STRUCTURE <status> TO FIELD-SYMBOL(<code>).
+        
+        ASSIGN COMPONENT `CODE` OF STRUCTURE <status> TO <code>.
         IF sy-subrc = 0.
           result-code = <code>.
         ENDIF.
-        ASSIGN COMPONENT `REASON` OF STRUCTURE <status> TO FIELD-SYMBOL(<reason>).
+        
+        ASSIGN COMPONENT `REASON` OF STRUCTURE <status> TO <reason>.
         IF sy-subrc = 0.
           result-reason = <reason>.
         ENDIF.
 
         CALL METHOD lo_client->(`IF_WEB_HTTP_CLIENT~CLOSE`).
 
-      CATCH cx_root INTO DATA(lx_error).
+        
+      CATCH cx_root INTO lx_error.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = lx_error.
@@ -12177,6 +14509,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     DATA lo_resp   TYPE REF TO object.
     DATA lv_class  TYPE string.
     FIELD-SYMBOLS <obj> TYPE any.
+        DATA ls_header LIKE LINE OF t_header.
+        DATA lx_error TYPE REF TO cx_root.
 
     TRY.
 
@@ -12197,7 +14531,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           EXPORTING
             method = method.
 
-        LOOP AT t_header INTO DATA(ls_header).
+        
+        LOOP AT t_header INTO ls_header.
           CALL METHOD lo_req->(`IF_HTTP_ENTITY~SET_HEADER_FIELD`)
             EXPORTING
               name  = ls_header-n
@@ -12249,7 +14584,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
           EXCEPTIONS
             OTHERS = 1.
 
-      CATCH cx_root INTO DATA(lx_error).
+        
+      CATCH cx_root INTO lx_error.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = lx_error.
@@ -12261,7 +14597,8 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lr_data TYPE REF TO data.
 
-    DATA(lv_name) = to_upper( c_trim( val ) ).
+    DATA lv_name TYPE string.
+    lv_name = to_upper( c_trim( val ) ).
 
     TRY.
         CREATE DATA lr_data TYPE (lv_name).
@@ -12274,20 +14611,29 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD db_select_by_name.
 
-    DATA(lv_tab) = to_upper( c_trim( tabname ) ).
-    DATA(lv_where) = CONV string( where ).
+    DATA lv_tab TYPE string.
+    DATA temp532 TYPE string.
+    DATA lv_where LIKE temp532.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+        DATA lx_error TYPE REF TO cx_root.
+    lv_tab = to_upper( c_trim( tabname ) ).
+    
+    temp532 = where.
+    
+    lv_where = temp532.
 
     result = rtti_create_tab_by_name( lv_tab ).
-    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    
     ASSIGN result->* TO <tab>.
 
     TRY.
         IF max_rows > 0.
-          SELECT * FROM (lv_tab) WHERE (lv_where) INTO TABLE @<tab> UP TO @max_rows ROWS.
+          SELECT * FROM (lv_tab) INTO TABLE <tab> WHERE (lv_where)  UP TO max_rows ROWS.
         ELSE.
-          SELECT * FROM (lv_tab) WHERE (lv_where) INTO TABLE @<tab>.
+          SELECT * FROM (lv_tab) INTO TABLE <tab> WHERE (lv_where) .
         ENDIF.
-      CATCH cx_root INTO DATA(lx_error).
+        
+      CATCH cx_root INTO lx_error.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = lx_error.
@@ -12297,12 +14643,20 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD db_count_by_name.
 
-    DATA(lv_tab) = to_upper( c_trim( tabname ) ).
-    DATA(lv_where) = CONV string( where ).
+    DATA lv_tab TYPE string.
+    DATA temp533 TYPE string.
+    DATA lv_where LIKE temp533.
+        DATA lx_error TYPE REF TO cx_root.
+    lv_tab = to_upper( c_trim( tabname ) ).
+    
+    temp533 = where.
+    
+    lv_where = temp533.
 
     TRY.
-        SELECT COUNT(*) FROM (lv_tab) WHERE (lv_where) INTO @result.
-      CATCH cx_root INTO DATA(lx_error).
+        SELECT COUNT(*) FROM (lv_tab) INTO result WHERE (lv_where) .
+        
+      CATCH cx_root INTO lx_error.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING
             val = lx_error.
@@ -12314,14 +14668,25 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lv_tab TYPE string.
 
-    DATA(lv_uname) = COND string( WHEN uname IS NOT INITIAL
-                                  THEN to_upper( c_trim( uname ) )
-                                  ELSE CONV string( sy-uname ) ).
-    DATA(lv_parid) = to_upper( c_trim( val ) ).
+    DATA temp534 TYPE string.
+    DATA temp87 TYPE string.
+    DATA lv_uname LIKE temp87.
+    DATA lv_parid TYPE string.
+    temp534 = sy-uname.
+    
+    IF uname IS NOT INITIAL.
+      temp87 = to_upper( c_trim( uname ) ).
+    ELSE.
+      temp87 = temp534.
+    ENDIF.
+    
+    lv_uname = temp87.
+    
+    lv_parid = to_upper( c_trim( val ) ).
 
     TRY.
         lv_tab = `USR05`.
-        SELECT SINGLE parva FROM (lv_tab) WHERE bname = @lv_uname AND parid = @lv_parid INTO @result.
+        SELECT SINGLE parva FROM (lv_tab) INTO result WHERE bname = lv_uname AND parid = lv_parid .
         IF sy-subrc <> 0.
           CLEAR result.
         ENDIF.
@@ -12335,12 +14700,15 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     DATA lv_tab TYPE string.
 
-    DATA(lv_jobname) = to_upper( c_trim( jobname ) ).
-    DATA(lv_jobcount) = c_trim( jobcount ).
+    DATA lv_jobname TYPE string.
+    DATA lv_jobcount TYPE string.
+    lv_jobname = to_upper( c_trim( jobname ) ).
+    
+    lv_jobcount = c_trim( jobcount ).
 
     TRY.
         lv_tab = `TBTCO`.
-        SELECT SINGLE status FROM (lv_tab) WHERE jobname = @lv_jobname AND jobcount = @lv_jobcount INTO @result.
+        SELECT SINGLE status FROM (lv_tab) INTO result WHERE jobname = lv_jobname AND jobcount = lv_jobcount .
         IF sy-subrc <> 0.
           CLEAR result.
         ENDIF.

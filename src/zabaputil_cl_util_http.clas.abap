@@ -119,11 +119,18 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
   METHOD client_create.
 
     DATA lv_classname TYPE c LENGTH 14.
+    DATA lv_destination TYPE c LENGTH 32.
+    DATA temp16 TYPE string.
+    DATA lv_url LIKE temp16.
+        DATA x TYPE REF TO cx_root.
     lv_classname = `CL_HTTP_CLIENT`.
 
-    DATA lv_destination TYPE c LENGTH 32.
+    
     lv_destination = destination.
-    DATA(lv_url) = CONV string( url ).
+    
+    temp16 = url.
+    
+    lv_url = temp16.
 
     TRY.
 
@@ -161,7 +168,8 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
           CLEAR result.
         ENDIF.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING val = x.
     ENDTRY.
@@ -180,7 +188,13 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
     DATA lv_message  TYPE string.
     FIELD-SYMBOLS <any> TYPE any.
 
-    DATA(lo_client) = client_create( destination = destination
+    DATA lo_client TYPE REF TO object.
+        DATA temp17 TYPE string.
+        DATA lv_method LIKE temp17.
+        DATA temp18 TYPE string.
+        DATA lv_body LIKE temp18.
+        DATA x TYPE REF TO cx_root.
+    lo_client = client_create( destination = destination
                                      url         = url ).
 
     TRY.
@@ -189,12 +203,18 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         ASSERT sy-subrc = 0.
         lo_request = <any>.
 
-        DATA(lv_method) = CONV string( method ).
+        
+        temp17 = method.
+        
+        lv_method = temp17.
         CALL METHOD lo_request->(`SET_METHOD`)
           EXPORTING
             method = lv_method.
 
-        DATA(lv_body) = CONV string( body ).
+        
+        temp18 = body.
+        
+        lv_body = temp18.
         CALL METHOD lo_request->(`SET_CDATA`)
           EXPORTING
             data = lv_body.
@@ -244,7 +264,8 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
           EXCEPTIONS
             OTHERS = 1.
 
-      CATCH cx_root INTO DATA(x).
+        
+      CATCH cx_root INTO x.
         " CLOSE on the failure path too: every throw between client_create
         " and the success-path CLOSE above (a failing dynamic GET_CDATA /
         " GET_STATUS, the RESPONSE assign) used to leave the connection
@@ -265,11 +286,17 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD delete_response_cookie.
 
-    DATA(lv_val) = CONV string( val ).
+    DATA temp19 TYPE string.
+    DATA lv_val LIKE temp19.
+      DATA object TYPE REF TO object.
+    temp19 = val.
+    
+    lv_val = temp19.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_response_onprem( ).
+      
+      object = get_response_onprem( ).
 
       CALL METHOD object->(`DELETE_COOKIE`)
         EXPORTING
@@ -281,11 +308,17 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD get_response_cookie.
 
-    DATA(lv_val) = CONV string( val ).
+    DATA temp20 TYPE string.
+    DATA lv_val LIKE temp20.
+      DATA object TYPE REF TO object.
+    temp20 = val.
+    
+    lv_val = temp20.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_response_onprem( ).
+      
+      object = get_response_onprem( ).
 
       CALL METHOD object->(`GET_COOKIE`)
         EXPORTING
@@ -301,11 +334,17 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD get_header_field.
 
-    DATA(lv_val) = CONV string( val ).
+    DATA temp21 TYPE string.
+    DATA lv_val LIKE temp21.
+      DATA object TYPE REF TO object.
+    temp21 = val.
+    
+    lv_val = temp21.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_request_onprem( ).
+      
+      object = get_request_onprem( ).
 
       CALL METHOD object->(`GET_HEADER_FIELD`)
         EXPORTING
@@ -327,8 +366,22 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD set_header_field.
 
-    DATA(lv_n) = CONV string( n ).
-    DATA(lv_v) = CONV string( v ).
+    DATA temp22 TYPE string.
+    DATA lv_n LIKE temp22.
+    DATA temp23 TYPE string.
+    DATA lv_v LIKE temp23.
+      DATA temp24 TYPE string.
+      DATA lv_cr LIKE temp24.
+      DATA temp25 TYPE string.
+      DATA lv_lf LIKE temp25.
+      DATA object TYPE REF TO object.
+    temp22 = n.
+    
+    lv_n = temp22.
+    
+    temp23 = v.
+    
+    lv_v = temp23.
 
     " strip CR/LF from both halves before they reach the stack: a header
     " name or value that carries a line break splits the response into two
@@ -337,8 +390,14 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
     " embedded CRLF itself, but nothing here should depend on it
     IF lv_n CA zabaputil_cl_util_context=>cv_char_util_cr_lf
         OR lv_v CA zabaputil_cl_util_context=>cv_char_util_cr_lf.
-      DATA(lv_cr) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf(1) ).
-      DATA(lv_lf) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf+1(1) ).
+      
+      temp24 = zabaputil_cl_util_context=>cv_char_util_cr_lf(1).
+      
+      lv_cr = temp24.
+      
+      temp25 = zabaputil_cl_util_context=>cv_char_util_cr_lf+1(1).
+      
+      lv_lf = temp25.
       REPLACE ALL OCCURRENCES OF lv_cr IN lv_n WITH ``.
       REPLACE ALL OCCURRENCES OF lv_lf IN lv_n WITH ``.
       REPLACE ALL OCCURRENCES OF lv_cr IN lv_v WITH ``.
@@ -347,7 +406,8 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_response_onprem( ).
+      
+      object = get_response_onprem( ).
 
       CALL METHOD object->(`SET_HEADER_FIELD`)
         EXPORTING
@@ -367,24 +427,26 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD factory.
 
-    result = NEW #( ).
+    CREATE OBJECT result.
     result->mo_server_onprem = server.
 
   ENDMETHOD.
 
   METHOD factory_cloud.
 
-    result = NEW #( ).
+    CREATE OBJECT result.
     result->mo_request_cloud  = req.
     result->mo_response_cloud = res.
 
   ENDMETHOD.
 
   METHOD get_cdata.
+      DATA object TYPE REF TO object.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_request_onprem( ).
+      
+      object = get_request_onprem( ).
 
       CALL METHOD object->(`GET_CDATA`)
         RECEIVING
@@ -401,10 +463,12 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_method.
+      DATA object TYPE REF TO object.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_request_onprem( ).
+      
+      object = get_request_onprem( ).
 
       CALL METHOD object->(`IF_HTTP_REQUEST~GET_METHOD`)
         RECEIVING
@@ -421,10 +485,12 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_cdata.
+      DATA object TYPE REF TO object.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_response_onprem( ).
+      
+      object = get_response_onprem( ).
 
       CALL METHOD object->(`SET_CDATA`)
         EXPORTING
@@ -442,11 +508,17 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
   METHOD set_status.
 
-    DATA(lv_reason) = CONV string( reason ).
+    DATA temp26 TYPE string.
+    DATA lv_reason LIKE temp26.
+      DATA object TYPE REF TO object.
+    temp26 = reason.
+    
+    lv_reason = temp26.
 
     IF mo_server_onprem IS BOUND.
 
-      DATA(object) = get_response_onprem( ).
+      
+      object = get_response_onprem( ).
 
       CALL METHOD object->(`IF_HTTP_RESPONSE~SET_STATUS`)
         EXPORTING
@@ -487,9 +559,10 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_request_onprem.
+      FIELD-SYMBOLS <any> TYPE any.
 
     IF mo_request_onprem IS NOT BOUND.
-      FIELD-SYMBOLS <any> TYPE any.
+      
       ASSIGN mo_server_onprem->(`REQUEST`) TO <any>.
       ASSERT sy-subrc = 0.
       mo_request_onprem = <any>.
@@ -500,9 +573,10 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_response_onprem.
+      FIELD-SYMBOLS <any> TYPE any.
 
     IF mo_response_onprem IS NOT BOUND.
-      FIELD-SYMBOLS <any> TYPE any.
+      
       ASSIGN mo_server_onprem->(`RESPONSE`) TO <any>.
       ASSERT sy-subrc = 0.
       mo_response_onprem = <any>.
