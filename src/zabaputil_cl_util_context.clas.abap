@@ -3435,8 +3435,14 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <unassign> TYPE any.
 
+    " IS ASSIGNED, not sy-subrc: on some runtimes ASSIGN ref->* of an
+    " unbound reference leaves sy-subrc untouched, so a stale value from an
+    " earlier statement decided the answer - a stale 4 read as "not
+    " assigned" and a stale 0 let the initial field symbol through. The
+    " symbol is declared fresh in this method and assigned exactly once, so
+    " no UNASSIGN is needed before the test
     ASSIGN val->* TO <unassign>.
-    IF sy-subrc <> 0.
+    IF <unassign> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
     result = <unassign>.
@@ -3447,8 +3453,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     FIELD-SYMBOLS <unassign> TYPE any.
 
+    " same reasoning as unassign_data directly above
     ASSIGN val->* TO <unassign>.
-    IF sy-subrc <> 0.
+    IF <unassign> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
     result = <unassign>.

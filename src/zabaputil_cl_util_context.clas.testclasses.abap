@@ -3166,6 +3166,10 @@ CLASS ltcl_sync_back DEFINITION FINAL
     " unassign_* / rtti_get_classname_by_ref guards
     METHODS unassign_data_unbound          FOR TESTING.
     METHODS unassign_object_unbound        FOR TESTING.
+    METHODS unassign_data_bound            FOR TESTING.
+    METHODS unassign_object_bound          FOR TESTING.
+    METHODS unassign_data_dirty_subrc      FOR TESTING.
+    METHODS unassign_data_unbound_dirty    FOR TESTING.
     METHODS classname_unbound_is_empty     FOR TESTING.
 
     " itab_* fixes
@@ -3282,6 +3286,66 @@ CLASS ltcl_sync_back IMPLEMENTATION.
   METHOD unassign_object_unbound.
     DATA lr_data TYPE REF TO data.
     cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>unassign_object( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD unassign_data_bound.
+    DATA lv_str   TYPE string VALUE `payload`.
+    DATA lr_inner TYPE REF TO data.
+    DATA lr_outer TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+
+    GET REFERENCE OF lv_str INTO lr_inner.
+    GET REFERENCE OF lr_inner INTO lr_outer.
+
+    DATA(lr_act) = zabaputil_cl_util_context=>unassign_data( lr_outer ).
+    cl_abap_unit_assert=>assert_bound( lr_act ).
+    ASSIGN lr_act->* TO <val>.
+    cl_abap_unit_assert=>assert_equals( act = <val>
+                                        exp = `payload` ).
+  ENDMETHOD.
+
+  METHOD unassign_object_bound.
+    DATA lo_inner TYPE REF TO object.
+    DATA lr_outer TYPE REF TO data.
+
+    lo_inner = NEW ltcl_test_app( ).
+    GET REFERENCE OF lo_inner INTO lr_outer.
+
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>unassign_object( lr_outer )
+                                        exp = lo_inner ).
+  ENDMETHOD.
+
+  METHOD unassign_data_dirty_subrc.
+    " the guard is the field symbol, not sy-subrc: ASSIGN ref->* of an
+    " unbound reference leaves sy-subrc untouched on some runtimes, so a
+    " value left over from an earlier statement must not decide the answer.
+    " Here a stale 4 must not suppress a perfectly good dereference
+    DATA lv_str   TYPE string VALUE `payload`.
+    DATA lr_inner TYPE REF TO data.
+    DATA lr_outer TYPE REF TO data.
+    DATA lt_empty TYPE string_table.
+
+    GET REFERENCE OF lv_str INTO lr_inner.
+    GET REFERENCE OF lr_inner INTO lr_outer.
+
+    READ TABLE lt_empty TRANSPORTING NO FIELDS INDEX 1.
+    cl_abap_unit_assert=>assert_differs( act = sy-subrc
+                                         exp = 0 ).
+
+    cl_abap_unit_assert=>assert_bound( zabaputil_cl_util_context=>unassign_data( lr_outer ) ).
+  ENDMETHOD.
+
+  METHOD unassign_data_unbound_dirty.
+    " and the other direction: a stale 0 must not let the unassigned field
+    " symbol through into `result = <unassign>`
+    DATA lr_data  TYPE REF TO data.
+    DATA lt_one   TYPE string_table.
+
+    INSERT `x` INTO TABLE lt_one.
+    READ TABLE lt_one TRANSPORTING NO FIELDS INDEX 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>unassign_data( lr_data ) ).
   ENDMETHOD.
 
   METHOD classname_unbound_is_empty.
