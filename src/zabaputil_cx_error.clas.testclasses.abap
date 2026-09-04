@@ -7,6 +7,7 @@ CLASS ltcl_unit_test DEFINITION FINAL
     METHODS test_raise_with_prev FOR TESTING RAISING cx_static_check.
     METHODS test_raise_with_cx   FOR TESTING RAISING cx_static_check.
     METHODS test_uuid_populated  FOR TESTING RAISING cx_static_check.
+    METHODS test_uuid_stable_over_renders FOR TESTING RAISING cx_static_check.
     METHODS test_chain_texts     FOR TESTING RAISING cx_static_check.
     METHODS test_raise_struct_val   FOR TESTING RAISING cx_static_check.
     METHODS test_raise_printable_val FOR TESTING RAISING cx_static_check.
@@ -34,6 +35,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         RAISE EXCEPTION TYPE zabaputil_cx_error.
       CATCH zabaputil_cx_error INTO DATA(lx).
         cl_abap_unit_assert=>assert_bound( lx ).
+        " the id is filled on first render - see test_uuid_populated
+        cl_abap_unit_assert=>assert_not_initial( zabaputil_cx_error=>get_text_full( lx ) ).
         cl_abap_unit_assert=>assert_not_initial( lx->ms_error-uuid ).
     ENDTRY.
 
@@ -117,13 +120,43 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_uuid_populated.
 
+    " the id is computed on first render, not in the constructor: a raise
+    " that is caught and handled on the way up never pays for the dynamic
+    " CL_SYSTEM_UUID call
     TRY.
         RAISE EXCEPTION TYPE zabaputil_cx_error
           EXPORTING val = `test`.
       CATCH zabaputil_cx_error INTO DATA(lx).
+        cl_abap_unit_assert=>assert_initial( lx->ms_error-uuid ).
+
+        DATA(lv_report) = zabaputil_cx_error=>get_text_full( lx ).
+
         cl_abap_unit_assert=>assert_not_initial( lx->ms_error-uuid ).
         cl_abap_unit_assert=>assert_equals( exp = 32
                                             act = strlen( lx->ms_error-uuid ) ).
+        " and the rendered report carries the id it just computed, rather
+        " than the empty `id :` line an un-filled uuid used to produce
+        cl_abap_unit_assert=>assert_char_cp( act = lv_report
+                                             exp = |*id       : { lx->ms_error-uuid }*| ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD test_uuid_stable_over_renders.
+
+    " filled once - a second render must not hand out a different id for
+    " the same exception, or the id stops identifying anything
+    TRY.
+        RAISE EXCEPTION TYPE zabaputil_cx_error
+          EXPORTING val = `test`.
+      CATCH zabaputil_cx_error INTO DATA(lx).
+        zabaputil_cx_error=>get_text_full( lx ).
+        DATA(lv_first) = lx->ms_error-uuid.
+
+        zabaputil_cx_error=>get_text_full( lx ).
+
+        cl_abap_unit_assert=>assert_equals( act = lx->ms_error-uuid
+                                            exp = lv_first ).
     ENDTRY.
 
   ENDMETHOD.

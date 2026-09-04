@@ -105,7 +105,10 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     ms_error-x_root = lo_root.
     ms_error-text   = lv_text.
-    ms_error-uuid   = zabaputil_cl_util_context=>uuid_get_c32( ).
+    " no uuid here: uuid_get_c32 is a dynamic CL_SYSTEM_UUID/GUID_CREATE
+    " call and its only reader is the full-report renderer - it is filled
+    " lazily in get_text_full_entry, so a raise that is caught and handled
+    " on the way up pays nothing for it
 
   ENDMETHOD.
 
@@ -234,8 +237,15 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     TRY.
         DATA(lx_own) = CAST zabaputil_cx_error( val ).
+        " computed on first render, not in the constructor - see there.
+        " cx_root, not just the cast error: a failing uuid lookup must not
+        " abort the rendering of the very error report it decorates, and an
+        " exception raised without an id used to render an empty `id :` line
+        IF lx_own->ms_error-uuid IS INITIAL.
+          lx_own->ms_error-uuid = zabaputil_cl_util_context=>uuid_get_c32( ).
+        ENDIF.
         result = result && lv_nl && |    id       : { lx_own->ms_error-uuid }|.
-      CATCH cx_sy_move_cast_error ##NO_HANDLER.
+      CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
     DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( val ).
