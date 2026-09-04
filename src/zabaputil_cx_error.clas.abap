@@ -260,10 +260,15 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_newline.
 
     " the runtime context of the failing request - what an issue report
-    " otherwise has to ask back for
+    " otherwise has to ask back for. Deliberately WITHOUT sy-host, sy-mandt
+    " and sy-uname: consumers render this text where an end user can read
+    " it (abap2UI5 puts it in the body of a 500), and hostname, client and
+    " user are recon material there - and an audit finding in hardened
+    " installations - while what a report actually needs is the release and
+    " the time. A caller that legitimately wants the rest reads sy-* itself;
+    " the server-side logs carry it anyway
     result = `--- context ---` && lv_nl &&
-             |    system   : { sy-sysid } / client { sy-mandt } / host { sy-host } / release { sy-saprl }| && lv_nl &&
-             |    user     : { sy-uname } / language { sy-langu }| && lv_nl &&
+             |    system   : { sy-sysid } / release { sy-saprl }| && lv_nl &&
              |    time     : { sy-datum } { sy-uzeit }|.
 
   ENDMETHOD.

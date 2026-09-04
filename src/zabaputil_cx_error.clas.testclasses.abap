@@ -195,6 +195,7 @@ CLASS ltcl_chain DEFINITION FINAL
     METHODS full_unbound             FOR TESTING.
     METHODS full_sections            FOR TESTING.
     METHODS full_lists_every_link    FOR TESTING.
+    METHODS full_context_discloses   FOR TESTING.
 
 ENDCLASS.
 
@@ -277,6 +278,23 @@ CLASS ltcl_chain IMPLEMENTATION.
     " the message section comes first, everything else is detail
     cl_abap_unit_assert=>assert_true( xsdbool( find( val = lv_full sub = `--- error ---` ) <
                                                find( val = lv_full sub = `--- exception chain ---` ) ) ).
+  ENDMETHOD.
+
+  METHOD full_context_discloses.
+    " the rendered report reaches an end user in some consumers (abap2UI5
+    " puts it in the body of a 500), so the context block names the system
+    " and the release and stops there - client, host, user and language are
+    " recon material with no place in a text a browser may show
+    DATA(lv_full) = zabaputil_cx_error=>get_text_full( NEW zabaputil_cx_error( val = `the_error` ) ).
+
+    cl_abap_unit_assert=>assert_true( xsdbool( lv_full CS |release { sy-saprl }| ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( lv_full CS CONV string( sy-sysid ) ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( lv_full CS CONV string( sy-datum ) ) ).
+
+    cl_abap_unit_assert=>assert_false( xsdbool( lv_full CS `client` ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( lv_full CS `host` ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( lv_full CS `language` ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( lv_full CS |    user     : | ) ).
   ENDMETHOD.
 
   METHOD full_lists_every_link.
