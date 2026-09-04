@@ -2477,6 +2477,20 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-DATA mt_attri_cache TYPE HASHED TABLE OF ty_s_attri_cache WITH UNIQUE KEY absolute_name.
 
+    " answers of rtti_check_class_exists, per roll area - the repository
+    " lookup behind it is not free and the same names are asked again and
+    " again by callers that probe for an optional class on every call.
+    " A class created at runtime after a negative answer is the one caller
+    " this cache can mislead, within one roll area only - same trade as
+    " gv_check_cloud below
+    TYPES:
+      BEGIN OF ty_s_class_exists,
+        name   TYPE string,
+        exists TYPE abap_bool,
+      END OF ty_s_class_exists.
+
+    CLASS-DATA gt_class_exists TYPE HASHED TABLE OF ty_s_class_exists WITH UNIQUE KEY name.
+
     CLASS-METHODS filter_get_sql_cond_by_range
       IMPORTING
         fieldname     TYPE clike
@@ -3097,6 +3111,16 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD rtti_check_class_exists.
 
+    " cached per name - see gt_class_exists at the declaration
+    DATA lv_name TYPE string.
+    lv_name = to_upper( val ).
+
+    READ TABLE gt_class_exists REFERENCE INTO DATA(lr_hit) WITH TABLE KEY name = lv_name.
+    IF sy-subrc = 0.
+      result = lr_hit->exists.
+      RETURN.
+    ENDIF.
+
     TRY.
         cl_abap_classdescr=>describe_by_name( EXPORTING  p_name         = val
                                               EXCEPTIONS type_not_found = 1 ).
@@ -3106,6 +3130,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
       CATCH cx_root ##NO_HANDLER.
     ENDTRY.
+
+    INSERT VALUE #( name   = lv_name
+                    exists = result ) INTO TABLE gt_class_exists.
 
   ENDMETHOD.
 

@@ -1621,6 +1621,8 @@ CLASS ltcl_rtti_ops DEFINITION FINAL
     METHODS get_type_name                  FOR TESTING.
     METHODS check_class_exists_true        FOR TESTING.
     METHODS check_class_exists_false       FOR TESTING.
+    METHODS check_class_exists_cached      FOR TESTING.
+    METHODS check_class_exists_case        FOR TESTING.
     METHODS expand_components_plain        FOR TESTING.
     METHODS expand_components_empty        FOR TESTING.
     METHODS attri_by_any_struct            FOR TESTING.
@@ -1788,6 +1790,24 @@ CLASS ltcl_rtti_ops IMPLEMENTATION.
 
   METHOD check_class_exists_false.
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_class_exists( `ZCL_DOES_NOT_EXIST_99` ) ).
+  ENDMETHOD.
+
+  METHOD check_class_exists_cached.
+    " the second answer comes from the cache and has to be the same one -
+    " a negative answer is memoised too, so it must not flip to true
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_class_exists( `CL_ABAP_TYPEDESCR` ) ).
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_class_exists( `CL_ABAP_TYPEDESCR` ) ).
+
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_class_exists( `ZCL_DOES_NOT_EXIST_98` ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_class_exists( `ZCL_DOES_NOT_EXIST_98` ) ).
+  ENDMETHOD.
+
+  METHOD check_class_exists_case.
+    " the cache key is upper case, so the two spellings of one name share
+    " an entry instead of answering differently
+    cl_abap_unit_assert=>assert_equals(
+        act = zabaputil_cl_util_context=>rtti_check_class_exists( `cl_abap_typedescr` )
+        exp = zabaputil_cl_util_context=>rtti_check_class_exists( `CL_ABAP_TYPEDESCR` ) ).
   ENDMETHOD.
 
 ENDCLASS.
