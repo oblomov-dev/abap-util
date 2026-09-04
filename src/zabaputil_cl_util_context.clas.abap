@@ -226,15 +226,20 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE ty_s_msg.
 
+    " depth guards the mutual recursion between these two (an include whose
+    " expansion reaches itself would otherwise be an unbounded stack).
+    " Optional and last in the list, so every existing caller is unaffected
     CLASS-METHODS rtti_get_t_attri_by_include
       IMPORTING
         !type         TYPE REF TO cl_abap_datadescr
+        depth         TYPE i DEFAULT 0
       RETURNING
         VALUE(result) TYPE abap_component_tab.
 
     CLASS-METHODS expand_components
       IMPORTING
-        val      TYPE abap_component_tab
+        val           TYPE abap_component_tab
+        depth         TYPE i DEFAULT 0
       RETURNING
         VALUE(result) TYPE abap_component_tab.
 
@@ -3226,15 +3231,26 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     ENDIF.
     DATA(sdescr) = CAST cl_abap_structdescr( type_desc ).
     DATA(comps) = sdescr->get_components( ).
-    result = expand_components( comps ).
+    result = expand_components( val   = comps
+                                depth = depth ).
 
   ENDMETHOD.
 
   METHOD expand_components.
 
+    " see the declaration: bounded so a cyclic include chain surfaces as a
+    " readable error instead of a stack-overflow dump. 16 nested include
+    " levels is far beyond any real DDIC structure
+    IF depth > 16.
+      RAISE EXCEPTION TYPE zabaputil_cx_util_error
+        EXPORTING
+          val = `RTTI_INCLUDE_RECURSION - include expansion exceeded 16 levels (cyclic include?)`.
+    ENDIF.
+
     LOOP AT val REFERENCE INTO DATA(lr_comp).
       IF lr_comp->as_include = abap_true.
-        DATA(lt_incl) = rtti_get_t_attri_by_include( lr_comp->type ).
+        DATA(lt_incl) = rtti_get_t_attri_by_include( type  = lr_comp->type
+                                                     depth = depth + 1 ).
         APPEND LINES OF lt_incl TO result.
       ELSE.
         APPEND lr_comp->* TO result.

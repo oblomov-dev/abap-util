@@ -1625,6 +1625,9 @@ CLASS ltcl_rtti_ops DEFINITION FINAL
     METHODS check_class_exists_case        FOR TESTING.
     METHODS expand_components_plain        FOR TESTING.
     METHODS expand_components_empty        FOR TESTING.
+    METHODS expand_components_depth_ok     FOR TESTING.
+    METHODS expand_components_depth_stop   FOR TESTING.
+    METHODS attri_by_include_depth_stop    FOR TESTING.
     METHODS attri_by_any_struct            FOR TESTING.
     METHODS attri_by_any_table             FOR TESTING.
     METHODS msg_get_empty_no_dump          FOR TESTING.
@@ -1649,6 +1652,52 @@ CLASS ltcl_rtti_ops IMPLEMENTATION.
   METHOD expand_components_empty.
     DATA(lt_result) = zabaputil_cl_util_context=>expand_components( VALUE abap_component_tab( ) ).
     cl_abap_unit_assert=>assert_initial( lt_result ).
+  ENDMETHOD.
+
+  METHOD expand_components_depth_ok.
+    " the last level that is still inside the bound expands normally - the
+    " guard must not cost a real DDIC structure its deepest include
+    DATA(lo_str) = cl_abap_elemdescr=>get_string( ).
+    DATA(lt_comps) = VALUE abap_component_tab( ( name = `A` type = lo_str ) ).
+
+    DATA(lt_result) = zabaputil_cl_util_context=>expand_components( val   = lt_comps
+                                                                    depth = 16 ).
+    cl_abap_unit_assert=>assert_equals( exp = 1
+                                        act = lines( lt_result ) ).
+  ENDMETHOD.
+
+  METHOD expand_components_depth_stop.
+    " past the bound the mutual recursion stops with a readable error
+    " instead of running the stack out - a cyclic include used to dump
+    DATA(lo_str) = cl_abap_elemdescr=>get_string( ).
+    DATA(lt_comps) = VALUE abap_component_tab( ( name = `A` type = lo_str ) ).
+
+    TRY.
+        zabaputil_cl_util_context=>expand_components( val   = lt_comps
+                                                      depth = 17 ).
+        cl_abap_unit_assert=>fail( `expected zabaputil_cx_util_error` ).
+      CATCH zabaputil_cx_util_error INTO DATA(lx).
+        cl_abap_unit_assert=>assert_char_cp( act = lx->get_text( )
+                                             exp = `*RTTI_INCLUDE_RECURSION*` ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD attri_by_include_depth_stop.
+    " the other half of the pair carries the level into expand_components,
+    " so entering the cycle from either side stops at the same bound
+    TYPES: BEGIN OF ty_incl,
+             alpha TYPE string,
+           END OF ty_incl.
+    DATA ls_incl TYPE ty_incl ##NEEDED.
+
+    DATA(lo_type) = CAST cl_abap_datadescr( cl_abap_typedescr=>describe_by_data( ls_incl ) ).
+
+    TRY.
+        zabaputil_cl_util_context=>rtti_get_t_attri_by_include( type  = lo_type
+                                                                depth = 17 ).
+        cl_abap_unit_assert=>fail( `expected zabaputil_cx_util_error` ).
+      CATCH zabaputil_cx_util_error ##NO_HANDLER.
+    ENDTRY.
   ENDMETHOD.
 
   METHOD attri_by_any_struct.
