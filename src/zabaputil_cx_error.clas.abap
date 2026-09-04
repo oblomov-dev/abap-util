@@ -84,7 +84,14 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     TRY.
         lo_root ?= val.
       CATCH cx_root.
-        lv_text = val.
+        " val was no exception reference - render it as the message text.
+        " Guarded: a structured val (a table, a struct) would make this
+        " MOVE dump, and a runtime error inside a CATCH block is not
+        " caught by its own TRY - the one class that must never be the
+        " crash itself. Such a val degrades to an empty text instead
+        IF zabaputil_cl_util_context=>rtti_check_printable( val ) = abap_true.
+          lv_text = val.
+        ENDIF.
     ENDTRY.
 
     " Keep the cause chain. The dominant raise pattern in the consumers hands

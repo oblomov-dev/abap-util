@@ -8,6 +8,8 @@ CLASS ltcl_unit_test DEFINITION FINAL
     METHODS test_raise_with_cx   FOR TESTING RAISING cx_static_check.
     METHODS test_uuid_populated  FOR TESTING RAISING cx_static_check.
     METHODS test_chain_texts     FOR TESTING RAISING cx_static_check.
+    METHODS test_raise_struct_val   FOR TESTING RAISING cx_static_check.
+    METHODS test_raise_printable_val FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 
@@ -68,6 +70,47 @@ CLASS ltcl_unit_test IMPLEMENTATION.
       CATCH zabaputil_cx_error INTO DATA(lx).
         cl_abap_unit_assert=>assert_not_initial( lx->get_text( ) ).
         cl_abap_unit_assert=>assert_bound( lx->ms_error-x_root ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD test_raise_struct_val.
+
+    " a structured val made `lv_text = val` dump, and a runtime error
+    " inside a CATCH block is not caught by that block's own TRY - so the
+    " exception class became the crash instead of reporting one
+    " (the table shape cannot be tested here: the transpiled `?=` throws a
+    " raw runtime error the CATCH does not see, where ABAP raises a
+    " catchable CX_SY_MOVE_CAST_ERROR)
+    TYPES: BEGIN OF ty_s,
+             alpha TYPE string,
+             beta  TYPE i,
+           END OF ty_s.
+    DATA ls_val TYPE ty_s.
+
+    ls_val-alpha = `whatever`.
+
+    TRY.
+        RAISE EXCEPTION TYPE zabaputil_cx_error
+          EXPORTING val = ls_val.
+      CATCH zabaputil_cx_error INTO DATA(lx).
+        cl_abap_unit_assert=>assert_bound( lx ).
+        cl_abap_unit_assert=>assert_initial( lx->ms_error-text ).
+        cl_abap_unit_assert=>assert_not_initial( lx->get_text( ) ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD test_raise_printable_val.
+
+    " the guard must not cost the elementary values their text - a number
+    " handed over as val still renders
+    TRY.
+        RAISE EXCEPTION TYPE zabaputil_cx_error
+          EXPORTING val = 42.
+      CATCH zabaputil_cx_error INTO DATA(lx).
+        cl_abap_unit_assert=>assert_char_cp( act = lx->ms_error-text
+                                             exp = `*42*` ).
     ENDTRY.
 
   ENDMETHOD.
