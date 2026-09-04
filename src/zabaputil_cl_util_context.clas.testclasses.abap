@@ -3262,6 +3262,9 @@ CLASS ltcl_sync_back DEFINITION FINAL
     METHODS printable_elementary           FOR TESTING.
     METHODS printable_complex_is_false     FOR TESTING.
 
+    " class_constructor
+    METHODS constants_are_filled           FOR TESTING.
+
     " no-CONV-string( ) rewrites - behaviour must be identical
     METHODS attributes_name_is_trimmed     FOR TESTING.
     METHODS attri_by_any_cache_hits        FOR TESTING.
@@ -3361,6 +3364,31 @@ CLASS ltcl_sync_back IMPLEMENTATION.
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lt_tab ) ).
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( ls_struc ) ).
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lo_obj ) ).
+  ENDMETHOD.
+
+  METHOD constants_are_filled.
+    " every environment-abstracted constant the class publishes is set by
+    " class_constructor and carries the value of the SAP standard class
+    " behind it - a consumer branching on a stored type_kind reads these
+    " instead of cl_abap_typedescr directly
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_typedescr_typekind_date
+                                        exp = cl_abap_typedescr=>typekind_date ).
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_typedescr_typekind_time
+                                        exp = cl_abap_typedescr=>typekind_time ).
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_typedescr_typekind_packed
+                                        exp = cl_abap_typedescr=>typekind_packed ).
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_typedescr_kind_elem
+                                        exp = cl_abap_typedescr=>kind_elem ).
+
+    " the ones that were already there stay filled - cv_char_util_charsize
+    " in particular has callers here that abap2UI5's trimmed copy has not,
+    " so it must not follow the downstream class_constructor into removal
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_char_util_charsize
+                                        exp = cl_abap_char_utilities=>charsize ).
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_typedescr_kind_struct
+                                        exp = cl_abap_typedescr=>kind_struct ).
+    cl_abap_unit_assert=>assert_equals( act = zabaputil_cl_util_context=>cv_objectdescr_public
+                                        exp = cl_abap_objectdescr=>public ).
   ENDMETHOD.
 
   METHOD attributes_name_is_trimmed.

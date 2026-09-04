@@ -37,7 +37,16 @@ CLASS zabaputil_cl_util_context DEFINITION
     CLASS-DATA cv_typedescr_typekind_oref    TYPE c LENGTH 1 READ-ONLY.
     CLASS-DATA cv_typedescr_typekind_struct1 TYPE c LENGTH 1 READ-ONLY.
     CLASS-DATA cv_typedescr_typekind_struct2 TYPE c LENGTH 1 READ-ONLY.
+
+    " the three elementary kinds whose JSON form is not their ABAP form
+    " (ISO date/time strings, ISO timestamps) - what a caller converting a
+    " scalar between the two representations has to branch on
+    CLASS-DATA cv_typedescr_typekind_date    TYPE c LENGTH 1 READ-ONLY.
+    CLASS-DATA cv_typedescr_typekind_time    TYPE c LENGTH 1 READ-ONLY.
+    CLASS-DATA cv_typedescr_typekind_packed  TYPE c LENGTH 1 READ-ONLY.
+
     CLASS-DATA cv_typedescr_kind_struct      TYPE c LENGTH 1 READ-ONLY.
+    CLASS-DATA cv_typedescr_kind_elem        TYPE c LENGTH 1 READ-ONLY.
     CLASS-DATA cv_typedescr_kind_ref         TYPE c LENGTH 1 READ-ONLY.
     CLASS-DATA cv_objectdescr_public         TYPE c LENGTH 1 READ-ONLY.
 
@@ -2601,14 +2610,18 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     cv_char_util_cr_lf          = cl_abap_char_utilities=>cr_lf.
     cv_char_util_horizontal_tab = cl_abap_char_utilities=>horizontal_tab.
     cv_char_util_charsize       = cl_abap_char_utilities=>charsize.
-    cv_format_e_xml_attr             = cl_abap_format=>e_xml_attr.
+    cv_format_e_xml_attr        = cl_abap_format=>e_xml_attr.
 
     cv_typedescr_typekind_table      = cl_abap_typedescr=>typekind_table.
     cv_typedescr_typekind_dref       = cl_abap_typedescr=>typekind_dref.
     cv_typedescr_typekind_oref       = cl_abap_typedescr=>typekind_oref.
     cv_typedescr_typekind_struct1    = cl_abap_typedescr=>typekind_struct1.
     cv_typedescr_typekind_struct2    = cl_abap_typedescr=>typekind_struct2.
+    cv_typedescr_typekind_date       = cl_abap_typedescr=>typekind_date.
+    cv_typedescr_typekind_time       = cl_abap_typedescr=>typekind_time.
+    cv_typedescr_typekind_packed     = cl_abap_typedescr=>typekind_packed.
     cv_typedescr_kind_struct         = cl_abap_typedescr=>kind_struct.
+    cv_typedescr_kind_elem           = cl_abap_typedescr=>kind_elem.
     cv_typedescr_kind_ref            = cl_abap_typedescr=>kind_ref.
     cv_objectdescr_public            = cl_abap_objectdescr=>public.
 
