@@ -293,14 +293,8 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         IMPORTING
           value = result.
 
-    ELSE.
-
-*      CALL METHOD mo_request_cloud->(`GET_COOKIE`)
-*        EXPORTING
-*          i_name  = lv_val
-*        RECEIVING
-*          r_value = result.
-
+      " reading a response cookie has no released counterpart in ABAP
+      " Cloud - there is nothing to answer with there
     ENDIF.
 
   ENDMETHOD.
@@ -478,11 +472,7 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         EXPORTING
           stateful = val.
 
-    ELSE.
-
-      "FEATURE IN CLOUD NOT RELEASED
-*      ASSERT 1 = `NO_STATEFUL_FEATURE_IN_CLOUD_ERROR`.
-
+      " stateful sessions are not released in ABAP Cloud - no-op there
     ENDIF.
 
   ENDMETHOD.
