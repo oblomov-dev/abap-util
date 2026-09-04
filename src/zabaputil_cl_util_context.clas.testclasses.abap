@@ -3262,6 +3262,11 @@ CLASS ltcl_sync_back DEFINITION FINAL
     METHODS printable_elementary           FOR TESTING.
     METHODS printable_complex_is_false     FOR TESTING.
 
+    " no-CONV-string( ) rewrites - behaviour must be identical
+    METHODS attributes_name_is_trimmed     FOR TESTING.
+    METHODS attri_by_any_cache_hits        FOR TESTING.
+    METHODS date_valid_after_rewrite       FOR TESTING.
+
     " error_get_source_position / error_get_attributes
     METHODS position_unbound_is_empty      FOR TESTING.
     METHODS position_bound_no_dump         FOR TESTING.
@@ -3356,6 +3361,49 @@ CLASS ltcl_sync_back IMPLEMENTATION.
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lt_tab ) ).
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( ls_struc ) ).
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_printable( lo_obj ) ).
+  ENDMETHOD.
+
+  METHOD attributes_name_is_trimmed.
+    " the RTTI name is a CHAR field; the plain assignment into a string
+    " drops its trailing blanks, exactly as CONV string( ) did - the name
+    " is used both as the lookup key and in ASSIGN val->(lv_name), so a
+    " padded name would find no attribute at all
+    DATA(lx) = NEW lcx_sync_test( `the_detail` ).
+    DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( lx ).
+
+    cl_abap_unit_assert=>assert_true( xsdbool( line_exists( lt_attri[ n = `MV_DETAIL` ] ) ) ).
+    LOOP AT lt_attri REFERENCE INTO DATA(lr_attri).
+      cl_abap_unit_assert=>assert_equals( act = strlen( lr_attri->n )
+                                          exp = strlen( condense( lr_attri->n ) ) ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD attri_by_any_cache_hits.
+    " the cache key is the descriptor's absolute_name, now assigned instead
+    " of CONV string( ) - a second call over the same type must still hit
+    " the entry the first one wrote, not build a second one
+    TYPES: BEGIN OF ty_cached,
+             alpha TYPE string,
+             beta  TYPE i,
+           END OF ty_cached.
+    DATA ls_val TYPE ty_cached ##NEEDED.
+
+    DATA(lt_first)  = zabaputil_cl_util_context=>rtti_get_t_attri_by_any( ls_val ).
+    DATA(lt_second) = zabaputil_cl_util_context=>rtti_get_t_attri_by_any( ls_val ).
+
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_first )
+                                        exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_second
+                                        exp = lt_first ).
+  ENDMETHOD.
+
+  METHOD date_valid_after_rewrite.
+    " the same shape outside the vendored surface: the rendered date is
+    " compared against `00000000`, so the assignment has to produce the
+    " eight-character form the CONV produced
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>check_is_date_valid( `2024-03-15` ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>check_is_date_valid( `0000-00-00` ) ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>check_is_date_valid( `not-a-date` ) ).
   ENDMETHOD.
 
   METHOD position_unbound_is_empty.
