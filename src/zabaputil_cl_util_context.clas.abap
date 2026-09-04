@@ -6321,12 +6321,19 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     CLEAR messages.
     is_row = abap_false.
 
-    DATA(lt_meta) = msg_get_rap_meta( val ).
+    " the meta block is built LAZILY: msg_get_rap_meta walks the row's
+    " components three times over (element/action/tky scans), and the
+    " common row in a RAP response table carries neither a filled %MSG nor
+    " a %FAIL - building the block up front threw that work away per row
+    DATA lv_meta_built TYPE abap_bool.
+    DATA lt_meta TYPE ty_t_name_value.
 
     ASSIGN COMPONENT `%MSG` OF STRUCTURE val TO FIELD-SYMBOL(<msg>).
     IF sy-subrc = 0.
       is_row = abap_true.
       IF <msg> IS NOT INITIAL.
+        lt_meta = msg_get_rap_meta( val ).
+        lv_meta_built = abap_true.
         TRY.
             DATA(lt_one) = msg_get_t( <msg> ).
             LOOP AT lt_one ASSIGNING FIELD-SYMBOL(<m>).
@@ -6343,6 +6350,9 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       is_row = abap_true.
       ASSIGN COMPONENT `CAUSE` OF STRUCTURE <fail> TO FIELD-SYMBOL(<cause>).
       IF sy-subrc = 0.
+        IF lv_meta_built = abap_false.
+          lt_meta = msg_get_rap_meta( val ).
+        ENDIF.
         DATA lv_cause TYPE i.
         lv_cause = <cause>.
         DATA(lv_text) = msg_get_rap_fail_text( lv_cause ).

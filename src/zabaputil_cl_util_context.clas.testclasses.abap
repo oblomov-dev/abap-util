@@ -3288,6 +3288,21 @@ CLASS ltcl_sync_back DEFINITION FINAL
     METHODS url_lower_case_encoded_equals  FOR TESTING.
     METHODS url_startup_params_first       FOR TESTING.
 
+    " msg_get_rap_row - `%CID` / `%MSG` / `%FAIL` are no legal component
+    " names in a locally declared type, so the row is built through RTTI.
+    " fail = -1 leaves the %FAIL cause out of the row entirely
+    METHODS build_rap_row
+      IMPORTING
+        cid           TYPE string
+        msg           TYPE string
+        fail          TYPE i
+      RETURNING
+        VALUE(result) TYPE REF TO data.
+
+    METHODS rap_row_msg_carries_meta       FOR TESTING.
+    METHODS rap_row_fail_carries_meta      FOR TESTING.
+    METHODS rap_row_quiet_row_is_empty     FOR TESTING.
+
     " ui5_msg_box_format
     METHODS msg_box_empty_is_skipped       FOR TESTING.
     METHODS msg_box_single_message         FOR TESTING.
@@ -3523,6 +3538,91 @@ CLASS ltcl_sync_back IMPLEMENTATION.
     DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?sap-startup-params=name%3Dvalue` ).
     cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
                                         exp = `value` ).
+  ENDMETHOD.
+
+  METHOD build_rap_row.
+
+    DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+    FIELD-SYMBOLS <row>  TYPE any.
+    FIELD-SYMBOLS <comp> TYPE any.
+
+    DATA(lo_string) = cl_abap_elemdescr=>get_string( ).
+
+    INSERT VALUE #( name = `%CID`
+                    type = lo_string ) INTO TABLE lt_comp.
+    INSERT VALUE #( name = `%MSG`
+                    type = lo_string ) INTO TABLE lt_comp.
+    IF fail >= 0.
+      INSERT VALUE #( name = `%FAIL`
+                      type = cl_abap_structdescr=>create(
+                                 VALUE #( ( name = `CAUSE`
+                                            type = cl_abap_elemdescr=>get_i( ) ) ) ) ) INTO TABLE lt_comp.
+    ENDIF.
+
+    CREATE DATA result TYPE HANDLE cl_abap_structdescr=>create( lt_comp ).
+    ASSIGN result->* TO <row>.
+
+    ASSIGN COMPONENT `%CID` OF STRUCTURE <row> TO <comp>.
+    <comp> = cid.
+
+    ASSIGN COMPONENT `%MSG` OF STRUCTURE <row> TO <comp>.
+    <comp> = msg.
+
+    IF fail >= 0.
+      ASSIGN COMPONENT `%FAIL-CAUSE` OF STRUCTURE <row> TO <comp>.
+      <comp> = fail.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD rap_row_msg_carries_meta.
+    " the meta block is built lazily now - a row that DOES carry a message
+    " must still get it. The row is built through RTTI: `%CID` is no legal
+    " component name in a locally declared type
+    DATA(lr_row) = build_rap_row( cid  = `CID_1`
+                                  msg  = `the_message`
+                                  fail = -1 ).
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN lr_row->* TO <row>.
+
+    DATA(lt_msg) = zabaputil_cl_util_context=>msg_get_t( <row> ).
+
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_msg )
+                                        exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_msg[ 1 ]-t_meta[ n = `cid` ]-v
+                                        exp = `CID_1` ).
+  ENDMETHOD.
+
+  METHOD rap_row_fail_carries_meta.
+    " the %FAIL branch is reached without the %MSG branch having built the
+    " block - it has to build it itself, or the meta silently went missing
+    " on exactly the rows that failed
+    DATA(lr_row) = build_rap_row( cid  = `CID_2`
+                                  msg  = ``
+                                  fail = 1 ).
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN lr_row->* TO <row>.
+
+    DATA(lt_msg) = zabaputil_cl_util_context=>msg_get_t( <row> ).
+
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_msg )
+                                        exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_msg[ 1 ]-type
+                                        exp = `E` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_msg[ 1 ]-t_meta[ n = `cid` ]-v
+                                        exp = `CID_2` ).
+  ENDMETHOD.
+
+  METHOD rap_row_quiet_row_is_empty.
+    " the common row: neither a filled %MSG nor a %FAIL. Nothing is
+    " reported and - the point of the change - no meta block is built
+    DATA(lr_row) = build_rap_row( cid  = `CID_3`
+                                  msg  = ``
+                                  fail = -1 ).
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN lr_row->* TO <row>.
+
+    cl_abap_unit_assert=>assert_initial( zabaputil_cl_util_context=>msg_get_t( <row> ) ).
   ENDMETHOD.
 
   METHOD msg_box_empty_is_skipped.
