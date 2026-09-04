@@ -1216,11 +1216,16 @@ CLASS zabaputil_cl_util_context DEFINITION
       RETURNING
         VALUE(result) TYPE xstring.
 
+    " read_description defaults to off: filling it costs one repository
+    " read PER implementing class (SEO_CLASS_READ / XCO), and the common
+    " caller - interface implementer discovery - only ever reads the
+    " classname. Optional and last in the list, so it is additive
     CLASS-METHODS rtti_get_classes_impl_intf
       IMPORTING
-        val           TYPE clike
+        val              TYPE clike
+        read_description TYPE abap_bool DEFAULT abap_false
       RETURNING
-        VALUE(result) TYPE ty_t_classes.
+        VALUE(result)    TYPE ty_t_classes.
 
     " abap_true for values that can be rendered into a text without a
     " conversion dump - the elementary types. Anything structured (struct,
@@ -2441,15 +2446,17 @@ CLASS zabaputil_cl_util_context DEFINITION
 
     CLASS-METHODS rtti_get_classes_intf_cloud
       IMPORTING
-        val           TYPE clike
+        val              TYPE clike
+        read_description TYPE abap_bool DEFAULT abap_false
       RETURNING
-        VALUE(result) TYPE ty_t_classes.
+        VALUE(result)    TYPE ty_t_classes.
 
     CLASS-METHODS rtti_get_classes_intf_std
       IMPORTING
-        val           TYPE clike
+        val              TYPE clike
+        read_description TYPE abap_bool DEFAULT abap_false
       RETURNING
-        VALUE(result) TYPE ty_t_classes.
+        VALUE(result)    TYPE ty_t_classes.
 
     CLASS-METHODS rtti_get_dtel_texts_by_ddic
       IMPORTING
@@ -5550,9 +5557,11 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
   METHOD rtti_get_classes_impl_intf.
 
     IF check_abap_cloud( ).
-      result = rtti_get_classes_intf_cloud( val ).
+      result = rtti_get_classes_intf_cloud( val              = val
+                                            read_description = read_description ).
     ELSE.
-      result = rtti_get_classes_intf_std( val ).
+      result = rtti_get_classes_intf_std( val              = val
+                                          read_description = read_description ).
     ENDIF.
 
   ENDMETHOD.
@@ -5596,8 +5605,17 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     LOOP AT lt_implementation_names INTO implementation_name.
 
-      ls_class-classname   = implementation_name.
-      ls_class-description = rtti_get_class_descr_on_cloud( implementation_name ).
+      CLEAR ls_class.
+      ls_class-classname = implementation_name.
+      IF read_description = abap_true.
+        " a class the XCO layer cannot describe (deleted mid-list, locked)
+        " keeps its slot with a blank description - one broken implementer
+        " must not hide every other one from the caller
+        TRY.
+            ls_class-description = rtti_get_class_descr_on_cloud( implementation_name ).
+          CATCH cx_root ##NO_HANDLER.
+        ENDTRY.
+      ENDIF.
       INSERT ls_class INTO TABLE result.
     ENDLOOP.
 
@@ -5615,6 +5633,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
     " incompatible, so the CALL FUNCTION fails and no implementers are returned
     " (silently breaking user-exit discovery). Never change this key type.
     DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
+    "#EC DEFAULT_KEY
     TYPES BEGIN OF ty_s_key.
     TYPES intkey TYPE c LENGTH 30.
     TYPES END OF ty_s_key.
@@ -5652,32 +5671,39 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
     LOOP AT lt_impl REFERENCE INTO lr_impl.
 
-      CLEAR <class>.
-
-      ls_clskey-clsname = lr_impl->clsname.
-
-      lv_fm = `SEO_CLASS_READ`.
-      CALL FUNCTION lv_fm
-        EXPORTING
-          clskey        = ls_clskey
-        IMPORTING
-          class         = <class>
-        EXCEPTIONS
-          error_message = 1
-          OTHERS        = 2.
-      IF sy-subrc <> 0.
-        RAISE EXCEPTION TYPE zabaputil_cx_util_error.
-      ENDIF.
-
-      ASSIGN
-        COMPONENT `DESCRIPT`
-        OF STRUCTURE <class>
-        TO <description>.
-      ASSERT sy-subrc = 0.
-
       CLEAR ls_class.
-      ls_class-classname   = lr_impl->clsname.
-      ls_class-description = <description>.
+      ls_class-classname = lr_impl->clsname.
+
+      IF read_description = abap_true.
+
+        CLEAR <class>.
+        ls_clskey-clsname = lr_impl->clsname.
+
+        lv_fm = `SEO_CLASS_READ`.
+        CALL FUNCTION lv_fm
+          EXPORTING
+            clskey        = ls_clskey
+          IMPORTING
+            class         = <class>
+          EXCEPTIONS
+            error_message = 1
+            OTHERS        = 2.
+        " a class the repository cannot read (deleted mid-list, inactive,
+        " locked) keeps its slot with a blank description. This used to
+        " RAISE, which turned ONE broken implementer into an empty result
+        " for the caller - and a caller that swallows that reads it as
+        " "nothing implements this interface anywhere", with no error to
+        " point at
+        IF sy-subrc = 0.
+          ASSIGN
+            COMPONENT `DESCRIPT`
+            OF STRUCTURE <class>
+            TO <description>.
+          ASSERT sy-subrc = 0.
+          ls_class-description = <description>.
+        ENDIF.
+
+      ENDIF.
       INSERT
         ls_class
         INTO TABLE result.
