@@ -1576,6 +1576,10 @@ CLASS ltcl_rtti_ops DEFINITION FINAL
     METHODS check_clike_int                FOR TESTING.
     METHODS check_ref_data_true            FOR TESTING.
     METHODS check_ref_data_false           FOR TESTING.
+    METHODS check_ref_data_oref            FOR TESTING.
+    METHODS check_ref_data_iref            FOR TESTING.
+    METHODS check_ref_data_bound           FOR TESTING.
+    METHODS copy_ref_data_over_oref        FOR TESTING.
     METHODS get_classname                  FOR TESTING.
     METHODS get_type_name                  FOR TESTING.
     METHODS check_class_exists_true        FOR TESTING.
@@ -1682,6 +1686,51 @@ CLASS ltcl_rtti_ops IMPLEMENTATION.
   METHOD check_ref_data_false.
     DATA lv_str TYPE string.
     cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_ref_data( lv_str ) ).
+  ENDMETHOD.
+
+  METHOD check_ref_data_oref.
+    " an OBJECT reference is a reference, but not a reference to DATA -
+    " the caller that dereferences on a true answer cannot do `->*` on it
+    DATA lo_obj TYPE REF TO ltcl_test_app.
+    lo_obj = NEW #( ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_ref_data( lo_obj ) ).
+  ENDMETHOD.
+
+  METHOD check_ref_data_iref.
+    DATA li_ref TYPE REF TO if_serializable_object.
+    li_ref = NEW ltcl_test_app( ).
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_ref_data( li_ref ) ).
+  ENDMETHOD.
+
+  METHOD check_ref_data_bound.
+    " the answer is about the TYPE, not about whether the reference points
+    " anywhere - a bound data reference stays true
+    DATA lr_ref TYPE REF TO data.
+    DATA lv_str TYPE string VALUE `x`.
+    GET REFERENCE OF lv_str INTO lr_ref.
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_ref_data( lr_ref ) ).
+  ENDMETHOD.
+
+  METHOD copy_ref_data_over_oref.
+    " the damage the wrong answer did: conv_copy_ref_data took the `from->*`
+    " branch for an object reference and copied nothing. It must copy the
+    " reference itself instead
+    DATA lo_obj  TYPE REF TO ltcl_test_app.
+    DATA lo_back TYPE REF TO ltcl_test_app.
+    FIELD-SYMBOLS <copy> TYPE any.
+
+    lo_obj = NEW #( ).
+    lo_obj->mv_val = `payload`.
+
+    DATA(lr_copy) = zabaputil_cl_util_context=>conv_copy_ref_data( lo_obj ).
+    cl_abap_unit_assert=>assert_bound( lr_copy ).
+
+    ASSIGN lr_copy->* TO <copy>.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    lo_back ?= <copy>.
+    cl_abap_unit_assert=>assert_equals( act = lo_back->mv_val
+                                        exp = `payload` ).
   ENDMETHOD.
 
   METHOD get_classname.
