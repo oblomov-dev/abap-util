@@ -245,6 +245,18 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
             OTHERS = 1.
 
       CATCH cx_root INTO DATA(x).
+        " CLOSE on the failure path too: every throw between client_create
+        " and the success-path CLOSE above (a failing dynamic GET_CDATA /
+        " GET_STATUS, the RESPONSE assign) used to leave the connection
+        " open for the lifetime of the work process
+        IF lo_client IS BOUND.
+          TRY.
+              CALL METHOD lo_client->(`CLOSE`)
+                EXCEPTIONS
+                  OTHERS = 1.
+            CATCH cx_root ##NO_HANDLER.
+          ENDTRY.
+        ENDIF.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING val = x.
     ENDTRY.
