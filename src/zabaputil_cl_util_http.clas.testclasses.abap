@@ -150,6 +150,9 @@ CLASS ltcl_test DEFINITION FINAL
     METHODS test_get_header_field     FOR TESTING RAISING cx_static_check.
     METHODS test_set_cdata            FOR TESTING RAISING cx_static_check.
     METHODS test_set_header_field     FOR TESTING RAISING cx_static_check.
+    METHODS test_set_header_crlf_val  FOR TESTING RAISING cx_static_check.
+    METHODS test_set_header_crlf_name FOR TESTING RAISING cx_static_check.
+    METHODS test_set_header_lf_only   FOR TESTING RAISING cx_static_check.
     METHODS test_get_response_cookie  FOR TESTING RAISING cx_static_check.
     METHODS test_delete_resp_cookie   FOR TESTING RAISING cx_static_check.
     METHODS test_set_session_stateful FOR TESTING RAISING cx_static_check.
@@ -221,6 +224,48 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
         exp = `application/json`
         act = mo_server->response->mt_header[ n = `content-type` ]-v ).
+
+  ENDMETHOD.
+
+  METHOD test_set_header_crlf_val.
+
+    " response splitting: the CRLF and everything a caller could append
+    " behind it must not survive into the header value
+    DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_cr_lf.
+
+    mo_cut->set_header_field( n = `x-app`
+                              v = |first{ lv_nl }Set-Cookie: injected=1| ).
+
+    cl_abap_unit_assert=>assert_equals(
+        exp = `firstSet-Cookie: injected=1`
+        act = mo_server->response->mt_header[ n = `x-app` ]-v ).
+
+  ENDMETHOD.
+
+  METHOD test_set_header_crlf_name.
+
+    DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_cr_lf.
+
+    mo_cut->set_header_field( n = |x-app{ lv_nl }x-second: 1|
+                              v = `value` ).
+
+    cl_abap_unit_assert=>assert_equals(
+        exp = `value`
+        act = mo_server->response->mt_header[ n = `x-appx-second: 1` ]-v ).
+
+  ENDMETHOD.
+
+  METHOD test_set_header_lf_only.
+
+    " a bare LF splits a header just as well as a full CRLF pair
+    DATA(lv_lf) = zabaputil_cl_util_context=>cv_char_util_cr_lf+1(1).
+
+    mo_cut->set_header_field( n = `x-app`
+                              v = |first{ lv_lf }second| ).
+
+    cl_abap_unit_assert=>assert_equals(
+        exp = `firstsecond`
+        act = mo_server->response->mt_header[ n = `x-app` ]-v ).
 
   ENDMETHOD.
 

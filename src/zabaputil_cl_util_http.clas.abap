@@ -323,6 +323,22 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
     DATA(lv_n) = CONV string( n ).
     DATA(lv_v) = CONV string( v ).
+
+    " strip CR/LF from both halves before they reach the stack: a header
+    " name or value that carries a line break splits the response into two
+    " (response splitting), and the halves of a header are routinely
+    " derived from request data by the caller. The stack may reject
+    " embedded CRLF itself, but nothing here should depend on it
+    IF lv_n CA zabaputil_cl_util_context=>cv_char_util_cr_lf
+        OR lv_v CA zabaputil_cl_util_context=>cv_char_util_cr_lf.
+      DATA(lv_cr) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf(1) ).
+      DATA(lv_lf) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf+1(1) ).
+      REPLACE ALL OCCURRENCES OF lv_cr IN lv_n WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_lf IN lv_n WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_cr IN lv_v WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_lf IN lv_v WITH ``.
+    ENDIF.
+
     IF mo_server_onprem IS BOUND.
 
       DATA(object) = get_response_onprem( ).
