@@ -84,7 +84,14 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     TRY.
         lo_root ?= val.
       CATCH cx_root.
-        lv_text = val.
+        " val was no exception reference - render it as the message text.
+        " Guarded: a structured val (a table, a struct) would make this
+        " MOVE dump, and a runtime error inside a CATCH block is not
+        " caught by its own TRY - the one class that must never be the
+        " crash itself. Such a val degrades to an empty text instead
+        IF zabaputil_cl_util_context=>rtti_check_printable( val ) = abap_true.
+          lv_text = val.
+        ENDIF.
     ENDTRY.
 
     " Keep the cause chain. The dominant raise pattern in the consumers hands
@@ -98,7 +105,10 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     ms_error-x_root = lo_root.
     ms_error-text   = lv_text.
-    ms_error-uuid   = zabaputil_cl_util_context=>uuid_get_c32( ).
+    " no uuid here: uuid_get_c32 is a dynamic CL_SYSTEM_UUID/GUID_CREATE
+    " call and its only reader is the full-report renderer - it is filled
+    " lazily in get_text_full_entry, so a raise that is caught and handled
+    " on the way up pays nothing for it
 
   ENDMETHOD.
 
@@ -227,8 +237,15 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
 
     TRY.
         DATA(lx_own) = CAST zabaputil_cx_error( val ).
+        " computed on first render, not in the constructor - see there.
+        " cx_root, not just the cast error: a failing uuid lookup must not
+        " abort the rendering of the very error report it decorates, and an
+        " exception raised without an id used to render an empty `id :` line
+        IF lx_own->ms_error-uuid IS INITIAL.
+          lx_own->ms_error-uuid = zabaputil_cl_util_context=>uuid_get_c32( ).
+        ENDIF.
         result = result && lv_nl && |    id       : { lx_own->ms_error-uuid }|.
-      CATCH cx_sy_move_cast_error ##NO_HANDLER.
+      CATCH cx_root ##NO_HANDLER.
     ENDTRY.
 
     DATA(lt_attri) = zabaputil_cl_util_context=>error_get_attributes( val ).
@@ -243,10 +260,15 @@ CLASS zabaputil_cx_error IMPLEMENTATION.
     DATA(lv_nl) = zabaputil_cl_util_context=>cv_char_util_newline.
 
     " the runtime context of the failing request - what an issue report
-    " otherwise has to ask back for
+    " otherwise has to ask back for. Deliberately WITHOUT sy-host, sy-mandt
+    " and sy-uname: consumers render this text where an end user can read
+    " it (abap2UI5 puts it in the body of a 500), and hostname, client and
+    " user are recon material there - and an audit finding in hardened
+    " installations - while what a report actually needs is the release and
+    " the time. A caller that legitimately wants the rest reads sy-* itself;
+    " the server-side logs carry it anyway
     result = `--- context ---` && lv_nl &&
-             |    system   : { sy-sysid } / client { sy-mandt } / host { sy-host } / release { sy-saprl }| && lv_nl &&
-             |    user     : { sy-uname } / language { sy-langu }| && lv_nl &&
+             |    system   : { sy-sysid } / release { sy-saprl }| && lv_nl &&
              |    time     : { sy-datum } { sy-uzeit }|.
 
   ENDMETHOD.

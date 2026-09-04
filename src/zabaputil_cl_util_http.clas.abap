@@ -245,6 +245,18 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
             OTHERS = 1.
 
       CATCH cx_root INTO DATA(x).
+        " CLOSE on the failure path too: every throw between client_create
+        " and the success-path CLOSE above (a failing dynamic GET_CDATA /
+        " GET_STATUS, the RESPONSE assign) used to leave the connection
+        " open for the lifetime of the work process
+        IF lo_client IS BOUND.
+          TRY.
+              CALL METHOD lo_client->(`CLOSE`)
+                EXCEPTIONS
+                  OTHERS = 1.
+            CATCH cx_root ##NO_HANDLER.
+          ENDTRY.
+        ENDIF.
         RAISE EXCEPTION TYPE zabaputil_cx_util_error
           EXPORTING val = x.
     ENDTRY.
@@ -281,14 +293,8 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         IMPORTING
           value = result.
 
-    ELSE.
-
-*      CALL METHOD mo_request_cloud->(`GET_COOKIE`)
-*        EXPORTING
-*          i_name  = lv_val
-*        RECEIVING
-*          r_value = result.
-
+      " reading a response cookie has no released counterpart in ABAP
+      " Cloud - there is nothing to answer with there
     ENDIF.
 
   ENDMETHOD.
@@ -323,6 +329,22 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
 
     DATA(lv_n) = CONV string( n ).
     DATA(lv_v) = CONV string( v ).
+
+    " strip CR/LF from both halves before they reach the stack: a header
+    " name or value that carries a line break splits the response into two
+    " (response splitting), and the halves of a header are routinely
+    " derived from request data by the caller. The stack may reject
+    " embedded CRLF itself, but nothing here should depend on it
+    IF lv_n CA zabaputil_cl_util_context=>cv_char_util_cr_lf
+        OR lv_v CA zabaputil_cl_util_context=>cv_char_util_cr_lf.
+      DATA(lv_cr) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf(1) ).
+      DATA(lv_lf) = CONV string( zabaputil_cl_util_context=>cv_char_util_cr_lf+1(1) ).
+      REPLACE ALL OCCURRENCES OF lv_cr IN lv_n WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_lf IN lv_n WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_cr IN lv_v WITH ``.
+      REPLACE ALL OCCURRENCES OF lv_lf IN lv_v WITH ``.
+    ENDIF.
+
     IF mo_server_onprem IS BOUND.
 
       DATA(object) = get_response_onprem( ).
@@ -450,11 +472,7 @@ CLASS zabaputil_cl_util_http IMPLEMENTATION.
         EXPORTING
           stateful = val.
 
-    ELSE.
-
-      "FEATURE IN CLOUD NOT RELEASED
-*      ASSERT 1 = `NO_STATEFUL_FEATURE_IN_CLOUD_ERROR`.
-
+      " stateful sessions are not released in ABAP Cloud - no-op there
     ENDIF.
 
   ENDMETHOD.
