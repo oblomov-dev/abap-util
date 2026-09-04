@@ -570,6 +570,7 @@ CLASS ltcl_url_ops DEFINITION FINAL
     METHODS param_get_case_insensitive     FOR TESTING.
     METHODS param_get_not_found            FOR TESTING.
     METHODS param_get_encoded              FOR TESTING.
+    METHODS param_get_encoded_bare         FOR TESTING.
 
     METHODS param_get_tab_basic            FOR TESTING.
     METHODS param_get_tab_multiple         FOR TESTING.
@@ -611,9 +612,24 @@ CLASS ltcl_url_ops IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD param_get_encoded.
+    " a percent-encoded query is decoded where the launchpad puts one: in
+    " the sap-startup-params value. It used to be decoded wherever it
+    " appeared, which is what tore an encoded `&` inside an ordinary value
+    " apart - see url_encoded_value_survives
     cl_abap_unit_assert=>assert_equals(
         exp = `world`
-        act = zabaputil_cl_util_context=>url_param_get( val = `hello` url = `hello%3Dworld%26foo%3Dbar` ) ).
+        act = zabaputil_cl_util_context=>url_param_get(
+                  val = `hello`
+                  url = `sap-startup-params=hello%3Dworld%26foo%3Dbar` ) ).
+  ENDMETHOD.
+
+  METHOD param_get_encoded_bare.
+    " and NOT outside it: a bare `%3D` is a literal character of the value
+    " it stands in, not a separator waiting to be decoded
+    cl_abap_unit_assert=>assert_equals(
+        exp = ``
+        act = zabaputil_cl_util_context=>url_param_get( val = `hello`
+                                                        url = `hello%3Dworld` ) ).
   ENDMETHOD.
 
   METHOD param_get_tab_basic.
@@ -3295,6 +3311,10 @@ CLASS ltcl_sync_back DEFINITION FINAL
     METHODS token_including_unchanged      FOR TESTING.
     METHODS url_lower_case_encoded_equals  FOR TESTING.
     METHODS url_startup_params_first       FOR TESTING.
+    METHODS url_encoded_value_survives     FOR TESTING.
+    METHODS url_second_question_is_value   FOR TESTING.
+    METHODS url_startup_with_siblings      FOR TESTING.
+    METHODS url_full_url_with_path         FOR TESTING.
 
     " msg_get_rap_row - `%CID` / `%MSG` / `%FAIL` are no legal component
     " names in a locally declared type, so the row is built through RTTI.
@@ -3602,8 +3622,9 @@ CLASS ltcl_sync_back IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD url_lower_case_encoded_equals.
-    " RFC 3986 allows lowercase hex digits in percent-encodings
-    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?name%3dvalue` ).
+    " RFC 3986 allows lowercase hex digits in percent-encodings, so the
+    " packed value decodes %3d the same way as %3D
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?sap-startup-params=name%3dvalue` ).
     cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
                                         exp = `value` ).
   ENDMETHOD.
@@ -3614,6 +3635,55 @@ CLASS ltcl_sync_back IMPLEMENTATION.
     DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?sap-startup-params=name%3Dvalue` ).
     cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
                                         exp = `value` ).
+  ENDMETHOD.
+
+  METHOD url_encoded_value_survives.
+    " decoding the WHOLE query first tore every legitimately encoded `&`
+    " apart: `a=x%26y` became the two parameters a=x and y= , and
+    " url_param_create_url wrote the damage back into every generated link.
+    " Only the sap-startup-params value is decoded now
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?a=x%26y&b=2` ).
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_param )
+                                        exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `a` ]-v
+                                        exp = `x%26y` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `b` ]-v
+                                        exp = `2` ).
+  ENDMETHOD.
+
+  METHOD url_second_question_is_value.
+    " the cut is at the FIRST `?` only - a later one is a legal, unencoded
+    " character of a value, and cutting there dropped every parameter
+    " before it
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab( `?app_start=zcl_x&title=why?` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `app_start` ]-v
+                                        exp = `zcl_x` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `title` ]-v
+                                        exp = `why?` ).
+  ENDMETHOD.
+
+  METHOD url_startup_with_siblings.
+    " the packed value is unwrapped in place: what stood next to
+    " sap-startup-params in the query stays a parameter of its own
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab(
+                         `?sap-ui-tech=x&sap-startup-params=name%3Dvalue%26other%3D2&sap-lang=EN` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `name` ]-v
+                                        exp = `value` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `other` ]-v
+                                        exp = `2` ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `sap-lang` ]-v
+                                        exp = `EN` ).
+  ENDMETHOD.
+
+  METHOD url_full_url_with_path.
+    " a full URL, not just a query string - the path in front of the first
+    " `?` is not a parameter
+    DATA(lt_param) = zabaputil_cl_util_context=>url_param_get_tab(
+                         `https://host/sap/bc/z2ui5?app_start=zcl_x&b=2` ).
+    cl_abap_unit_assert=>assert_equals( act = lines( lt_param )
+                                        exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = lt_param[ n = `app_start` ]-v
+                                        exp = `zcl_x` ).
   ENDMETHOD.
 
   METHOD build_rap_row.

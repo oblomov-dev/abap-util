@@ -3555,36 +3555,49 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
 
   METHOD url_param_get_tab.
 
-    DATA(lv_search) = replace( val  = val
-                               sub  = `%3D`
-                               with = `=`
-                               occ  = 0 ).
+    " a full URL or a request URI carries a path before its query: cut at
+    " the FIRST `?` only. A later `?` is a legal, unencoded character of a
+    " value (`title=why?`) - cutting there dropped every parameter before
+    " it, and the caller fell back to its defaults.
+    " declared, not DATA( ) from a generic CLIKE parameter, which is
+    " "fixed type STRING used for generic type CLIKE" in the extended check
+    DATA lv_search TYPE string.
+    lv_search = val.
+    IF lv_search CS `?`.
+      lv_search = substring_after( val = lv_search
+                                   sub = `?` ).
+    ENDIF.
 
-    " RFC 3986 allows lowercase hex digits in percent-encodings, so decode
-    " %3d the same way as %3D (%26 contains no letters and needs no twin)
-    lv_search = replace( val  = lv_search
-                         sub  = `%3d`
-                         with = `=`
-                         occ  = 0 ).
-
-    lv_search = replace( val  = lv_search
-                         sub  = `%26`
-                         with = `&`
-                         occ  = 0 ).
-
-    lv_search = shift_left( val = lv_search
-                            sub = `?` ).
-
-    " prepend & before searching so sap-startup-params is also unwrapped
-    " when it is the first/only query parameter (typical FLP target mapping)
-    DATA(lv_search2) = substring_after( val = |&{ lv_search }|
+    " The FLP packs the target's own parameters into ONE value,
+    " sap-startup-params, with its `=` and `&` percent-encoded. Prepend &
+    " before searching so it is also unwrapped when it is the first/only
+    " query parameter (typical FLP target mapping). Only THAT value is
+    " decoded: decoding the whole query first tore every legitimately
+    " encoded `&` or `=` in any other value apart (`a=x%26y` became the
+    " two parameters a=x and y=), and url_param_create_url wrote the
+    " damage back into every generated link
+    DATA(lv_startup) = substring_after( val = |&{ lv_search }|
                                         sub = `&sap-startup-params=` ).
-    lv_search = COND #( WHEN lv_search2 IS NOT INITIAL THEN lv_search2 ELSE lv_search ).
-
-    lv_search2 = substring_after( val = lv_search
-                                  sub = `?` ).
-    IF lv_search2 IS NOT INITIAL.
-      lv_search = lv_search2.
+    IF lv_startup IS NOT INITIAL.
+      SPLIT lv_startup AT `&` INTO DATA(lv_packed) DATA(lv_rest).
+      lv_packed = replace( val  = lv_packed
+                           sub  = `%3D`
+                           with = `=`
+                           occ  = 0 ).
+      " RFC 3986 allows lowercase hex digits in percent-encodings, so decode
+      " %3d the same way as %3D (%26 contains no letters and needs no twin)
+      lv_packed = replace( val  = lv_packed
+                           sub  = `%3d`
+                           with = `=`
+                           occ  = 0 ).
+      lv_packed = replace( val  = lv_packed
+                           sub  = `%26`
+                           with = `&`
+                           occ  = 0 ).
+      lv_search = lv_packed.
+      IF lv_rest IS NOT INITIAL.
+        lv_search = |{ lv_packed }&{ lv_rest }|.
+      ENDIF.
     ENDIF.
 
     SPLIT lv_search AT `&` INTO TABLE DATA(lt_param).
@@ -3599,8 +3612,7 @@ CLASS zabaputil_cl_util_context IMPLEMENTATION.
       ENDIF.
       " normalize the name so lookups are case-insensitive on every input
       " shape (with or without a leading path/question mark) - the value
-      " keeps its original case. url_param_get / url_param_set look up with
-      " c_trim_lower, so the stored name has to be lower case too
+      " keeps its original case
       INSERT VALUE #( n = c_trim_lower( lv_name )
                       v = lv_value ) INTO TABLE result.
     ENDLOOP.
