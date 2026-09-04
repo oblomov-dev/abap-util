@@ -3809,3 +3809,345 @@ CLASS ltcl_sync_back IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+"! ================================================================
+"! ui5_data_box_format - everything a box can be built from that is
+"! not a message, plus rtti_check_table_standard
+"! ================================================================
+CLASS ltcl_data_box DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_s_node,
+        name TYPE string,
+        next TYPE REF TO data,
+      END OF ty_s_node.
+
+  PRIVATE SECTION.
+
+    " elementary values
+    METHODS char_is_its_own_text        FOR TESTING.
+    METHODS char_empty_is_not_skipped   FOR TESTING.
+    METHODS char_markup_moves_to_detail FOR TESTING.
+    METHODS number_is_trimmed           FOR TESTING.
+    METHODS date_renders                FOR TESTING.
+
+    " complex values
+    METHODS empty_table_is_skipped      FOR TESTING.
+    METHODS empty_struct_is_skipped     FOR TESTING.
+    METHODS table_headline_and_list     FOR TESTING.
+    METHODS table_one_entry_is_singular FOR TESTING.
+    METHODS table_row_cap_is_announced  FOR TESTING.
+    METHODS struct_headline_and_fields  FOR TESTING.
+    METHODS object_headline_and_attris  FOR TESTING.
+    METHODS exception_renders_its_text  FOR TESTING.
+    METHODS dref_renders_the_target     FOR TESTING.
+    METHODS cycle_stops_at_depth        FOR TESTING.
+
+    " escaping and the text cap
+    METHODS values_are_escaped          FOR TESTING.
+    METHODS plain_text_is_capped        FOR TESTING.
+
+    " the hand-over from ui5_msg_box_format
+    METHODS non_message_struct_skips    FOR TESTING.
+
+    " rtti_check_table_standard
+    METHODS table_standard_true         FOR TESTING.
+    METHODS table_sorted_false          FOR TESTING.
+    METHODS table_hashed_false          FOR TESTING.
+    METHODS table_non_table_false       FOR TESTING.
+
+ENDCLASS.
+
+CLASS ltcl_data_box IMPLEMENTATION.
+
+  METHOD char_is_its_own_text.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( `plain text` ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `plain text` ).
+    cl_abap_unit_assert=>assert_initial( ls_box-details ).
+  ENDMETHOD.
+
+  METHOD char_empty_is_not_skipped.
+    " an empty character value is the shape a plain text box has always
+    " had, and is not this method's to turn into silence
+    DATA lv_empty TYPE string.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lv_empty ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_initial( ls_box-text ).
+  ENDMETHOD.
+
+  METHOD char_markup_moves_to_detail.
+    " markup in the box text would be shown as the tags it is written with,
+    " so it goes into the details and the plain text behind it stays the
+    " headline
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( `<b>bold</b> and <i>italic</i>` ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-details
+                                        exp = `<b>bold</b> and <i>italic</i>` ).
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-text CS `<b>` ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( ls_box-text CS `bold` ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( ls_box-text CS `italic` ) ).
+  ENDMETHOD.
+
+  METHOD number_is_trimmed.
+    " a number reaches a character target right-aligned in the length its
+    " type needs - ` 42` is not what the value says
+    DATA lv_int TYPE i VALUE 42.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lv_int ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `42` ).
+    cl_abap_unit_assert=>assert_initial( ls_box-details ).
+  ENDMETHOD.
+
+  METHOD date_renders.
+    DATA lv_date TYPE d VALUE '20260904'.
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lv_date ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `20260904` ).
+  ENDMETHOD.
+
+  METHOD empty_table_is_skipped.
+    " a caller that hands over the result table of a call it just made
+    " expects no box when the call returned nothing
+    DATA lt_empty TYPE string_table.
+    cl_abap_unit_assert=>assert_equals(
+        act = zabaputil_cl_util_context=>ui5_data_box_format( lt_empty )-skip
+        exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD empty_struct_is_skipped.
+    TYPES: BEGIN OF ty_s,
+             alpha TYPE string,
+             beta  TYPE i,
+           END OF ty_s.
+    DATA ls_empty TYPE ty_s.
+    cl_abap_unit_assert=>assert_equals(
+        act = zabaputil_cl_util_context=>ui5_data_box_format( ls_empty )-skip
+        exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD table_headline_and_list.
+    DATA lt_tab TYPE string_table.
+
+    INSERT `first` INTO TABLE lt_tab.
+    INSERT `second` INTO TABLE lt_tab.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lt_tab ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `Table with 2 entries` ).
+    " rows are an ORDERED list - the position of a row is information
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `<ol>*<li>first</li>*<li>second</li>*</ol>` ).
+  ENDMETHOD.
+
+  METHOD table_one_entry_is_singular.
+    DATA lt_tab TYPE string_table.
+
+    INSERT `only` INTO TABLE lt_tab.
+
+    cl_abap_unit_assert=>assert_equals(
+        act = zabaputil_cl_util_context=>ui5_data_box_format( lt_tab )-text
+        exp = `Table with 1 entry` ).
+  ENDMETHOD.
+
+  METHOD table_row_cap_is_announced.
+    " the cap is announced in the output rather than applied silently -
+    " a truncated dump that does not say so is a wrong dump
+    DATA lt_tab TYPE string_table.
+    DATA lv_no  TYPE i.
+
+    DO 120 TIMES.
+      lv_no = lv_no + 1.
+      INSERT |row{ lv_no }| INTO TABLE lt_tab.
+    ENDDO.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lt_tab ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `Table with 120 entries` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*20 more entries*` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<li>row100</li>*` ).
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-details CS `<li>row101</li>` ) ).
+  ENDMETHOD.
+
+  METHOD struct_headline_and_fields.
+    TYPES: BEGIN OF ty_s,
+             alpha TYPE string,
+             beta  TYPE i,
+           END OF ty_s.
+    DATA ls_val TYPE ty_s.
+
+    ls_val-alpha = `the_value`.
+    ls_val-beta  = 7.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( ls_val ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `Structure with 2 fields` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<strong>ALPHA</strong>: the_value*` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<strong>BETA</strong>: 7*` ).
+  ENDMETHOD.
+
+  METHOD object_headline_and_attris.
+    DATA(lo_obj) = NEW ltcl_test_app( ).
+    lo_obj->mv_val = `instance_state`.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lo_obj ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-text
+                                        exp = `Object LTCL_TEST_APP` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<strong>MV_VAL</strong>: instance_state*` ).
+    " a constant belongs to the type and a class attribute to nobody -
+    " neither is this instance's state
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-details CS `SV_STATUS` ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-details CS `SV_VAR` ) ).
+  ENDMETHOD.
+
+  METHOD exception_renders_its_text.
+    " an exception carries its own text, and that text is the whole story -
+    " its attributes are the placeholders already substituted into it
+    DATA(lx) = NEW zabaputil_cx_error( val = `the_failure` ).
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lx ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-text
+                                         exp = `Object ZABAPUTIL_CX_ERROR*` ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*the_failure*` ).
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-details CS `<strong>MS_ERROR` ) ).
+  ENDMETHOD.
+
+  METHOD dref_renders_the_target.
+    DATA lv_str  TYPE string VALUE `behind_the_reference`.
+    DATA lr_data TYPE REF TO data.
+
+    GET REFERENCE OF lv_str INTO lr_data.
+
+    cl_abap_unit_assert=>assert_char_cp(
+        act = zabaputil_cl_util_context=>ui5_data_box_format( lr_data )-details
+        exp = `*behind_the_reference*` ).
+  ENDMETHOD.
+
+  METHOD cycle_stops_at_depth.
+    " a structure that points at itself: the walk has to stop, and say in
+    " the output where it did, instead of running the stack out
+    DATA ls_node TYPE ty_s_node.
+
+    ls_node-name = `loop`.
+    GET REFERENCE OF ls_node INTO ls_node-next.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( ls_node ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*<em>...</em>*` ).
+  ENDMETHOD.
+
+  METHOD values_are_escaped.
+    " every rendered value goes through the catalogue's own escaping - a
+    " value is data, never markup of the report it appears in
+    TYPES: BEGIN OF ty_s,
+             payload TYPE string,
+           END OF ty_s.
+    DATA ls_val TYPE ty_s.
+
+    ls_val-payload = `<script>alert("x")</script>`.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( ls_val ).
+    cl_abap_unit_assert=>assert_false( xsdbool( ls_box-details CS `<script>` ) ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-details
+                                         exp = `*&lt;script&gt;*` ).
+  ENDMETHOD.
+
+  METHOD plain_text_is_capped.
+    " the headline is one line of a box - what does not fit is in the
+    " details anyway, and the cut says that it was cut
+    DATA lv_markup TYPE string.
+    DATA lv_no     TYPE i.
+
+    lv_markup = `<p>`.
+    DO 60 TIMES.
+      lv_no = lv_no + 1.
+      lv_markup = lv_markup && |word{ lv_no } |.
+    ENDDO.
+    lv_markup = lv_markup && `</p>`.
+
+    DATA(ls_box) = zabaputil_cl_util_context=>ui5_data_box_format( lv_markup ).
+    cl_abap_unit_assert=>assert_equals( act = ls_box-details
+                                        exp = lv_markup ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_box-text
+                                         exp = `*...` ).
+    cl_abap_unit_assert=>assert_equals( act = strlen( ls_box-text )
+                                        exp = 203 ).
+  ENDMETHOD.
+
+  METHOD non_message_struct_skips.
+    " the hand-over: a structure carrying none of the message components
+    " is data, not a message. ui5_msg_box_format says so with `skip`, and
+    " that is what lets a caller fall through to ui5_data_box_format
+    TYPES: BEGIN OF ty_s,
+             alpha TYPE string,
+             beta  TYPE i,
+           END OF ty_s.
+    DATA ls_val TYPE ty_s.
+
+    ls_val-alpha = `not_a_message`.
+    ls_val-beta  = 3.
+
+    cl_abap_unit_assert=>assert_equals(
+        act = zabaputil_cl_util_context=>ui5_msg_box_format( ls_val )-skip
+        exp = abap_true ).
+
+    " and the fall-through has something to show
+    DATA(ls_data) = zabaputil_cl_util_context=>ui5_data_box_format( ls_val ).
+    cl_abap_unit_assert=>assert_equals( act = ls_data-skip
+                                        exp = abap_false ).
+    cl_abap_unit_assert=>assert_char_cp( act = ls_data-details
+                                         exp = `*not_a_message*` ).
+  ENDMETHOD.
+
+  METHOD table_standard_true.
+    DATA lt_tab  TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    DATA lr_data TYPE REF TO data.
+
+    GET REFERENCE OF lt_tab INTO lr_data.
+
+    cl_abap_unit_assert=>assert_true( zabaputil_cl_util_context=>rtti_check_table_standard( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD table_sorted_false.
+    DATA lt_tab  TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lr_data TYPE REF TO data.
+
+    GET REFERENCE OF lt_tab INTO lr_data.
+
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_table_standard( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD table_hashed_false.
+    DATA lt_tab  TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lr_data TYPE REF TO data.
+
+    GET REFERENCE OF lt_tab INTO lr_data.
+
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_table_standard( lr_data ) ).
+  ENDMETHOD.
+
+  METHOD table_non_table_false.
+    " (the unbound reference has no test here: the transpiled
+    " describe_by_data_ref throws a raw runtime error the CATCH does not
+    " see, where ABAP raises a catchable exception)
+    DATA lv_str  TYPE string.
+    DATA lr_data TYPE REF TO data.
+
+    GET REFERENCE OF lv_str INTO lr_data.
+
+    cl_abap_unit_assert=>assert_false( zabaputil_cl_util_context=>rtti_check_table_standard( lr_data ) ).
+  ENDMETHOD.
+
+ENDCLASS.
